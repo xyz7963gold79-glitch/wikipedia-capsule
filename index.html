@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>情報カプセルコンピューター 世界版Wikipedia リーダー</title>
+<style>
+  body { font-family: sans-serif; margin: 0; background: #f7f7f5; color: #222; }
+  header { background: #1a3a5c; color: #fff; padding: 12px 16px; }
+  header h1 { font-size: 17px; margin: 0 0 4px; }
+  header p { font-size: 12px; margin: 0; opacity: .85; }
+  main { max-width: 760px; margin: 0 auto; padding: 14px 16px 40px; }
+  .card { background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+  label { font-size: 14px; font-weight: bold; display: block; margin-bottom: 6px; }
+  select { width: 100%; box-sizing: border-box; font-size: 16px; padding: 10px; border: 1px solid #bbb; border-radius: 8px; background: #fff; }
+  input[type="text"] { width: 100%; box-sizing: border-box; font-size: 16px; padding: 10px; border: 1px solid #bbb; border-radius: 8px; }
+  input[type="file"] { width: 100%; box-sizing: border-box; font-size: 14px; margin-top: 6px; }
+  button { font-size: 15px; padding: 9px 16px; border: 0; border-radius: 8px; background: #1a3a5c; color: #fff; margin-top: 10px; }
+  button:disabled { background: #999; }
+  #status, #fstatus, #sstat { font-size: 13px; color: #555; margin-top: 8px; white-space: pre-wrap; word-break: break-all; }
+  .note { font-size: 12px; color: #777; margin-top: 8px; }
+  #hits { list-style: none; padding: 0; margin: 10px 0 0; }
+  #hits li { padding: 9px 6px; border-bottom: 1px solid #eee; cursor: pointer; color: #14509e; }
+  #hits li:active { background: #eef3fa; }
+  #hits li.exact { font-weight: bold; }
+  #article h2 { font-size: 19px; margin: 4px 0 8px; }
+  #article .body { font-size: 15px; line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+  .cert { font-size: 12px; color: #2e7d32; margin-top: 12px; border-top: 1px solid #eee; padding-top: 8px; word-break: break-all; white-space: pre-wrap; }
+  .cert .ng { color: #b71c1c; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>情報カプセルコンピューター 世界版</h1>
+  <p>多言語Wikipedia・オフライン閲覧アプリ（ZDOT形式）【{(0~∞)×Χ}≦∞】=Ζ</p>
+</header>
+<main>
+  <div class="card" id="langcard">
+    <label for="lang">言語を選ぶ</label>
+    <select id="lang"></select>
+    <div class="note" id="langinfo"></div>
+    <button id="openLang">この言語を開く</button>
+    <div id="status">未読み込み</div>
+  </div>
+  <div class="card" id="loader">
+    <p style="margin-top:0">スマホのストレージから <b>.zdot</b> ファイルを選んで開くこともできます。分割版では、部品ファイル <b>.part00 〜 の全部</b> をまとめて選んでください。</p>
+    <input type="file" id="file" multiple>
+    <div id="fstatus"></div>
+  </div>
+  <div class="card hidden" id="searcher">
+    <input type="text" id="q" placeholder="記事の題名を入力（部分一致）">
+    <button id="go">題名を検索</button>
+    <div id="sstat"></div>
+    <ul id="hits"></ul>
+  </div>
+  <div class="card hidden" id="article">
+    <h2 id="atitle"></h2>
+    <div class="body" id="abody"></div>
+    <div class="cert" id="acert"></div>
+  </div>
+  <p class="note">データ出典: 各言語版Wikipedia（CC BY-SA）。本文のみ・画像は含まれません。各ブロックは読み出し時にSHA-256証明書で検証されます。言語一覧は、このページと同じ場所に manifest.json があれば自動で読み込みます（無い場合は内蔵の一覧を使います）。</p>
+</main>
+<script>!function(f){typeof module!='undefined'&&typeof exports=='object'?module.exports=f():typeof define!='undefined'&&define.amd?define(['fzstd',f]):(typeof self!='undefined'?self:this).fzstd=f()}(function(){var _e={};"use strict";var r=ArrayBuffer,t=Uint8Array,e=Uint16Array,n=Int16Array,a=Uint32Array,s=Int32Array,i=function(r,e,n){if(t.prototype.slice)return t.prototype.slice.call(r,e,n);(null==e||e<0)&&(e=0),(null==n||n>r.length)&&(n=r.length);var a=new t(n-e);return a.set(r.subarray(e,n)),a},o=function(r,e,n,a){if(t.prototype.fill)return t.prototype.fill.call(r,e,n,a);for((null==n||n<0)&&(n=0),(null==a||a>r.length)&&(a=r.length);n<a;++n)r[n]=e;return r},u=function(r,e,n,a){if(t.prototype.copyWithin)return t.prototype.copyWithin.call(r,e,n,a);for((null==n||n<0)&&(n=0),(null==a||a>r.length)&&(a=r.length);n<a;)r[e++]=r[n++]};_e.ZstdErrorCode={InvalidData:0,WindowSizeTooLarge:1,InvalidBlockType:2,FSEAccuracyTooHigh:3,DistanceTooFarBack:4,UnexpectedEOF:5};var h=["invalid zstd data","window size too large (>2046MB)","invalid block type","FSE accuracy too high","match distance too far back","unexpected EOF"],f=function(r,t,e){var n=Error(t||h[r]);if(n.code=r,Error.captureStackTrace&&Error.captureStackTrace(n,f),!e)throw n;return n},l=function(r,t,e){for(var n=0,a=0;n<e;++n)a|=r[t++]<<(n<<3);return a},v=function(r,t){return(r[t]|r[t+1]<<8|r[t+2]<<16|r[t+3]<<24)>>>0},c=function(r,e){var n=r[0]|r[1]<<8|r[2]<<16;if(3126568==n&&253==r[3]){var a=r[4],i=a>>5&1,o=a>>2&1,u=3&a,h=a>>6;8&a&&f(0);var c=6-i,b=3==u?4:u,y=l(r,c,b),p=h?1<<h:i,w=l(r,c+=b,p)+(1==h&&256),g=w;if(!i){var d=1<<10+(r[5]>>3);g=d+(d>>3)*(7&r[5])}g>2145386496&&f(1);var m=new t((1==e?w||g:e?0:g)+12);return m[0]=1,m[4]=4,m[8]=8,{b:c+p,y:0,l:0,d:y,w:e&&1!=e?e:m.subarray(12),e:g,o:new s(m.buffer,0,3),u:w,c:o,m:Math.min(131072,g)}}if(25481893==(n>>4|r[3]<<20))return v(r,4)+8;f(0)},b=function(r){for(var t=0;1<<t<=r;++t);return t-1},y=function(a,s,i){var o=4+(s<<3),u=5+(15&a[s]);u>i&&f(3);for(var h=1<<u,l=h,v=-1,c=-1,y=-1,p=h,w=new r(512+(h<<2)),g=new n(w,0,256),d=new e(w,0,256),m=new e(w,512,h),z=512+(h<<1),E=new t(w,z,h),k=new t(w,z+h);v<255&&l>0;){var A=b(l+1),T=o>>3,x=(1<<A+1)-1,F=(a[T]|a[T+1]<<8|a[T+2]<<16)>>(7&o)&x,S=(1<<A)-1,B=x-l-1,I=F&S;if(I<B?(o+=A,F=I):(o+=A+1,F>S&&(F-=B)),g[++v]=--F,-1==F?(l+=F,E[--p]=v):l-=F,!F)do{var U=o>>3;c=(a[U]|a[U+1]<<8)>>(7&o)&3,o+=2,v+=c}while(3==c)}(v>255||l)&&f(0);for(var D=0,M=(h>>1)+(h>>3)+3,W=h-1,O=0;O<=v;++O){var j=g[O];if(j<1)d[O]=-j;else for(y=0;y<j;++y){E[D]=O;do{D=D+M&W}while(D>=p)}}for(D&&f(0),y=0;y<h;++y){var C=d[E[y]]++,H=k[y]=u-b(C);m[y]=(C<<H)-h}return[o+7>>3,{b:u,s:E,n:k,t:m}]},p=function(r,n){var a=0,s=-1,i=new t(292),u=r[n],h=i.subarray(0,256),l=i.subarray(256,268),v=new e(i.buffer,268);if(u<128){var c=y(r,n+1,6),p=c[1],w=c[0]<<3,g=r[n+=u];g||f(0);for(var d=0,m=0,z=p.b,E=z,k=(++n<<3)-8+b(g);!((k-=z)<w);){var A=k>>3;if(h[++s]=p.s[d+=(r[A]|r[A+1]<<8)>>(7&k)&(1<<z)-1],(k-=E)<w)break;h[++s]=p.s[m+=(r[A=k>>3]|r[A+1]<<8)>>(7&k)&(1<<E)-1],z=p.n[d],d=p.t[d],E=p.n[m],m=p.t[m]}++s>255&&f(0)}else{for(s=u-127;a<s;a+=2){var T=r[++n];h[a]=T>>4,h[a+1]=15&T}++n}var x=0;for(a=0;a<s;++a)(I=h[a])>11&&f(0),x+=I&&1<<I-1;var F=b(x)+1,S=1<<F,B=S-x;for(B&B-1&&f(0),h[s++]=b(B)+1,a=0;a<s;++a){var I;++l[h[a]=(I=h[a])&&F+1-I]}var U=new t(S<<1),D=U.subarray(0,S),M=U.subarray(S);for(v[F]=0,a=F;a>0;--a){var W=v[a];o(M,a,W,v[a-1]=W+l[a]*(1<<F-a))}for(v[0]!=S&&f(0),a=0;a<s;++a){var O=h[a];if(O){var j=v[O];o(D,a,j,v[O]=j+(1<<F-O))}}return[n,{n:M,b:F,s:D}]},w=y(new t([81,16,99,140,49,198,24,99,12,33,196,24,99,102,102,134,70,146,4]),0,6)[1],g=y(new t([33,20,196,24,99,140,33,132,16,66,8,33,132,16,66,8,33,68,68,68,68,68,68,68,68,36,9]),0,6)[1],d=y(new t([32,132,16,66,102,70,68,68,68,68,36,73,2]),0,5)[1],m=function(r,t){for(var e=r.length,n=new s(e),a=0;a<e;++a)n[a]=t,t+=1<<r[a];return n},z=new t(new s([0,0,0,0,16843009,50528770,134678020,202050057,269422093]).buffer,0,36),E=m(z,0),k=new t(new s([0,0,0,0,0,0,0,0,16843009,50528770,117769220,185207048,252579084,16]).buffer,0,53),A=m(k,3),T=function(r,t,e){var n=r.length,a=t.length,s=r[n-1],i=(1<<e.b)-1,o=-e.b;s||f(0);for(var u=0,h=e.b,l=(n<<3)-8+b(s)-h,v=-1;l>o&&v<a;){var c=l>>3;t[++v]=e.s[u=(u<<h|(r[c]|r[c+1]<<8|r[c+2]<<16)>>(7&l))&i],l-=h=e.n[u]}l==o&&v+1==a||f(0)},x=function(r,t,e){var n=6,a=t.length+3>>2,s=a<<1,i=a+s;T(r.subarray(n,n+=r[0]|r[1]<<8),t.subarray(0,a),e),T(r.subarray(n,n+=r[2]|r[3]<<8),t.subarray(a,s),e),T(r.subarray(n,n+=r[4]|r[5]<<8),t.subarray(s,i),e),T(r.subarray(n),t.subarray(i),e)},F=function(r,n,a){var s,u=n.b,h=r[u],l=h>>1&3;n.l=1&h;var v=h>>3|r[u+1]<<5|r[u+2]<<13,c=(u+=3)+v;if(1==l){if(u>=r.length)return;return n.b=u+1,a?(o(a,r[u],n.y,n.y+=v),a):o(new t(v),r[u])}if(!(c>r.length)){if(0==l)return n.b=c,a?(a.set(r.subarray(u,c),n.y),n.y+=v,a):i(r,u,c);if(2==l){var m=r[u],F=3&m,S=m>>2&3,B=m>>4,I=0,U=0;F<2?1&S?B|=r[++u]<<4|(2&S&&r[++u]<<12):B=m>>3:(U=S,S<2?(B|=(63&r[++u])<<4,I=r[u]>>6|r[++u]<<2):2==S?(B|=r[++u]<<4|(3&r[++u])<<12,I=r[u]>>2|r[++u]<<6):(B|=r[++u]<<4|(63&r[++u])<<12,I=r[u]>>6|r[++u]<<2|r[++u]<<10)),++u;var D=a?a.subarray(n.y,n.y+n.m):new t(n.m),M=D.length-B;if(0==F)D.set(r.subarray(u,u+=B),M);else if(1==F)o(D,r[u++],M);else{var W=n.h;if(2==F){var O=p(r,u);I+=u-(u=O[0]),n.h=W=O[1]}else W||f(0);(U?x:T)(r.subarray(u,u+=I),D.subarray(M),W)}var j=r[u++];if(j){255==j?j=32512+(r[u++]|r[u++]<<8):j>127&&(j=j-128<<8|r[u++]);var C=r[u++];3&C&&f(0);for(var H=[g,d,w],L=2;L>-1;--L){var Z=C>>2+(L<<1)&3;if(1==Z){var q=new t([0,0,r[u++]]);H[L]={s:q.subarray(2,3),n:q.subarray(0,1),t:new e(q.buffer,0,1),b:0}}else 2==Z?(u=(s=y(r,u,9-(1&L)))[0],H[L]=s[1]):3==Z&&(n.t||f(0),H[L]=n.t[L])}var G=n.t=H,J=G[0],K=G[1],N=G[2],P=r[c-1];P||f(0);var Q=(c<<3)-8+b(P)-N.b,R=Q>>3,V=0,X=(r[R]|r[R+1]<<8)>>(7&Q)&(1<<N.b)-1,Y=(r[R=(Q-=K.b)>>3]|r[R+1]<<8)>>(7&Q)&(1<<K.b)-1,$=(r[R=(Q-=J.b)>>3]|r[R+1]<<8)>>(7&Q)&(1<<J.b)-1;for(++j;--j;){var _=N.s[X],rr=N.n[X],tr=J.s[$],er=J.n[$],nr=K.s[Y],ar=K.n[Y],sr=1<<nr,ir=sr+((r[R=(Q-=nr)>>3]|r[R+1]<<8|r[R+2]<<16|r[R+3]<<24)>>>(7&Q)&sr-1);R=(Q-=k[tr])>>3;var or=A[tr]+((r[R]|r[R+1]<<8|r[R+2]<<16)>>(7&Q)&(1<<k[tr])-1);R=(Q-=z[_])>>3;var ur=E[_]+((r[R]|r[R+1]<<8|r[R+2]<<16)>>(7&Q)&(1<<z[_])-1);if(R=(Q-=rr)>>3,X=N.t[X]+((r[R]|r[R+1]<<8)>>(7&Q)&(1<<rr)-1),R=(Q-=er)>>3,$=J.t[$]+((r[R]|r[R+1]<<8)>>(7&Q)&(1<<er)-1),R=(Q-=ar)>>3,Y=K.t[Y]+((r[R]|r[R+1]<<8)>>(7&Q)&(1<<ar)-1),ir>3)n.o[2]=n.o[1],n.o[1]=n.o[0],n.o[0]=ir-=3;else{var hr=ir-(0!=ur);hr?(ir=3==hr?n.o[0]-1:n.o[hr],hr>1&&(n.o[2]=n.o[1]),n.o[1]=n.o[0],n.o[0]=ir):ir=n.o[0]}for(L=0;L<ur;++L)D[V+L]=D[M+L];M+=ur;var fr=(V+=ur)-ir;if(fr<0){var lr=-fr,vr=n.e+fr;for(lr>or&&(lr=or),L=0;L<lr;++L)D[V+L]=n.w[vr+L];V+=lr,or-=lr,fr=0}for(L=0;L<or;++L)D[V+L]=D[fr+L];V+=or}if(V!=M)for(;M<D.length;)D[V++]=D[M++];else V=D.length;a?n.y+=V:D=i(D,0,V)}else if(a){if(n.y+=B,M)for(L=0;L<B;++L)D[L]=D[M+L]}else M&&(D=i(D,M));return n.b=c,D}f(2)}},S=function(r,e){if(1==r.length)return r[0];for(var n=new t(e),a=0,s=0;a<r.length;++a){var i=r[a];n.set(i,s),s+=i.length}return n};function B(r,t){for(var e=[],n=+!t,a=0,s=0;r.length;){var i=c(r,n||t);if("object"==typeof i){for(n?(t=null,i.w.length==i.u&&(e.push(t=i.w),s+=i.u)):(e.push(t),i.e=0);!i.l;){var o=F(r,i,t);o||f(5),t?i.e=i.y:(e.push(o),s+=o.length,u(i.w,0,o.length),i.w.set(o,i.w.length-o.length))}a=i.b+4*i.c}else a=i;r=r.subarray(a)}return S(e,s)}_e.decompress=B;var I=function(){function r(r){this.ondata=r,this.c=[],this.l=0,this.z=0}return r.prototype.push=function(r,e){if("number"==typeof this.s){var n=Math.min(r.length,this.s);r=r.subarray(n),this.s-=n}var a=r.length+this.l;if(!this.s){if(e){if(!a)return void this.ondata(new t(0),!0);a<5&&f(5)}else if(a<18)return this.c.push(r),void(this.l=a);if(this.l&&(this.c.push(r),r=S(this.c,a),this.c=[],this.l=0),"number"==typeof(this.s=c(r)))return this.push(r,e)}if("number"!=typeof this.s){if(a<(this.z||3))return e&&f(5),this.c.push(r),void(this.l=a);if(this.l&&(this.c.push(r),r=S(this.c,a),this.c=[],this.l=0),!this.z&&a<(this.z=2&r[this.s.b]?4:3+(r[this.s.b]>>3|r[this.s.b+1]<<5|r[this.s.b+2]<<13)))return e&&f(5),this.c.push(r),void(this.l=a);for(this.z=0;;){var s=F(r,this.s);if(!s){e&&f(5);var i=r.subarray(this.s.b);return this.s.b=0,this.c.push(i),void(this.l+=i.length)}if(this.ondata(s,!1),u(this.s.w,0,s.length),this.s.w.set(s,this.s.w.length-s.length),this.s.l){var o=r.subarray(this.s.b);return this.s=4*this.s.c,void this.push(o,e)}}}else e&&f(5)},r}();_e.Decompress=I;return _e})</script><script id="core">
+"use strict";
+// ===== ZDOT コア（DOM非依存・Nodeでも検証可能） =====
+// 形式: ファイル先頭24バイト "ZDOTF1" + 根ドット位置/長さ（BE64）
+// ドット: 56バイトヘッダ（"ZDOT", 層, 圧縮旗, 予約2, 格納長BE64, 原長BE64, 証明書SHA-256×32）+ 格納データ
+// 根ドット（層0・無圧縮）: 記事数BE64, 本文総量BE64, ブロック数BE32,
+//   題名ドット（位置BE64, 長さBE64, 証明32）, 各ブロック（位置, 長さ, 原長, 証明32, 記事数BE32,
+//   先頭題名 varint長+文字列, 末尾題名 varint長+文字列）, 最後にルート証明（Merkle）32
+// ブロックドット（層2・zstd）: 記事数BE32, 葉数BE32, 葉（varint長, 証明32）×葉数,
+//   記事目次（varint題名長, 題名, varint葉番号, varint葉内位置, varint長）×記事数, 本文（葉の連結）
+const ZDOT_BLOCK_ARTICLES = 16384;
+
+function rdVarint(buf, pos) {
+  let shift = 0, val = 0;
+  while (true) {
+    const b = buf[pos++];
+    val += (b & 0x7f) * Math.pow(2, shift);
+    if (!(b & 0x80)) return [val, pos];
+    shift += 7;
+  }
+}
+function be32(buf, pos) { return ((buf[pos] << 24) | (buf[pos + 1] << 16) | (buf[pos + 2] << 8) | buf[pos + 3]) >>> 0; }
+function be64(buf, pos) { return be32(buf, pos) * 4294967296 + be32(buf, pos + 4); }
+function hex(bytes) { return Array.from(bytes, b => b.toString(16).padStart(2, "0")).join(""); }
+function utf8(bytes) { return new TextDecoder().decode(bytes); }
+async function sha256hex(bytes) {
+  const h = await crypto.subtle.digest("SHA-256", bytes);
+  return hex(new Uint8Array(h));
+}
+
+class ZDotCapsule {
+  // read: async (off, len) => Uint8Array ／ size: 全体バイト数（不明なら null）
+  constructor(read, size) {
+    this.read = read;
+    this.size = size;
+    this._titles = null;
+    this.titlesCertOk = null;
+  }
+  async readDot(off) {
+    const hdr = await this.read(off, 56);
+    if (utf8(hdr.subarray(0, 4)) !== "ZDOT") throw new Error("ドットのマジックが違います");
+    const layer = hdr[4], comp = hdr[5];
+    const slen = be64(hdr, 8), rlen = be64(hdr, 16);
+    const cert = hex(hdr.subarray(24, 56));
+    const stored = await this.read(off + 56, slen);
+    const raw = comp ? fzstd.decompress(stored) : stored;
+    if (raw.length !== rlen) throw new Error("ドットの長さが一致しません");
+    return { layer, comp, cert, raw, total: 56 + slen };
+  }
+  async open() {
+    const head = await this.read(0, 24);
+    if (utf8(head.subarray(0, 6)) !== "ZDOTF1") throw new Error("ZDOTF1形式ではありません");
+    this.rootOff = be64(head, 8);
+    this.rootLen = be64(head, 16);
+    const rd = await this.readDot(this.rootOff);
+    if (rd.layer !== 0) throw new Error("根ドットではありません");
+    this.rootCertOk = (await sha256hex(rd.raw)) === rd.cert;
+    const raw = rd.raw;
+    let p = 0;
+    this.count = be64(raw, p); p += 8;
+    this.bodyTotal = be64(raw, p); p += 8;
+    const nb = be32(raw, p); p += 4;
+    const toff = be64(raw, p); p += 8;
+    const tlen = be64(raw, p); p += 8;
+    this.titlesDot = { off: toff, len: tlen, cert: hex(raw.subarray(p, p + 32)) }; p += 32;
+    this.blocks = [];
+    for (let i = 0; i < nb; i++) {
+      const off = be64(raw, p); p += 8;
+      const len = be64(raw, p); p += 8;
+      const rl = be64(raw, p); p += 8;
+      const cert = hex(raw.subarray(p, p + 32)); p += 32;
+      const n = be32(raw, p); p += 4;
+      let fl; [fl, p] = rdVarint(raw, p);
+      const first = utf8(raw.subarray(p, p + fl)); p += fl;
+      let ll; [ll, p] = rdVarint(raw, p);
+      const last = utf8(raw.subarray(p, p + ll)); p += ll;
+      this.blocks.push({ off, len, raw: rl, cert, n, first, last });
+    }
+    this.merkle = hex(raw.subarray(p, p + 32));
+    return this;
+  }
+  async loadTitles() {
+    if (this._titles) return this._titles;
+    const d = await this.readDot(this.titlesDot.off);
+    this.titlesCertOk = d.cert === this.titlesDot.cert &&
+      (await sha256hex(d.raw)) === this.titlesDot.cert;
+    this._titles = utf8(d.raw).split("\n");
+    return this._titles;
+  }
+  // 完全一致 → 前方一致 → 部分一致 の順に返す
+  search(q, limit) {
+    limit = limit || 100;
+    const titles = this._titles || [];
+    const exact = [], pre = [], sub = [];
+    for (const t of titles) {
+      if (t === q) exact.push(t);
+      else if (t.startsWith(q)) pre.push(t);
+      else if (t.includes(q)) sub.push(t);
+    }
+    const all = exact.concat(pre, sub);
+    return { total: all.length, exactCount: exact.length, hits: all.slice(0, limit) };
+  }
+  async readArticle(title) {
+    const titles = await this.loadTitles();
+    const gi = titles.indexOf(title);
+    if (gi < 0) return null;
+    const bi = Math.floor(gi / ZDOT_BLOCK_ARTICLES);
+    const bm = this.blocks[bi];
+    const d = await this.readDot(bm.off);
+    const blockCertOk = d.cert === bm.cert && (await sha256hex(d.raw)) === bm.cert;
+    const raw = d.raw;
+    let p = 0;
+    const nart = be32(raw, p); p += 4;
+    const nleaf = be32(raw, p); p += 4;
+    const leafLens = [], leafCerts = [];
+    for (let i = 0; i < nleaf; i++) {
+      let ln; [ln, p] = rdVarint(raw, p);
+      leafLens.push(ln); leafCerts.push(hex(raw.subarray(p, p + 32))); p += 32;
+    }
+    const local = gi - bi * ZDOT_BLOCK_ARTICLES;
+    let found = null;
+    for (let i = 0; i < nart; i++) {
+      let tl; [tl, p] = rdVarint(raw, p);
+      const t = utf8(raw.subarray(p, p + tl)); p += tl;
+      let leaf, off, ln;
+      [leaf, p] = rdVarint(raw, p); [off, p] = rdVarint(raw, p); [ln, p] = rdVarint(raw, p);
+      if (i === local) found = { t, leaf, off, ln };
+    }
+    const dataStart = p;
+    if (!found || found.t !== title) return null;
+    const starts = []; let s = 0;
+    for (const ln of leafLens) { starts.push(s); s += ln; }
+    const leafStart = dataStart + starts[found.leaf];
+    const leafBytes = raw.subarray(leafStart, leafStart + leafLens[found.leaf]);
+    const leafCertOk = (await sha256hex(leafBytes)) === leafCerts[found.leaf];
+    const body = utf8(raw.subarray(leafStart + found.off, leafStart + found.off + found.ln));
+    return {
+      title, body, blockIndex: bi, blockCert: bm.cert, blockCertOk,
+      leafCertOk, merkle: this.merkle
+    };
+  }
+}
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { ZDotCapsule, rdVarint, be32, be64, hex, ZDOT_BLOCK_ARTICLES };
+}
+</script>
+<script>
+"use strict";
+// ===== 画面まわり =====
+const $ = id => document.getElementById(id);
+let capsule = null;
+
+const DEFAULT_MANIFEST = {
+  version: 1,
+  languages: [
+    { dbname: "jawiki", name: "日本語", articles: 1515389, file: "nihongo.zdot" },
+    { dbname: "simplewiki", name: "Simple English", articles: 284290, file: "simplewiki.zdot" }
+  ]
+};
+let manifest = DEFAULT_MANIFEST;
+
+// ローカルファイル（分割パート対応）を仮想1ファイルとして読むソース
+function makeLocalSource(sel) {
+  const files = Array.from(sel);
+  files.sort((a, b) => a.name.localeCompare(b.name));
+  if (files.length > 1 || /\.part\d+$/.test(files[0].name)) {
+    const nums = files.map(f => {
+      const m = f.name.match(/\.part(\d+)$/);
+      return m ? parseInt(m[1], 10) : -1;
+    });
+    if (!nums.every((n, i) => n === i)) {
+      throw new Error("部品ファイルがそろっていません。.part00 から連番で全部を選んでください。");
+    }
+  }
+  const parts = [];
+  let acc = 0;
+  for (const f of files) { parts.push({ file: f, start: acc, size: f.size }); acc += f.size; }
+  const total = acc;
+  async function read(off, len) {
+    const out = new Uint8Array(len);
+    let done = 0;
+    while (done < len) {
+      const p = parts.find(p => off + done >= p.start && off + done < p.start + p.size);
+      if (!p) throw new Error("読み取り範囲がファイルの終わりを超えています");
+      const local = off + done - p.start;
+      const take = Math.min(len - done, p.size - local);
+      const buf = new Uint8Array(await p.file.slice(local, local + take).arrayBuffer());
+      out.set(buf, done);
+      done += take;
+    }
+    return out;
+  }
+  return { read, size: total };
+}
+
+// URL（Range取得）から読むソース。Range非対応サーバでは丸ごと取得して使い回す
+function makeRemoteSource(url) {
+  let size = null, whole = null;
+  async function read(off, len) {
+    if (whole) return whole.subarray(off, off + len);
+    const res = await fetch(url, { headers: { Range: "bytes=" + off + "-" + (off + len - 1) } });
+    if (!res.ok && res.status !== 206) throw new Error("取得に失敗しました（HTTP " + res.status + "）");
+    const cr = res.headers.get("Content-Range");
+    if (cr) { const m = cr.match(/\/(\d+)\s*$/); if (m) size = parseInt(m[1], 10); }
+    const buf = new Uint8Array(await res.arrayBuffer());
+    if (res.status === 200) {
+      // Rangeが無視された: 全体が返ってきたので保持して使い回す
+      whole = buf; size = buf.length;
+      return whole.subarray(off, off + len);
+    }
+    return buf;
+  }
+  return { read, get size() { return size; } };
+}
+
+function fmt(n) { return n == null ? "?" : n.toLocaleString(); }
+
+async function openWithSource(src, label) {
+  $("status").textContent = label + " を読み込み中…";
+  try {
+    capsule = await new ZDotCapsule(src.read, src.size).open();
+    $("status").textContent =
+      "読み込み完了: " + fmt(capsule.count) + " 記事 / 本文 " + fmt(capsule.bodyTotal) +
+      " バイト / ブロック " + capsule.blocks.length + " 個\n" +
+      "根ドットの証明: " + (capsule.rootCertOk ? "一致 ✓" : "不一致 ✗") +
+      " / ルート証明: " + capsule.merkle.slice(0, 32) + "…";
+    $("searcher").classList.remove("hidden");
+    $("article").classList.add("hidden");
+    $("hits").innerHTML = "";
+    $("sstat").textContent = "";
+    $("q").value = "";
+  } catch (e) {
+    capsule = null;
+    $("status").textContent = "読み込みに失敗しました: " + e.message;
+  }
+}
+
+function currentEntry() {
+  const i = parseInt($("lang").value, 10);
+  return manifest.languages[i] || null;
+}
+
+function refreshLangInfo() {
+  const e = currentEntry();
+  if (!e) { $("langinfo").textContent = ""; return; }
+  let s = e.name + "（" + e.dbname + "）";
+  if (e.articles) s += " / " + fmt(e.articles) + " 記事";
+  if (e.url) s += "\n配信元: " + e.url + "（Range取得で読みます）";
+  else if (e.file) s += "\nファイル: " + e.file + "（ストレージから選んでください）";
+  $("langinfo").textContent = s;
+  $("openLang").textContent = e.url ? "この言語を開く" : "ファイルを選んで開く";
+}
+
+async function initManifest() {
+  try {
+    const res = await fetch("manifest.json", { cache: "no-store" });
+    if (res.ok) {
+      const j = await res.json();
+      if (j && Array.isArray(j.languages) && j.languages.length) manifest = j;
+    }
+  } catch (e) { /* manifest.json が無い場合は内蔵の一覧を使う */ }
+  const sel = $("lang");
+  sel.innerHTML = "";
+  manifest.languages.forEach((e, i) => {
+    const o = document.createElement("option");
+    o.value = i;
+    o.textContent = e.name + (e.articles ? "（" + fmt(e.articles) + "記事）" : "");
+    sel.appendChild(o);
+  });
+  refreshLangInfo();
+}
+
+$("lang").addEventListener("change", refreshLangInfo);
+$("openLang").addEventListener("click", async () => {
+  const e = currentEntry();
+  if (!e) return;
+  if (e.url) {
+    $("openLang").disabled = true;
+    await openWithSource(makeRemoteSource(e.url), e.name);
+    $("openLang").disabled = false;
+  } else {
+    $("fstatus").textContent = "「" + (e.file || e.dbname + ".zdot") + "」をストレージから選んでください。";
+    $("file").click();
+  }
+});
+
+$("file").addEventListener("change", async ev => {
+  const sel = ev.target.files;
+  if (!sel || !sel.length) return;
+  try {
+    const src = makeLocalSource(sel);
+    await openWithSource(src, sel[0].name + (sel.length > 1 ? " ほか " + (sel.length - 1) + " 件" : ""));
+  } catch (e) {
+    $("fstatus").textContent = "読み込みに失敗しました: " + e.message;
+  }
+});
+
+async function doSearch() {
+  if (!capsule) return;
+  const q = $("q").value.trim();
+  if (!q) return;
+  $("sstat").textContent = "題名索引を読み込み中…";
+  try {
+    await capsule.loadTitles();
+  } catch (e) {
+    $("sstat").textContent = "題名索引の読み込みに失敗しました: " + e.message;
+    return;
+  }
+  if (capsule.titlesCertOk === false) {
+    $("sstat").textContent = "注意: 題名ドットの証明書が一致しませんでした。";
+  }
+  const r = capsule.search(q, 100);
+  $("sstat").textContent = "「" + q + "」: " + fmt(r.total) + " 件" +
+    (r.exactCount ? "（完全一致 " + r.exactCount + " 件を先頭に表示）" : "") +
+    (r.total > 100 ? "（先頭100件を表示）" : "");
+  const ul = $("hits");
+  ul.innerHTML = "";
+  for (const t of r.hits) {
+    const li = document.createElement("li");
+    li.textContent = t;
+    if (t === q) li.className = "exact";
+    li.addEventListener("click", () => showArticle(t));
+    ul.appendChild(li);
+  }
+}
+
+async function showArticle(title) {
+  if (!capsule) return;
+  $("atitle").textContent = title;
+  $("abody").textContent = "読み込み中…（ブロックを展開しています）";
+  $("acert").textContent = "";
+  $("article").classList.remove("hidden");
+  $("article").scrollIntoView();
+  try {
+    const a = await capsule.readArticle(title);
+    if (!a) { $("abody").textContent = "記事が見つかりませんでした"; return; }
+    $("abody").textContent = a.body;
+    $("acert").innerHTML =
+      (a.blockCertOk
+        ? "✓ この記事を含むブロック（第 " + (a.blockIndex + 1) + " ブロック）の証明書（SHA-256）が一致しました"
+        : "<span class=\"ng\">✗ ブロックの証明書が一致しません</span>") + "\n" +
+      (a.leafCertOk ? "✓ 葉ドットの証明書も一致しました\n" : "<span class=\"ng\">✗ 葉ドットの証明書が一致しません</span>\n") +
+      "ブロック証明: " + a.blockCert.slice(0, 32) + "…\n" +
+      "全体のルート証明: " + a.merkle.slice(0, 32) + "…";
+  } catch (e) {
+    $("abody").textContent = "読み込みに失敗しました: " + e.message;
+  }
+}
+
+$("go").addEventListener("click", doSearch);
+$("q").addEventListener("keydown", e => { if (e.key === "Enter") doSearch(); });
+initManifest();
+</script>
+</body>
+</html>

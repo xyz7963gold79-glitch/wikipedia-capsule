@@ -1,0 +1,10 @@
+{
+  "languages": [
+    {
+      "name": "日本語版Wikipedia",
+      "dbname": "jawiki",
+      "articles": 1515389,
+      "url": "https://zenodo.org/api/records/24292888/files/jawiki.zdot/content"
+    }
+  ]
+}
