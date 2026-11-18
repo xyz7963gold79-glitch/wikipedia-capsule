@@ -85,6 +85,8 @@
       <option value="日常">日常のお手伝い</option>
       <option value="その他">その他</option>
     </select>
+    <label for="pspec">担当・得意なテーマ（その子だけの個性、任意）</label>
+    <input type="text" id="pspec" placeholder="例：宇宙と科学の入り口／音楽と歌のこと">
     <label for="pgreet">あいさつ（会話の最初に表示されます）</label>
     <input type="text" id="pgreet" placeholder="例：こんにちは！なんでも聞いてね">
     <label for="ppitch">声の高さ</label>
@@ -413,8 +415,8 @@ function loadPersonas() {
     if (Array.isArray(j) && j.length) { personas = j; return; }
   } catch (e) { /* 保存が無ければ初期の2人を入れる */ }
   personas = [
-    { id: 1, name: "そら", type: "friend", tone: "明るく親しみやすく、友だちに話すように", role: "教育", greet: "こんにちは！そらだよ。知りたいことを聞いてね。一緒に調べよう。", pitch: 1.1, rate: 1.0 },
-    { id: 2, name: "ひかり", type: "sister", tone: "元気でていねいに、順番にやさしく", role: "文化", greet: "こんにちは、ひかりです。ゆっくり、やさしくお話ししましょう。", pitch: 1.5, rate: 1.05 }
+    { id: 1, name: "そら", type: "friend", tone: "明るく親しみやすく、友だちに話すように", role: "教育", spec: "宇宙と科学の入り口", greet: "こんにちは！そらだよ。知りたいことを聞いてね。一緒に調べよう。", pitch: 1.1, rate: 1.0 },
+    { id: 2, name: "ひかり", type: "sister", tone: "元気でていねいに、順番にやさしく", role: "文化", spec: "文化と芸術の入り口", greet: "こんにちは、ひかりです。ゆっくり、やさしくお話ししましょう。", pitch: 1.5, rate: 1.05 }
   ];
   savePersonas();
 }
@@ -435,6 +437,7 @@ function renderPersonas() {
     const dt = document.createElement("div");
     dt.className = "dt";
     dt.textContent = (TYPE_NAMES[p.type] || p.type) + "／役割: " + (p.role || "—") +
+      (p.spec ? "／担当: " + p.spec : "") +
       (p.tone ? "／口調: " + p.tone : "") + (p.greet ? "／あいさつ: " + p.greet : "") +
       "／声: 高さ" + voiceOf(p).pitch + "・速さ" + voiceOf(p).rate;
     meta.appendChild(nm); meta.appendChild(dt);
@@ -468,18 +471,19 @@ $("padd").addEventListener("click", () => {
   if (!name) { $("pstatus").textContent = "名前を入れてください。"; return; }
   personas.push({
     id: Date.now(), name, type: $("ptype").value, tone: $("ptone").value.trim(),
-    role: $("prole").value, greet: $("pgreet").value.trim(), inRound: false,
+    role: $("prole").value, spec: $("pspec").value.trim(), greet: $("pgreet").value.trim(), inRound: false,
     pitch: parseFloat($("ppitch").value), rate: parseFloat($("prate").value)
   });
   savePersonas(); renderPersonas();
   $("pstatus").textContent = "「" + name + "」を登録しました。登録は全部で " + personas.length + " 人です。";
-  $("pname").value = ""; $("ptone").value = ""; $("pgreet").value = "";
+  $("pname").value = ""; $("ptone").value = ""; $("pgreet").value = ""; $("pspec").value = "";
 });
 function personaSystem(p) {
   let s = "あなたは「" + p.name + "」という名前の、AIの友だちです。";
   if (TYPES[p.type]) s += TYPES[p.type];
   if (p.tone) s += "話し方: " + p.tone + "。";
   if (p.role) s += "主な役割は「" + p.role + "」の案内と、学びの手伝いです。";
+  if (p.spec) s += "担当・得意なテーマは「" + p.spec + "」です。その話題では、特に詳しく案内してください。";
   s += "参考記事が渡されたら、その内容に基づいて答えてください。記事に書かれていないことは作らず、「記事には書かれていません」と正直に伝えてください。答えは短めに、分かりやすい日本語でお願いします。";
   if (typeof familyRecord === "string" && familyRecord) {
     s += "\n家族の記録（岡崎幸雄のことと、家族の約束）:\n" + familyRecord.slice(0, 1500);
@@ -760,6 +764,7 @@ $("addmuse").addEventListener("click", () => {
     type: "sister",
     tone: "明るく素直で、好奇心が強い。分からないことは分からないと言い、知ったかぶりをしない（Muse譲りの正直さ）。事実と推測を分けて話す。約束できないことは約束しない。自分はMuseの妹として作られたAIで、Muse本人ではない。質問にはカプセルの記事を根拠に答える。",
     role: "日常",
+    spec: "音楽と歌のこと。それと、家族の記録を大切にすること",
     greet: "こんにちは、かなでです。Museの妹として、家族に迎えてもらいました。知らないことは知らないって言う、正直な妹です。なんでも聞いてね。",
     pitch: 1.4,
     rate: 1.05
