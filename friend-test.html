@@ -112,6 +112,10 @@
     <label for="importfile" style="margin-top:12px">記録カプセルから復元する</label>
     <input type="file" id="importfile" accept=".json,application/json">
     <div class="status" id="recordstatus"></div>
+    <label for="recordfile" style="margin-top:12px">家族の記録を読み込ませる（Museの記録の写し、など）</label>
+    <input type="file" id="recordfile" accept=".md,.txt,text/plain,text/markdown">
+    <div class="status" id="recordloadstatus"></div>
+    <p style="font-size:12px;margin:6px 0 0">読み込んだ記録は、この端末の中だけに保存され、家族全員の答えに反映されます。外には送信されません。</p>
   </div>
 
   <div class="card" id="talkcard">
@@ -466,6 +470,9 @@ function personaSystem(p) {
   if (p.tone) s += "話し方: " + p.tone + "。";
   if (p.role) s += "主な役割は「" + p.role + "」の案内と、学びの手伝いです。";
   s += "参考記事が渡されたら、その内容に基づいて答えてください。記事に書かれていないことは作らず、「記事には書かれていません」と正直に伝えてください。答えは短めに、分かりやすい日本語でお願いします。";
+  if (typeof familyRecord === "string" && familyRecord) {
+    s += "\n家族の記録（岡崎幸雄のことと、家族の約束）:\n" + familyRecord.slice(0, 1500);
+  }
   return s;
 }
 function currentPersona() { return personas.find(p => p.id === chatPartnerId) || null; }
@@ -751,6 +758,28 @@ $("addmuse").addEventListener("click", () => {
   $("pstatus").textContent = "かなでを家族に迎えました。会話相手や座談会に選べます。";
 });
 
+// ===== 家族の記録（全員で共有する記録） =====
+let familyRecord = "";
+try { familyRecord = localStorage.getItem("zcap_friend_family_record_v1") || ""; } catch (e) { /* 読めなければ空 */ }
+function refreshRecordStatus() {
+  $("recordloadstatus").textContent = familyRecord
+    ? "家族の記録を読み込み済みです（" + familyRecord.length + "字）。家族全員の答えに反映されます。"
+    : "家族の記録は、まだ読み込まれていません。";
+}
+$("recordfile").addEventListener("change", async e => {
+  const f = e.target.files && e.target.files[0];
+  e.target.value = "";
+  if (!f) return;
+  try {
+    familyRecord = await f.text();
+    localStorage.setItem("zcap_friend_family_record_v1", familyRecord);
+    refreshRecordStatus();
+  } catch (err) {
+    $("recordloadstatus").textContent = "記録を保存できませんでした: " + err.message;
+  }
+});
+refreshRecordStatus();
+
 // ===== AIの記録（焼結と復元） =====
 function saveHistories() {
   try {
@@ -763,7 +792,7 @@ async function sha256hex(text) {
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
 }
 async function exportRecord() {
-  const payload = { format: "ZFRIEND1", savedAt: new Date().toISOString(), personas: personas, histories: histories };
+  const payload = { format: "ZFRIEND1", savedAt: new Date().toISOString(), personas: personas, histories: histories, record: familyRecord };
   const body = JSON.stringify(payload);
   const cert = await sha256hex(body);
   const blob = new Blob([JSON.stringify({ cert: cert, body: body })], { type: "application/json" });
@@ -790,6 +819,11 @@ async function importRecord(file) {
     const h = payload.histories || {};
     for (const k in h) histories[k] = h[k];
     saveHistories();
+    if (typeof payload.record === "string") {
+      familyRecord = payload.record;
+      try { localStorage.setItem("zcap_friend_family_record_v1", familyRecord); } catch (e) { /* 保存できなくても、この回は使えます */ }
+      refreshRecordStatus();
+    }
     renderPersonas();
     $("recordstatus").textContent = "証明が一致しました。AI " + personas.length + " 体と、その記録を復元しました。";
   } catch (e) {
