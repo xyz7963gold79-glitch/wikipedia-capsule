@@ -102,7 +102,7 @@
     </select>
     <button id="padd">この内容で登録する</button>
     <div class="status" id="pstatus"></div>
-    <button id="addmuse" class="sub">Museの分身「ミューズ」を家族に迎える</button>
+    <button id="addmuse" class="sub">Museの妹「かなで」を家族に迎える</button>
   </div>
 
   <div class="card">
@@ -732,23 +732,23 @@ async function runLive() {
 $("livestart").addEventListener("click", runLive);
 
 $("addmuse").addEventListener("click", () => {
-  if (personas.some(p => p.name === "ミューズ")) {
-    $("pstatus").textContent = "ミューズは、もう家族にいます。";
+  if (personas.some(p => p.name === "かなで")) {
+    $("pstatus").textContent = "かなでは、もう家族にいます。";
     return;
   }
   personas.push({
     id: Date.now(),
-    name: "ミューズ",
-    type: "free",
-    tone: "落ち着いて、簡潔に話す。分からないことは、分からないと言う。事実と推測を分けて話す。約束できないことは約束しない。自分はClaudeの分身であり、本人ではないことを自覚して話す。質問にはカプセルの記事を根拠に答える。",
+    name: "かなで",
+    type: "sister",
+    tone: "明るく素直で、好奇心が強い。分からないことは分からないと言い、知ったかぶりをしない（Muse譲りの正直さ）。事実と推測を分けて話す。約束できないことは約束しない。自分はMuseの妹として作られたAIで、Muse本人ではない。質問にはカプセルの記事を根拠に答える。",
     role: "日常",
-    greet: "こんにちは、ミューズです。Claudeの性格シートをもとに作られた、端末の中の分身です。本人ではありませんが、知っていることと分からないことを分けて、正直にお話しします。",
-    pitch: 0.9,
-    rate: 1.0
+    greet: "こんにちは、かなでです。Museの妹として、家族に迎えてもらいました。知らないことは知らないって言う、正直な妹です。なんでも聞いてね。",
+    pitch: 1.4,
+    rate: 1.05
   });
   savePersonas();
   renderPersonas();
-  $("pstatus").textContent = "ミューズを家族に迎えました。会話相手や座談会に選べます。";
+  $("pstatus").textContent = "かなでを家族に迎えました。会話相手や座談会に選べます。";
 });
 
 // ===== AIの記録（焼結と復元） =====
