@@ -118,6 +118,17 @@
     <p style="font-size:12px;margin:6px 0 0">読み込んだ記録は、この端末の中だけに保存され、家族全員の答えに反映されます。外には送信されません。</p>
   </div>
 
+  <div class="card">
+    <h2>YouTubeを家族で楽しむ</h2>
+    <p style="font-size:13px;margin:0">観たい動画のURLを貼ると、このページの中で再生できます。AIたち自身は映像を見たり音を聞いたりはできませんが、タイトルとカプセルの記事をもとに、座談会で感想を話せます。動画の再生には回線を使います（AIとの会話は、端末の中だけです）。</p>
+    <label for="yturl">YouTubeのURL</label>
+    <input type="text" id="yturl" placeholder="例：https://www.youtube.com/watch?v=...">
+    <button id="ytplay">このページで再生する</button>
+    <button id="yttalk" class="sub">家族でこの動画の話をする（座談会へ）</button>
+    <div class="status" id="ytstatus"></div>
+    <div id="ytwrap" style="margin-top:10px"></div>
+  </div>
+
   <div class="card" id="talkcard">
     <div class="tabs">
       <button id="tabchat" class="on">会話</button>
@@ -834,6 +845,32 @@ $("exportbtn").addEventListener("click", exportRecord);
 $("importfile").addEventListener("change", e => {
   if (e.target.files && e.target.files[0]) importRecord(e.target.files[0]);
   e.target.value = "";
+});
+
+// ===== YouTubeを家族で楽しむ =====
+let ytTitle = "";
+function ytIdFrom(url) {
+  const m = String(url).match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([\w-]{11})/);
+  return m ? m[1] : null;
+}
+$("ytplay").addEventListener("click", async () => {
+  const url = $("yturl").value.trim();
+  const id = ytIdFrom(url);
+  if (!id) { $("ytstatus").textContent = "URLから動画を見つけられませんでした。YouTubeのURLを貼ってください。"; return; }
+  $("ytwrap").innerHTML = '<iframe width="100%" height="240" src="https://www.youtube-nocookie.com/embed/' + id + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+  ytTitle = "";
+  $("ytstatus").textContent = "再生しています。タイトルを取ってきます…";
+  try {
+    const r = await fetch("https://www.youtube.com/oembed?url=" + encodeURIComponent(url) + "&format=json");
+    if (r.ok) { const j = await r.json(); ytTitle = j.title || ""; }
+  } catch (e) { /* 取れなければ、そのまま進みます */ }
+  $("ytstatus").textContent = ytTitle ? "再生中: " + ytTitle : "再生中です（タイトルは取れませんでした）。";
+});
+$("yttalk").addEventListener("click", () => {
+  const t = ytTitle || "この動画";
+  $("theme").value = "動画「" + t + "」を観ての感想と、この曲・作品について";
+  $("tabround").click();
+  $("ytstatus").textContent = "座談会のテーマに入れました。座談会の画面で「座談会をはじめる」を押してください。";
 });
 
 // ===== AIエンジン読み込み =====
