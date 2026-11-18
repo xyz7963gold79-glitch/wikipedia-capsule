@@ -104,6 +104,15 @@
     <div class="status" id="pstatus"></div>
   </div>
 
+  <div class="card">
+    <h2>AIの記録（焼結と復元）</h2>
+    <p style="font-size:13px;margin:0">AIたちの性格と会話の記録を、証明書つきの1つのファイルに焼結して書き出せます。ブラウザの保存が消えてしまっても、このファイルがあれば、証明を照合してから同じAIたちを復元できます。ファイルはあなたの端末の中だけにあります。大切に保管してください。</p>
+    <button id="exportbtn">記録を焼結して書き出す</button>
+    <label for="importfile" style="margin-top:12px">記録カプセルから復元する</label>
+    <input type="file" id="importfile" accept=".json,application/json">
+    <div class="status" id="recordstatus"></div>
+  </div>
+
   <div class="card" id="talkcard">
     <div class="tabs">
       <button id="tabchat" class="on">会話</button>
@@ -499,6 +508,10 @@ function stopSpeech() { if ("speechSynthesis" in window) speechSynthesis.cancel(
 
 // ===== 会話 =====
 const histories = {}; // personaId -> [{role, content}] 直近だけ保持
+try {
+  const savedHist = JSON.parse(localStorage.getItem("zcap_friend_histories_v1") || "{}");
+  for (const k in savedHist) histories[k] = savedHist[k];
+} catch (e) { /* 保存が無ければ空のまま */ }
 function addMsg(logEl, who, text, cls) {
   const d = document.createElement("div");
   d.className = "msg " + cls;
@@ -540,6 +553,7 @@ async function sendChat() {
     messages.push({ role: "user", content: (g ? "参考記事「" + g.title + "」:\n" + g.text + "\n\n質問: " : "") + q });
     const ans = await window.__friendEngine.chat(messages, t => { bodyEl.textContent = t; }, 400);
     histories[p.id] = hist.concat([{ role: "user", content: q }, { role: "assistant", content: ans }]);
+    saveHistories();
     if ($("voicechat").checked) speak(ans, p);
     if (g) addMsg($("log"), "根拠", "カプセルの記事「" + g.title + "」をもとに答えました。", "sys");
   } catch (e) {
@@ -703,6 +717,7 @@ async function runLive() {
       $("livestatus").textContent = p.name + " が考え中…";
       const ans = await window.__friendEngine.chat(messages, t => { bodyEl.textContent = t; }, 400);
       histories[p.id] = hist.concat([{ role: "user", content: text }, { role: "assistant", content: ans }]);
+      saveHistories();
       if (g) addMsg($("log"), "根拠", "カプセルの記事「" + g.title + "」をもとに答えました。", "sys");
       $("livestatus").textContent = p.name + " が話しています…";
       await speak(ans, p);
@@ -714,6 +729,57 @@ async function runLive() {
   $("livestart").disabled = false; $("livestop").disabled = true;
 }
 $("livestart").addEventListener("click", runLive);
+
+// ===== AIの記録（焼結と復元） =====
+function saveHistories() {
+  try {
+    for (const k in histories) if (histories[k].length > 40) histories[k] = histories[k].slice(-40);
+    localStorage.setItem("zcap_friend_histories_v1", JSON.stringify(histories));
+  } catch (e) { /* 保存できない環境では、その回の間だけ保持します */ }
+}
+async function sha256hex(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+async function exportRecord() {
+  const payload = { format: "ZFRIEND1", savedAt: new Date().toISOString(), personas: personas, histories: histories };
+  const body = JSON.stringify(payload);
+  const cert = await sha256hex(body);
+  const blob = new Blob([JSON.stringify({ cert: cert, body: body })], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "friend-capsule.json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  $("recordstatus").textContent = "記録カプセルを書き出しました。証明: " + cert.slice(0, 16) + "…（AI " + personas.length + " 体の性格と会話の記録入り）";
+}
+async function importRecord(file) {
+  try {
+    const obj = JSON.parse(await file.text());
+    const cert = await sha256hex(obj.body);
+    if (cert !== obj.cert) {
+      $("recordstatus").textContent = "証明が一致しません。ファイルが壊れているか、書き換えられています。復元を中止しました。";
+      return;
+    }
+    const payload = JSON.parse(obj.body);
+    if (payload.format !== "ZFRIEND1" || !Array.isArray(payload.personas)) throw new Error("記録カプセルの形式ではありません");
+    personas = payload.personas;
+    savePersonas();
+    for (const k in histories) delete histories[k];
+    const h = payload.histories || {};
+    for (const k in h) histories[k] = h[k];
+    saveHistories();
+    renderPersonas();
+    $("recordstatus").textContent = "証明が一致しました。AI " + personas.length + " 体と、その記録を復元しました。";
+  } catch (e) {
+    $("recordstatus").textContent = "復元に失敗しました: " + e.message;
+  }
+}
+$("exportbtn").addEventListener("click", exportRecord);
+$("importfile").addEventListener("change", e => {
+  if (e.target.files && e.target.files[0]) importRecord(e.target.files[0]);
+  e.target.value = "";
+});
 
 // ===== AIエンジン読み込み =====
 $("loadai").addEventListener("click", async () => {
