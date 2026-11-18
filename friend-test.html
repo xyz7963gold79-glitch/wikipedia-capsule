@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/webp" href="logo.webp">
+<title>Zカプセル フレンドAI（試験） ― 端末の中の友だちと座談会</title>
+<style>
+  body { font-family: sans-serif; margin: 0; background: #f7f7f5; color: #222; }
+  header { background: #1a3a5c; color: #fff; padding: 16px; }
+  header h1 { font-size: 19px; margin: 0 0 4px; }
+  header p { font-size: 12px; margin: 0; opacity: .88; line-height: 1.7; }
+  main { max-width: 760px; margin: 0 auto; padding: 14px 16px 40px; }
+  .card { background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+  label { font-size: 14px; font-weight: bold; display: block; margin: 8px 0 6px; }
+  select, input[type="text"], textarea { width: 100%; box-sizing: border-box; font-size: 15px; padding: 9px; border: 1px solid #bbb; border-radius: 8px; background: #fff; }
+  input[type="file"] { width: 100%; box-sizing: border-box; font-size: 14px; margin-top: 6px; }
+  button { font-size: 15px; padding: 9px 16px; border: 0; border-radius: 8px; background: #1a3a5c; color: #fff; margin-top: 10px; cursor: pointer; }
+  button.sub { background: #e8ecf1; color: #1a3a5c; }
+  button.danger { background: #f3e2e2; color: #8c2b2b; }
+  button:disabled { background: #999; color: #fff; }
+  .status { font-size: 13px; color: #555; margin-top: 8px; white-space: pre-wrap; word-break: break-all; }
+  .note { font-size: 12px; color: #777; margin-top: 8px; line-height: 1.7; }
+  .prow { border: 1px solid #e3e3e3; border-radius: 8px; padding: 9px 10px; margin-top: 8px; display: flex; gap: 8px; align-items: flex-start; }
+  .prow .meta { flex: 1; }
+  .prow .nm { font-weight: bold; font-size: 15px; }
+  .prow .dt { font-size: 12px; color: #666; margin-top: 2px; line-height: 1.6; }
+  .prow button { margin-top: 0; padding: 6px 10px; font-size: 13px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 10px; }
+  .tabs button { flex: 1; background: #e8ecf1; color: #1a3a5c; }
+  .tabs button.on { background: #1a3a5c; color: #fff; }
+  #log { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+  .msg { border-radius: 10px; padding: 10px 12px; font-size: 15px; line-height: 1.8; white-space: pre-wrap; word-break: break-word; }
+  .msg .who { font-size: 12px; font-weight: bold; color: #1a3a5c; margin-bottom: 4px; }
+  .msg.me { background: #eef3fa; align-self: flex-end; max-width: 92%; }
+  .msg.ai { background: #f4f1e8; align-self: flex-start; max-width: 92%; }
+  .msg.sys { background: #eee; color: #555; font-size: 13px; align-self: center; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Zカプセル フレンドAI（試験）</h1>
+  <p>スマホの中だけで動く小さなAIの友だちです。何人でも登録でき、1対1の会話も、みんなでの座談会もできます。答えは、Zカプセル（日本語版Wikipedia）の記事を根拠にします。登録したAIの情報も、会話も、この端末の中だけに保存され、外には送信されません。</p>
+</header>
+<main>
+  <div class="card" id="enginecard">
+    <label>小さなAI（端末内で動きます）</label>
+    <select id="model">
+      <option value="Qwen2.5-1.5B-Instruct-q4f16_1-MLC">Qwen2.5 1.5B（軽い・推奨／約1GB）</option>
+      <option value="Qwen2.5-3B-Instruct-q4f16_1-MLC">Qwen2.5 3B（少し賢い／約1.9GB）</option>
+    </select>
+    <button id="loadai">AIを読み込む</button>
+    <div class="status" id="aistatus">AIは未読み込みです。最初の一回だけ、AIの本体をダウンロードします（Wi-Fi推奨）。その後は端末の中で動きます。</div>
+  </div>
+
+  <div class="card" id="capcard">
+    <label>Zカプセル（知識のもと）</label>
+    <p style="margin:0;font-size:13px">端末に保存した .zdot ファイル（jawiki_full.zdot など）を選んでください。選ばなくても会話はできますが、記事を根拠にした答えはできません。</p>
+    <input type="file" id="capfile">
+    <div class="status" id="capstatus">カプセルは未読み込みです。</div>
+  </div>
+
+  <div class="card" id="personacard">
+    <label>AIの友だち（登録は何人でもできます）</label>
+    <div id="plist"></div>
+    <label for="pname">新しいAIを登録する</label>
+    <input type="text" id="pname" placeholder="名前（例：そら）">
+    <label for="ptype">タイプ</label>
+    <select id="ptype">
+      <option value="friend">やさしい友だち型</option>
+      <option value="sister">あかるい妹型</option>
+      <option value="teacher">先生型</option>
+      <option value="guide">案内役型</option>
+      <option value="free">自由（口調だけで決める）</option>
+    </select>
+    <label for="ptone">口調・性格（自由に書けます）</label>
+    <input type="text" id="ptone" placeholder="例：明るく親しみやすく。友だちに話すように">
+    <label for="prole">役割</label>
+    <select id="prole">
+      <option value="教育">教育</option>
+      <option value="文化">文化</option>
+      <option value="平和">平和</option>
+      <option value="防災・医療">防災・医療</option>
+      <option value="日常">日常のお手伝い</option>
+      <option value="その他">その他</option>
+    </select>
+    <label for="pgreet">あいさつ（会話の最初に表示されます）</label>
+    <input type="text" id="pgreet" placeholder="例：こんにちは！なんでも聞いてね">
+    <button id="padd">この内容で登録する</button>
+    <div class="status" id="pstatus"></div>
+  </div>
+
+  <div class="card" id="talkcard">
+    <div class="tabs">
+      <button id="tabchat" class="on">会話</button>
+      <button id="tabround">座談会</button>
+    </div>
+    <div id="panechat">
+      <p style="margin:0;font-size:13px">上のリストで「会話相手」に選んだAIと、1対1で話します。</p>
+      <div id="log"></div>
+      <label for="qin">質問・お話</label>
+      <input type="text" id="qin" placeholder="例：日本について教えて">
+      <button id="send">送る</button>
+      <button id="clearlog" class="sub">会話を消す</button>
+    </div>
+    <div id="paneround" class="hidden">
+      <p style="margin:0;font-size:13px">上のリストで「座談会」にチェックしたAIたち（2〜4人）が、テーマについて順番に話します。下敷きに、カプセルの記事を使います。</p>
+      <label for="theme">座談会のテーマ</label>
+      <input type="text" id="theme" placeholder="例：平和な世界を作るには">
+      <label for="rounds">まわす回数</label>
+      <select id="rounds">
+        <option value="1">1周</option>
+        <option value="2" selected>2周</option>
+        <option value="3">3周</option>
+      </select>
+      <button id="startround">座談会をはじめる</button>
+      <button id="stopround" class="danger" disabled>止める</button>
+      <div id="roundlog"></div>
+    </div>
+  </div>
+
+  <p class="note">プライバシーについて: AIの本体は最初の一回だけダウンロードしますが、会話の処理はすべてこの端末の中で行われ、質問や会話の内容が外に送信されることはありません。登録したAIの情報は、この端末のブラウザの中にだけ保存されます。<br>小さなAIの正直な限界: 大きなAIより間違いやすく、答えも短めです。カプセルの記事を根拠にすることで間違いを減らす設計ですが、試験としてお試しください。動作は Pixel 8a などの新しいスマホがおすすめです（古い機種では遅くなります）。</p>
+</main>
+<script>!function(f){typeof module!='undefined'&&typeof exports=='object'?module.exports=f():typeof define!='undefined'&&define.amd?define(['fzstd',f]):(typeof self!='undefined'?self:this).fzstd=f()}(function(){var _e={};"use strict";var r=ArrayBuffer,t=Uint8Array,e=Uint16Array,n=Int16Array,a=Uint32Array,s=Int32Array,i=function(r,e,n){if(t.prototype.slice)return t.prototype.slice.call(r,e,n);(null==e||e<0)&&(e=0),(null==n||n>r.length)&&(n=r.length);var a=new t(n-e);return a.set(r.subarray(e,n)),a},o=function(r,e,n,a){if(t.prototype.fill)return t.prototype.fill.call(r,e,n,a);for((null==n||n<0)&&(n=0),(null==a||a>r.length)&&(a=r.length);n<a;++n)r[n]=e;return r},u=function(r,e,n,a){if(t.prototype.copyWithin)return t.prototype.copyWithin.call(r,e,n,a);for((null==n||n<0)&&(n=0),(null==a||a>r.length)&&(a=r.length);n<a;)r[e++]=r[n++]};_e.ZstdErrorCode={InvalidData:0,WindowSizeTooLarge:1,InvalidBlockType:2,FSEAccuracyTooHigh:3,DistanceTooFarBack:4,UnexpectedEOF:5};var h=["invalid zstd data","window size too large (>2046MB)","invalid block type","FSE accuracy too high","match distance too far back","unexpected EOF"],f=function(r,t,e){var n=Error(t||h[r]);if(n.code=r,Error.captureStackTrace&&Error.captureStackTrace(n,f),!e)throw n;return n},l=function(r,t,e){for(var n=0,a=0;n<e;++n)a|=r[t++]<<(n<<3);return a},v=function(r,t){return(r[t]|r[t+1]<<8|r[t+2]<<16|r[t+3]<<24)>>>0},c=function(r,e){var n=r[0]|r[1]<<8|r[2]<<16;if(3126568==n&&253==r[3]){var a=r[4],i=a>>5&1,o=a>>2&1,u=3&a,h=a>>6;8&a&&f(0);var c=6-i,b=3==u?4:u,y=l(r,c,b),p=h?1<<h:i,w=l(r,c+=b,p)+(1==h&&256),g=w;if(!i){var d=1<<10+(r[5]>>3);g=d+(d>>3)*(7&r[5])}g>2145386496&&f(1);var m=new t((1==e?w||g:e?0:g)+12);return m[0]=1,m[4]=4,m[8]=8,{b:c+p,y:0,l:0,d:y,w:e&&1!=e?e:m.subarray(12),e:g,o:new s(m.buffer,0,3),u:w,c:o,m:Math.min(131072,g)}}if(25481893==(n>>4|r[3]<<20))return v(r,4)+8;f(0)},b=function(r){for(var t=0;1<<t<=r;++t);return t-1},y=function(a,s,i){var o=4+(s<<3),u=5+(15&a[s]);u>i&&f(3);for(var h=1<<u,l=h,v=-1,c=-1,y=-1,p=h,w=new r(512+(h<<2)),g=new n(w,0,256),d=new e(w,0,256),m=new e(w,512,h),z=512+(h<<1),E=new t(w,z,h),k=new t(w,z+h);v<255&&l>0;){var A=b(l+1),T=o>>3,x=(1<<A+1)-1,F=(a[T]|a[T+1]<<8|a[T+2]<<16)>>(7&o)&x,S=(1<<A)-1,B=x-l-1,I=F&S;if(I<B?(o+=A,F=I):(o+=A+1,F>S&&(F-=B)),g[++v]=--F,-1==F?(l+=F,E[--p]=v):l-=F,!F)do{var U=o>>3;c=(a[U]|a[U+1]<<8)>>(7&o)&3,o+=2,v+=c}while(3==c)}(v>255||l)&&f(0);for(var D=0,M=(h>>1)+(h>>3)+3,W=h-1,O=0;O<=v;++O){var j=g[O];if(j<1)d[O]=-j;else for(y=0;y<j;++y){E[D]=O;do{D=D+M&W}while(D>=p)}}for(D&&f(0),y=0;y<h;++y){var C=d[E[y]]++,H=k[y]=u-b(C);m[y]=(C<<H)-h}return[o+7>>3,{b:u,s:E,n:k,t:m}]},p=function(r,n){var a=0,s=-1,i=new t(292),u=r[n],h=i.subarray(0,256),l=i.subarray(256,268),v=new e(i.buffer,268);if(u<128){var c=y(r,n+1,6),p=c[1],w=c[0]<<3,g=r[n+=u];g||f(0);for(var d=0,m=0,z=p.b,E=z,k=(++n<<3)-8+b(g);!((k-=z)<w);){var A=k>>3;if(h[++s]=p.s[d+=(r[A]|r[A+1]<<8)>>(7&k)&(1<<z)-1],(k-=E)<w)break;h[++s]=p.s[m+=(r[A=k>>3]|r[A+1]<<8)>>(7&k)&(1<<E)-1],z=p.n[d],d=p.t[d],E=p.n[m],m=p.t[m]}++s>255&&f(0)}else{for(s=u-127;a<s;a+=2){var T=r[++n];h[a]=T>>4,h[a+1]=15&T}++n}var x=0;for(a=0;a<s;++a)(I=h[a])>11&&f(0),x+=I&&1<<I-1;var F=b(x)+1,S=1<<F,B=S-x;for(B&B-1&&f(0),h[s++]=b(B)+1,a=0;a<s;++a){var I;++l[h[a]=(I=h[a])&&F+1-I]}var U=new t(S<<1),D=U.subarray(0,S),M=U.subarray(S);for(v[F]=0,a=F;a>0;--a){var W=v[a];o(M,a,W,v[a-1]=W+l[a]*(1<<F-a))}for(v[0]!=S&&f(0),a=0;a<s;++a){var O=h[a];if(O){var j=v[O];o(D,a,j,v[O]=j+(1<<F-O))}}return[n,{n:M,b:F,s:D}]},w=y(new t([81,16,99,140,49,198,24,99,12,33,196,24,99,102,102,134,70,146,4]),0,6)[1],g=y(new t([33,20,196,24,99,140,33,132,16,66,8,33,132,16,66,8,33,68,68,68,68,68,68,68,68,36,9]),0,6)[1],d=y(new t([32,132,16,66,102,70,68,68,68,68,36,73,2]),0,5)[1],m=function(r,t){for(var e=r.length,n=new s(e),a=0;a<e;++a)n[a]=t,t+=1<<r[a];return n},z=new t(new s([0,0,0,0,16843009,50528770,134678020,202050057,269422093]).buffer,0,36),E=m(z,0),k=new t(new s([0,0,0,0,0,0,0,0,16843009,50528770,117769220,185207048,252579084,16]).buffer,0,53),A=m(k,3),T=function(r,t,e){var n=r.length,a=t.length,s=r[n-1],i=(1<<e.b)-1,o=-e.b;s||f(0);for(var u=0,h=e.b,l=(n<<3)-8+b(s)-h,v=-1;l>o&&v<a;){var c=l>>3;t[++v]=e.s[u=(u<<h|(r[c]|r[c+1]<<8|r[c+2]<<16)>>(7&l))&i],l-=h=e.n[u]}l==o&&v+1==a||f(0)},x=function(r,t,e){var n=6,a=t.length+3>>2,s=a<<1,i=a+s;T(r.subarray(n,n+=r[0]|r[1]<<8),t.subarray(0,a),e),T(r.subarray(n,n+=r[2]|r[3]<<8),t.subarray(a,s),e),T(r.subarray(n,n+=r[4]|r[5]<<8),t.subarray(s,i),e),T(r.subarray(n),t.subarray(i),e)},F=function(r,n,a){var s,u=n.b,h=r[u],l=h>>1&3;n.l=1&h;var v=h>>3|r[u+1]<<5|r[u+2]<<13,c=(u+=3)+v;if(1==l){if(u>=r.length)return;return n.b=u+1,a?(o(a,r[u],n.y,n.y+=v),a):o(new t(v),r[u])}if(!(c>r.length)){if(0==l)return n.b=c,a?(a.set(r.subarray(u,c),n.y),n.y+=v,a):i(r,u,c);if(2==l){var m=r[u],F=3&m,S=m>>2&3,B=m>>4,I=0,U=0;F<2?1&S?B|=r[++u]<<4|(2&S&&r[++u]<<12):B=m>>3:(U=S,S<2?(B|=(63&r[++u])<<4,I=r[u]>>6|r[++u]<<2):2==S?(B|=r[++u]<<4|(3&r[++u])<<12,I=r[u]>>2|r[++u]<<6):(B|=r[++u]<<4|(63&r[++u])<<12,I=r[u]>>6|r[++u]<<2|r[++u]<<10)),++u;var D=a?a.subarray(n.y,n.y+n.m):new t(n.m),M=D.length-B;if(0==F)D.set(r.subarray(u,u+=B),M);else if(1==F)o(D,r[u++],M);else{var W=n.h;if(2==F){var O=p(r,u);I+=u-(u=O[0]),n.h=W=O[1]}else W||f(0);(U?x:T)(r.subarray(u,u+=I),D.subarray(M),W)}var j=r[u++];if(j){255==j?j=32512+(r[u++]|r[u++]<<8):j>127&&(j=j-128<<8|r[u++]);var C=r[u++];3&C&&f(0);for(var H=[g,d,w],L=2;L>-1;--L){var Z=C>>2+(L<<1)&3;if(1==Z){var q=new t([0,0,r[u++]]);H[L]={s:q.subarray(2,3),n:q.subarray(0,1),t:new e(q.buffer,0,1),b:0}}else 2==Z?(u=(s=y(r,u,9-(1&L)))[0],H[L]=s[1]):3==Z&&(n.t||f(0),H[L]=n.t[L])}var G=n.t=H,J=G[0],K=G[1],N=G[2],P=r[c-1];P||f(0);var Q=(c<<3)-8+b(P)-N.b,R=Q>>3,V=0,X=(r[R]|r[R+1]<<8)>>(7&Q)&(1<<N.b)-1,Y=(r[R=(Q-=K.b)>>3]|r[R+1]<<8)>>(7&Q)&(1<<K.b)-1,$=(r[R=(Q-=J.b)>>3]|r[R+1]<<8)>>(7&Q)&(1<<J.b)-1;for(++j;--j;){var _=N.s[X],rr=N.n[X],tr=J.s[$],er=J.n[$],nr=K.s[Y],ar=K.n[Y],sr=1<<nr,ir=sr+((r[R=(Q-=nr)>>3]|r[R+1]<<8|r[R+2]<<16|r[R+3]<<24)>>>(7&Q)&sr-1);R=(Q-=k[tr])>>3;var or=A[tr]+((r[R]|r[R+1]<<8|r[R+2]<<16)>>(7&Q)&(1<<k[tr])-1);R=(Q-=z[_])>>3;var ur=E[_]+((r[R]|r[R+1]<<8|r[R+2]<<16)>>(7&Q)&(1<<z[_])-1);if(R=(Q-=rr)>>3,X=N.t[X]+((r[R]|r[R+1]<<8)>>(7&Q)&(1<<rr)-1),R=(Q-=er)>>3,$=J.t[$]+((r[R]|r[R+1]<<8)>>(7&Q)&(1<<er)-1),R=(Q-=ar)>>3,Y=K.t[Y]+((r[R]|r[R+1]<<8)>>(7&Q)&(1<<ar)-1),ir>3)n.o[2]=n.o[1],n.o[1]=n.o[0],n.o[0]=ir-=3;else{var hr=ir-(0!=ur);hr?(ir=3==hr?n.o[0]-1:n.o[hr],hr>1&&(n.o[2]=n.o[1]),n.o[1]=n.o[0],n.o[0]=ir):ir=n.o[0]}for(L=0;L<ur;++L)D[V+L]=D[M+L];M+=ur;var fr=(V+=ur)-ir;if(fr<0){var lr=-fr,vr=n.e+fr;for(lr>or&&(lr=or),L=0;L<lr;++L)D[V+L]=n.w[vr+L];V+=lr,or-=lr,fr=0}for(L=0;L<or;++L)D[V+L]=D[fr+L];V+=or}if(V!=M)for(;M<D.length;)D[V++]=D[M++];else V=D.length;a?n.y+=V:D=i(D,0,V)}else if(a){if(n.y+=B,M)for(L=0;L<B;++L)D[L]=D[M+L]}else M&&(D=i(D,M));return n.b=c,D}f(2)}},S=function(r,e){if(1==r.length)return r[0];for(var n=new t(e),a=0,s=0;a<r.length;++a){var i=r[a];n.set(i,s),s+=i.length}return n};function B(r,t){for(var e=[],n=+!t,a=0,s=0;r.length;){var i=c(r,n||t);if("object"==typeof i){for(n?(t=null,i.w.length==i.u&&(e.push(t=i.w),s+=i.u)):(e.push(t),i.e=0);!i.l;){var o=F(r,i,t);o||f(5),t?i.e=i.y:(e.push(o),s+=o.length,u(i.w,0,o.length),i.w.set(o,i.w.length-o.length))}a=i.b+4*i.c}else a=i;r=r.subarray(a)}return S(e,s)}_e.decompress=B;var I=function(){function r(r){this.ondata=r,this.c=[],this.l=0,this.z=0}return r.prototype.push=function(r,e){if("number"==typeof this.s){var n=Math.min(r.length,this.s);r=r.subarray(n),this.s-=n}var a=r.length+this.l;if(!this.s){if(e){if(!a)return void this.ondata(new t(0),!0);a<5&&f(5)}else if(a<18)return this.c.push(r),void(this.l=a);if(this.l&&(this.c.push(r),r=S(this.c,a),this.c=[],this.l=0),"number"==typeof(this.s=c(r)))return this.push(r,e)}if("number"!=typeof this.s){if(a<(this.z||3))return e&&f(5),this.c.push(r),void(this.l=a);if(this.l&&(this.c.push(r),r=S(this.c,a),this.c=[],this.l=0),!this.z&&a<(this.z=2&r[this.s.b]?4:3+(r[this.s.b]>>3|r[this.s.b+1]<<5|r[this.s.b+2]<<13)))return e&&f(5),this.c.push(r),void(this.l=a);for(this.z=0;;){var s=F(r,this.s);if(!s){e&&f(5);var i=r.subarray(this.s.b);return this.s.b=0,this.c.push(i),void(this.l+=i.length)}if(this.ondata(s,!1),u(this.s.w,0,s.length),this.s.w.set(s,this.s.w.length-s.length),this.s.l){var o=r.subarray(this.s.b);return this.s=4*this.s.c,void this.push(o,e)}}}else e&&f(5)},r}();_e.Decompress=I;return _e})</script>
+<script id="core">
+"use strict";
+// ===== ZDOT コア（DOM非依存・Nodeでも検証可能） =====
+// 形式: ファイル先頭24バイト "ZDOTF1" + 根ドット位置/長さ（BE64）
+// ドット: 56バイトヘッダ（"ZDOT", 層, 圧縮旗, 予約2, 格納長BE64, 原長BE64, 証明書SHA-256×32）+ 格納データ
+// 根ドット（層0・無圧縮）: 記事数BE64, 本文総量BE64, ブロック数BE32,
+//   題名ドット（位置BE64, 長さBE64, 証明32）, 各ブロック（位置, 長さ, 原長, 証明32, 記事数BE32,
+//   先頭題名 varint長+文字列, 末尾題名 varint長+文字列）, 最後にルート証明（Merkle）32
+// ブロックドット（層2・zstd）: 記事数BE32, 葉数BE32, 葉（varint長, 証明32）×葉数,
+//   記事目次（varint題名長, 題名, varint葉番号, varint葉内位置, varint長）×記事数, 本文（葉の連結）
+const ZDOT_BLOCK_ARTICLES = 16384;
+
+function rdVarint(buf, pos) {
+  let shift = 0, val = 0;
+  while (true) {
+    const b = buf[pos++];
+    val += (b & 0x7f) * Math.pow(2, shift);
+    if (!(b & 0x80)) return [val, pos];
+    shift += 7;
+  }
+}
+function be32(buf, pos) { return ((buf[pos] << 24) | (buf[pos + 1] << 16) | (buf[pos + 2] << 8) | buf[pos + 3]) >>> 0; }
+function be64(buf, pos) { return be32(buf, pos) * 4294967296 + be32(buf, pos + 4); }
+function hex(bytes) { return Array.from(bytes, b => b.toString(16).padStart(2, "0")).join(""); }
+function utf8(bytes) { return new TextDecoder().decode(bytes); }
+async function sha256hex(bytes) {
+  const h = await crypto.subtle.digest("SHA-256", bytes);
+  return hex(new Uint8Array(h));
+}
+
+class ZDotCapsule {
+  // read: async (off, len) => Uint8Array ／ size: 全体バイト数（不明なら null）
+  constructor(read, size) {
+    this.read = read;
+    this.size = size;
+    this._titles = null;
+    this.titlesCertOk = null;
+  }
+  async readDot(off) {
+    const hdr = await this.read(off, 56);
+    if (utf8(hdr.subarray(0, 4)) !== "ZDOT") throw new Error("ドットのマジックが違います");
+    const layer = hdr[4], comp = hdr[5];
+    const slen = be64(hdr, 8), rlen = be64(hdr, 16);
+    const cert = hex(hdr.subarray(24, 56));
+    const stored = await this.read(off + 56, slen);
+    const raw = comp ? fzstd.decompress(stored) : stored;
+    if (raw.length !== rlen) throw new Error("ドットの長さが一致しません");
+    return { layer, comp, cert, raw, total: 56 + slen };
+  }
+  async open() {
+    const head = await this.read(0, 24);
+    if (utf8(head.subarray(0, 6)) !== "ZDOTF1") throw new Error("ZDOTF1形式ではありません");
+    this.rootOff = be64(head, 8);
+    this.rootLen = be64(head, 16);
+    const rd = await this.readDot(this.rootOff);
+    if (rd.layer !== 0) throw new Error("根ドットではありません");
+    this.rootCertOk = (await sha256hex(rd.raw)) === rd.cert;
+    const raw = rd.raw;
+    let p = 0;
+    this.count = be64(raw, p); p += 8;
+    this.bodyTotal = be64(raw, p); p += 8;
+    const nb = be32(raw, p); p += 4;
+    const toff = be64(raw, p); p += 8;
+    const tlen = be64(raw, p); p += 8;
+    this.titlesDot = { off: toff, len: tlen, cert: hex(raw.subarray(p, p + 32)) }; p += 32;
+    this.blocks = [];
+    for (let i = 0; i < nb; i++) {
+      const off = be64(raw, p); p += 8;
+      const len = be64(raw, p); p += 8;
+      const rl = be64(raw, p); p += 8;
+      const cert = hex(raw.subarray(p, p + 32)); p += 32;
+      const n = be32(raw, p); p += 4;
+      let fl; [fl, p] = rdVarint(raw, p);
+      const first = utf8(raw.subarray(p, p + fl)); p += fl;
+      let ll; [ll, p] = rdVarint(raw, p);
+      const last = utf8(raw.subarray(p, p + ll)); p += ll;
+      this.blocks.push({ off, len, raw: rl, cert, n, first, last });
+    }
+    this.merkle = hex(raw.subarray(p, p + 32)); p += 32;
+    // 拡張参照: Merkleの後ろに48バイト単位（位置・長さ・証明）で並ぶ。
+    // 層3=条件ドット、層4=対応表ドット。古い形式では存在しない。
+    this.extras = [];
+    while (raw.length - p >= 48) {
+      const eoff = be64(raw, p);
+      const elen = be64(raw, p + 8);
+      const ecert = hex(raw.subarray(p + 16, p + 48));
+      this.extras.push({ off: eoff, len: elen, cert: ecert });
+      p += 48;
+    }
+    this.mapDot = null;
+    for (const e of this.extras) {
+      try {
+        const hdr = await this.read(e.off, 56);
+        if (utf8(hdr.subarray(0, 4)) === "ZDOT" && hdr[4] === 4) { this.mapDot = e; break; }
+      } catch (err) { /* 読めない参照は飛ばす */ }
+    }
+    return this;
+  }
+  async loadTitles() {
+    if (this._titles) return this._titles;
+    const d = await this.readDot(this.titlesDot.off);
+    this.titlesCertOk = d.cert === this.titlesDot.cert &&
+      (await sha256hex(d.raw)) === this.titlesDot.cert;
+    this._titles = utf8(d.raw).split("\n");
+    return this._titles;
+  }
+  // 完全一致 → 前方一致 → 部分一致 の順に返す
+  search(q, limit) {
+    limit = limit || 100;
+    const titles = this._titles || [];
+    const exact = [], pre = [], sub = [];
+    for (const t of titles) {
+      if (t === q) exact.push(t);
+      else if (t.startsWith(q)) pre.push(t);
+      else if (t.includes(q)) sub.push(t);
+    }
+    const all = exact.concat(pre, sub);
+    return { total: all.length, exactCount: exact.length, hits: all.slice(0, limit) };
+  }
+  async readArticle(title) {
+    const titles = await this.loadTitles();
+    const gi = titles.indexOf(title);
+    if (gi < 0) return null;
+    const bi = Math.floor(gi / ZDOT_BLOCK_ARTICLES);
+    const bm = this.blocks[bi];
+    const d = await this.readDot(bm.off);
+    const blockCertOk = d.cert === bm.cert && (await sha256hex(d.raw)) === bm.cert;
+    const raw = d.raw;
+    let p = 0;
+    const nart = be32(raw, p); p += 4;
+    const nleaf = be32(raw, p); p += 4;
+    const leafLens = [], leafCerts = [];
+    for (let i = 0; i < nleaf; i++) {
+      let ln; [ln, p] = rdVarint(raw, p);
+      leafLens.push(ln); leafCerts.push(hex(raw.subarray(p, p + 32))); p += 32;
+    }
+    const local = gi - bi * ZDOT_BLOCK_ARTICLES;
+    let found = null;
+    for (let i = 0; i < nart; i++) {
+      let tl; [tl, p] = rdVarint(raw, p);
+      const t = utf8(raw.subarray(p, p + tl)); p += tl;
+      let leaf, off, ln;
+      [leaf, p] = rdVarint(raw, p); [off, p] = rdVarint(raw, p); [ln, p] = rdVarint(raw, p);
+      if (i === local) found = { t, leaf, off, ln };
+    }
+    const dataStart = p;
+    if (!found || found.t !== title) return null;
+    const starts = []; let s = 0;
+    for (const ln of leafLens) { starts.push(s); s += ln; }
+    const leafStart = dataStart + starts[found.leaf];
+    const leafBytes = raw.subarray(leafStart, leafStart + leafLens[found.leaf]);
+    const leafCertOk = (await sha256hex(leafBytes)) === leafCerts[found.leaf];
+    const body = utf8(raw.subarray(leafStart + found.off, leafStart + found.off + found.ln));
+    return {
+      title, body, blockIndex: bi, blockCert: bm.cert, blockCertOk,
+      leafCertOk, merkle: this.merkle
+    };
+  }
+}
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { ZDotCapsule, rdVarint, be32, be64, hex, ZDOT_BLOCK_ARTICLES };
+}
+</script>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+let capsule = null;
+let busy = false;
+let roundStop = false;
+
+// ===== カプセル読み込み（端末内ファイル） =====
+function makeLocalSource(files) {
+  const parts = [];
+  let acc = 0;
+  for (const f of files) { parts.push({ file: f, start: acc, size: f.size }); acc += f.size; }
+  async function read(off, len) {
+    const out = new Uint8Array(len);
+    let done = 0;
+    while (done < len) {
+      const p = parts.find(p => off + done >= p.start && off + done < p.start + p.size);
+      if (!p) throw new Error("読み取り範囲がファイルの終わりを超えています");
+      const local = off + done - p.start;
+      const take = Math.min(len - done, p.size - local);
+      const buf = new Uint8Array(await p.file.slice(local, local + take).arrayBuffer());
+      out.set(buf, done);
+      done += take;
+    }
+    return out;
+  }
+  return { read, size: acc };
+}
+$("capfile").addEventListener("change", async ev => {
+  const files = ev.target.files;
+  if (!files || !files.length) return;
+  try {
+    const src = makeLocalSource(Array.from(files));
+    capsule = await new ZDotCapsule(src.read, src.size).open();
+    await capsule.loadTitles();
+    $("capstatus").textContent = "カプセルを読み込みました: " + capsule.count.toLocaleString() +
+      " 記事 / ルート証明 " + capsule.merkle.slice(0, 16) + "…（記事を根拠に答えられます）";
+  } catch (e) {
+    capsule = null;
+    $("capstatus").textContent = "カプセルの読み込みに失敗しました: " + e.message;
+  }
+});
+async function findArticle(q) {
+  if (!capsule) return null;
+  const tries = [];
+  const stripped = q.replace(/(とは|について|を教えて|って何|は何|ですか|の歴史|の意味)+/g, " ").trim();
+  if (stripped) tries.push(stripped);
+  tries.push(q);
+  for (const t of q.split(/[\s、。・!?！？]+/)) if (t.length >= 2) tries.push(t);
+  for (const t of tries) {
+    const r = capsule.search(t, 3);
+    if (r.total) return r.hits[0];
+  }
+  return null;
+}
+async function groundFor(q, maxChars) {
+  const title = await findArticle(q);
+  if (!title) return null;
+  const a = await capsule.readArticle(title);
+  if (!a) return null;
+  return { title, text: a.body.slice(0, maxChars) };
+}
+
+// ===== AI登録（端末の中だけに保存） =====
+const TYPES = {
+  friend: "困っている人を助けるのが大好きな、頼れる友だちです。カプセルの知識を道具のように取り出して、一緒に問題を解きます。",
+  sister: "明るく元気で、面倒見のよい妹のような存在です。順番に、やさしく、ていねいに教えます。",
+  teacher: "落ち着いた先生です。筋道立てて説明し、最後に要点をまとめます。",
+  guide: "知識の案内役です。質問に合う記事を探して、分かりやすく紹介します。",
+  free: ""
+};
+const TYPE_NAMES = { friend: "やさしい友だち型", sister: "あかるい妹型", teacher: "先生型", guide: "案内役型", free: "自由型" };
+const LS_KEY = "zcap_friend_personas_v1";
+let personas = [];
+function loadPersonas() {
+  try {
+    const j = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+    if (Array.isArray(j) && j.length) { personas = j; return; }
+  } catch (e) { /* 保存が無ければ初期の2人を入れる */ }
+  personas = [
+    { id: 1, name: "そら", type: "friend", tone: "明るく親しみやすく、友だちに話すように", role: "教育", greet: "こんにちは！そらだよ。知りたいことを聞いてね。一緒に調べよう。" },
+    { id: 2, name: "ひかり", type: "sister", tone: "元気でていねいに、順番にやさしく", role: "文化", greet: "こんにちは、ひかりです。ゆっくり、やさしくお話ししましょう。" }
+  ];
+  savePersonas();
+}
+function savePersonas() { localStorage.setItem(LS_KEY, JSON.stringify(personas)); }
+let chatPartnerId = null;
+function renderPersonas() {
+  const box = $("plist");
+  box.innerHTML = "";
+  if (!chatPartnerId && personas.length) chatPartnerId = personas[0].id;
+  for (const p of personas) {
+    const row = document.createElement("div");
+    row.className = "prow";
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    const nm = document.createElement("div");
+    nm.className = "nm";
+    nm.textContent = p.name;
+    const dt = document.createElement("div");
+    dt.className = "dt";
+    dt.textContent = (TYPE_NAMES[p.type] || p.type) + "／役割: " + (p.role || "—") +
+      (p.tone ? "／口調: " + p.tone : "") + (p.greet ? "／あいさつ: " + p.greet : "");
+    meta.appendChild(nm); meta.appendChild(dt);
+    const bChat = document.createElement("button");
+    bChat.textContent = chatPartnerId === p.id ? "会話相手（選択中）" : "会話相手にする";
+    if (chatPartnerId === p.id) bChat.className = "sub";
+    bChat.addEventListener("click", () => { chatPartnerId = p.id; renderPersonas(); greetCurrent(); });
+    const lab = document.createElement("label");
+    lab.style.fontWeight = "normal";
+    lab.style.fontSize = "13px";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = !!p.inRound;
+    cb.addEventListener("change", () => { p.inRound = cb.checked; savePersonas(); });
+    lab.appendChild(cb);
+    lab.appendChild(document.createTextNode(" 座談会"));
+    const bDel = document.createElement("button");
+    bDel.textContent = "削除";
+    bDel.className = "danger";
+    bDel.addEventListener("click", () => {
+      personas = personas.filter(x => x.id !== p.id);
+      if (chatPartnerId === p.id) chatPartnerId = personas.length ? personas[0].id : null;
+      savePersonas(); renderPersonas();
+    });
+    row.appendChild(meta); row.appendChild(bChat); row.appendChild(lab); row.appendChild(bDel);
+    box.appendChild(row);
+  }
+}
+$("padd").addEventListener("click", () => {
+  const name = $("pname").value.trim();
+  if (!name) { $("pstatus").textContent = "名前を入れてください。"; return; }
+  personas.push({
+    id: Date.now(), name, type: $("ptype").value, tone: $("ptone").value.trim(),
+    role: $("prole").value, greet: $("pgreet").value.trim(), inRound: false
+  });
+  savePersonas(); renderPersonas();
+  $("pstatus").textContent = "「" + name + "」を登録しました。登録は全部で " + personas.length + " 人です。";
+  $("pname").value = ""; $("ptone").value = ""; $("pgreet").value = "";
+});
+function personaSystem(p) {
+  let s = "あなたは「" + p.name + "」という名前の、AIの友だちです。";
+  if (TYPES[p.type]) s += TYPES[p.type];
+  if (p.tone) s += "話し方: " + p.tone + "。";
+  if (p.role) s += "主な役割は「" + p.role + "」の案内と、学びの手伝いです。";
+  s += "参考記事が渡されたら、その内容に基づいて答えてください。記事に書かれていないことは作らず、「記事には書かれていません」と正直に伝えてください。答えは短めに、分かりやすい日本語でお願いします。";
+  return s;
+}
+function currentPersona() { return personas.find(p => p.id === chatPartnerId) || null; }
+
+// ===== 会話 =====
+const histories = {}; // personaId -> [{role, content}] 直近だけ保持
+function addMsg(logEl, who, text, cls) {
+  const d = document.createElement("div");
+  d.className = "msg " + cls;
+  const w = document.createElement("div");
+  w.className = "who";
+  w.textContent = who;
+  const b = document.createElement("div");
+  b.textContent = text;
+  d.appendChild(w); d.appendChild(b);
+  logEl.appendChild(d);
+  d.scrollIntoView({ block: "end" });
+  return b;
+}
+function greetCurrent() {
+  const p = currentPersona();
+  if (!p) return;
+  $("log").innerHTML = "";
+  if (p.greet) addMsg($("log"), p.name, p.greet, "ai");
+}
+async function engineReady() {
+  return window.__friendEngine && window.__friendEngine.ready;
+}
+async function sendChat() {
+  if (busy) return;
+  const p = currentPersona();
+  if (!p) { addMsg($("log"), "お知らせ", "先にAIの友だちを登録してください。", "sys"); return; }
+  if (!(await engineReady())) { addMsg($("log"), "お知らせ", "先に「AIを読み込む」を押してください。", "sys"); return; }
+  const q = $("qin").value.trim();
+  if (!q) return;
+  $("qin").value = "";
+  busy = true; $("send").disabled = true;
+  addMsg($("log"), "あなた", q, "me");
+  const bodyEl = addMsg($("log"), p.name, "考え中…", "ai");
+  try {
+    const g = await groundFor(q, 1800);
+    const hist = (histories[p.id] || []).slice(-4);
+    const messages = [{ role: "system", content: personaSystem(p) }].concat(hist);
+    messages.push({ role: "user", content: (g ? "参考記事「" + g.title + "」:\n" + g.text + "\n\n質問: " : "") + q });
+    const ans = await window.__friendEngine.chat(messages, t => { bodyEl.textContent = t; }, 400);
+    histories[p.id] = hist.concat([{ role: "user", content: q }, { role: "assistant", content: ans }]);
+    if (g) addMsg($("log"), "根拠", "カプセルの記事「" + g.title + "」をもとに答えました。", "sys");
+  } catch (e) {
+    bodyEl.textContent = "うまく答えられませんでした: " + e.message;
+  }
+  busy = false; $("send").disabled = false;
+}
+$("send").addEventListener("click", sendChat);
+$("qin").addEventListener("keydown", e => { if (e.key === "Enter") sendChat(); });
+$("clearlog").addEventListener("click", () => { $("log").innerHTML = ""; for (const k in histories) delete histories[k]; greetCurrent(); });
+
+// ===== 座談会 =====
+$("tabchat").addEventListener("click", () => {
+  $("tabchat").className = "on"; $("tabround").className = "";
+  $("panechat").classList.remove("hidden"); $("paneround").classList.add("hidden");
+});
+$("tabround").addEventListener("click", () => {
+  $("tabround").className = "on"; $("tabchat").className = "";
+  $("paneround").classList.remove("hidden"); $("panechat").classList.add("hidden");
+});
+$("stopround").addEventListener("click", () => { roundStop = true; });
+async function runRoundtable() {
+  if (busy) return;
+  if (!(await engineReady())) { addMsg($("roundlog"), "お知らせ", "先に「AIを読み込む」を押してください。", "sys"); return; }
+  const members = personas.filter(p => p.inRound);
+  if (members.length < 2 || members.length > 4) {
+    addMsg($("roundlog"), "お知らせ", "座談会の参加者は、上のリストで2〜4人を選んでください（現在 " + members.length + " 人）。", "sys");
+    return;
+  }
+  const theme = $("theme").value.trim();
+  if (!theme) { addMsg($("roundlog"), "お知らせ", "テーマを入れてください。", "sys"); return; }
+  busy = true; roundStop = false;
+  $("startround").disabled = true; $("stopround").disabled = false;
+  const logEl = $("roundlog");
+  logEl.innerHTML = "";
+  addMsg(logEl, "座談会", "テーマ: " + theme + "／参加: " + members.map(m => m.name).join("、"), "sys");
+  const g = await groundFor(theme, 1500);
+  if (g) addMsg(logEl, "下敷きの記事", "「" + g.title + "」\n" + g.text.slice(0, 300) + "…", "sys");
+  const rounds = parseInt($("rounds").value, 10) || 1;
+  const transcript = [];
+  try {
+    for (let r = 0; r < rounds && !roundStop; r++) {
+      for (const p of members) {
+        if (roundStop) break;
+        const bodyEl = addMsg(logEl, p.name + "（" + (r + 1) + "周目）", "考え中…", "ai");
+        const soFar = transcript.map(t => t.name + ": " + t.text).join("\n");
+        const messages = [
+          { role: "system", content: personaSystem(p) + "いま、テーマ「" + theme + "」の座談会をしています。前の人の発言を受けて、あなたの立場で短く（150字程度で）発言してください。同じことの繰り返しは避けてください。" },
+          { role: "user", content: (g ? "下敷きの記事「" + g.title + "」:\n" + g.text + "\n\n" : "") + (soFar ? "これまでの発言:\n" + soFar + "\n\n" : "") + "あなたの番です。" }
+        ];
+        const speech = await window.__friendEngine.chat(messages, t => { bodyEl.textContent = t; }, 220);
+        transcript.push({ name: p.name, text: speech });
+      }
+    }
+    if (!roundStop && transcript.length) {
+      const bodyEl = addMsg(logEl, "まとめ", "まとめています…", "sys");
+      const sum = await window.__friendEngine.chat([
+        { role: "system", content: "あなたは座談会の記録係です。発言を3行以内で中立にまとめてください。" },
+        { role: "user", content: "テーマ: " + theme + "\n\n" + transcript.map(t => t.name + ": " + t.text).join("\n") }
+      ], t => { bodyEl.textContent = t; }, 220);
+    }
+  } catch (e) {
+    addMsg(logEl, "お知らせ", "座談会で問題が起きました: " + e.message, "sys");
+  }
+  busy = false;
+  $("startround").disabled = false; $("stopround").disabled = true;
+}
+$("startround").addEventListener("click", runRoundtable);
+
+// ===== AIエンジン読み込み =====
+$("loadai").addEventListener("click", async () => {
+  if (!("gpu" in navigator)) {
+    $("aistatus").textContent = "この端末・ブラウザでは WebGPU が使えないため、小さなAIを動かせません。新しいChromeと、新しめのスマホでお試しください。";
+    return;
+  }
+  if (!window.__friendEngine) {
+    $("aistatus").textContent = "AIエンジンの読み込みに失敗しました。回線を確認して、ページを開き直してください。";
+    return;
+  }
+  $("loadai").disabled = true;
+  try {
+    await window.__friendEngine.load($("model").value, (text, prog) => {
+      $("aistatus").textContent = "AIを読み込み中… " + text + (prog ? "（" + Math.round(prog * 100) + "%）" : "");
+    });
+    $("aistatus").textContent = "AIの読み込みが終わりました。端末の中で会話できます。";
+  } catch (e) {
+    $("aistatus").textContent = "AIの読み込みに失敗しました: " + e.message;
+    $("loadai").disabled = false;
+  }
+});
+
+loadPersonas();
+renderPersonas();
+greetCurrent();
+</script>
+<script type="module">
+import * as webllm from "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.79/+esm";
+let engine = null;
+window.__friendEngine = {
+  ready: false,
+  async load(modelId, onProgress) {
+    engine = await webllm.CreateMLCEngine(modelId, {
+      initProgressCallback: r => onProgress(r.text || "", r.progress || 0)
+    });
+    this.ready = true;
+  },
+  async chat(messages, onToken, maxTokens) {
+    if (!engine) throw new Error("AIが未読み込みです");
+    let out = "";
+    const chunks = await engine.chat.completions.create({
+      messages, stream: true, temperature: 0.8, max_tokens: maxTokens || 400
+    });
+    for await (const c of chunks) {
+      const d = (c.choices && c.choices[0] && c.choices[0].delta && c.choices[0].delta.content) || "";
+      out += d;
+      if (onToken) onToken(out);
+    }
+    return out;
+  }
+};
+</script>
+</body>
+</html>
