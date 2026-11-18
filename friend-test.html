@@ -41,7 +41,7 @@
 <body>
 <header>
   <h1>Zカプセル フレンドAI（試験）</h1>
-  <p>スマホの中だけで動く小さなAIの友だちです。何人でも登録でき、1対1の会話も、みんなでの座談会もできます。答えは、Zカプセル（日本語版Wikipedia）の記事を根拠にします。登録したAIの情報も、会話も、この端末の中だけに保存され、外には送信されません。</p>
+  <p>スマホの中だけで動く小さなAIの友だちです。何人でも登録でき、1対1の会話も、みんなでの座談会もできます。答えは、Zカプセル（日本語版Wikipedia）の記事を根拠にします。登録したAIの情報も、会話も、この端末の中だけに保存され、外には送信されません。声も、それぞれに違います。声での入力も、端末の中で認識するので外には送られません。</p>
 </header>
 <main>
   <div class="card" id="enginecard">
@@ -87,6 +87,19 @@
     </select>
     <label for="pgreet">あいさつ（会話の最初に表示されます）</label>
     <input type="text" id="pgreet" placeholder="例：こんにちは！なんでも聞いてね">
+    <label for="ppitch">声の高さ</label>
+    <select id="ppitch">
+      <option value="0.9">低め</option>
+      <option value="1.1" selected>ふつう</option>
+      <option value="1.4">高め</option>
+      <option value="1.6">とても高め</option>
+    </select>
+    <label for="prate">声の速さ</label>
+    <select id="prate">
+      <option value="0.9">ゆっくり</option>
+      <option value="1.0" selected>ふつう</option>
+      <option value="1.1">はやい</option>
+    </select>
     <button id="padd">この内容で登録する</button>
     <div class="status" id="pstatus"></div>
   </div>
@@ -102,12 +115,20 @@
       <label for="qin">質問・お話</label>
       <input type="text" id="qin" placeholder="例：日本について教えて">
       <button id="send">送る</button>
+      <button id="micbtn" class="sub">声で入力</button>
       <button id="clearlog" class="sub">会話を消す</button>
+      <div class="status" id="micstatus"></div>
+      <label style="font-weight:normal;font-size:13px;display:block;margin-top:8px"><input type="checkbox" id="voicechat" checked> 答えを声で読み上げる</label>
+      <button id="livestart" class="sub">ライブ会話をはじめる（声で話す）</button>
+      <button id="livestop" class="danger" disabled>ライブ会話をとめる</button>
+      <div class="status" id="livestatus"></div>
     </div>
     <div id="paneround" class="hidden">
       <p style="margin:0;font-size:13px">上のリストで「座談会」にチェックしたAIたち（2〜4人）が、テーマについて順番に話します。下敷きに、カプセルの記事を使います。</p>
       <label for="theme">座談会のテーマ</label>
       <input type="text" id="theme" placeholder="例：平和な世界を作るには">
+      <button id="micbtn2" class="sub">テーマを声で入力</button>
+      <div class="status" id="micstatus2"></div>
       <label for="rounds">まわす回数</label>
       <select id="rounds">
         <option value="1">1周</option>
@@ -116,11 +137,12 @@
       </select>
       <button id="startround">座談会をはじめる</button>
       <button id="stopround" class="danger" disabled>止める</button>
+      <label style="font-weight:normal;font-size:13px;display:block;margin-top:8px"><input type="checkbox" id="voiceround" checked> 発言を、それぞれの声で読み上げる</label>
       <div id="roundlog"></div>
     </div>
   </div>
 
-  <p class="note">プライバシーについて: AIの本体は最初の一回だけダウンロードしますが、会話の処理はすべてこの端末の中で行われ、質問や会話の内容が外に送信されることはありません。登録したAIの情報は、この端末のブラウザの中にだけ保存されます。<br>小さなAIの正直な限界: 大きなAIより間違いやすく、答えも短めです。カプセルの記事を根拠にすることで間違いを減らす設計ですが、試験としてお試しください。動作は Pixel 8a などの新しいスマホがおすすめです（古い機種では遅くなります）。</p>
+  <p class="note">プライバシーについて: AIの本体は最初の一回だけダウンロードしますが、会話の処理はすべてこの端末の中で行われ、質問や会話の内容が外に送信されることはありません。読み上げも端末の音声合成を使うので、声に出す時も外には送られません。音声での入力も、端末の中で認識する小さなモデルを使う方式にしたので、声が外に送られることはありません（認識モデル約40MBを、最初の一回だけダウンロードします。精度は試験レベルで、間違いは文字で直してから送れます）。登録したAIの情報は、この端末のブラウザの中にだけ保存されます。<br>小さなAIの正直な限界: 大きなAIより間違いやすく、答えも短めです。カプセルの記事を根拠にすることで間違いを減らす設計ですが、試験としてお試しください。動作は Pixel 8a などの新しいスマホがおすすめです（古い機種では遅くなります）。</p>
 </main>
 <script>!function(f){typeof module!='undefined'&&typeof exports=='object'?module.exports=f():typeof define!='undefined'&&define.amd?define(['fzstd',f]):(typeof self!='undefined'?self:this).fzstd=f()}(function(){var _e={};"use strict";var r=ArrayBuffer,t=Uint8Array,e=Uint16Array,n=Int16Array,a=Uint32Array,s=Int32Array,i=function(r,e,n){if(t.prototype.slice)return t.prototype.slice.call(r,e,n);(null==e||e<0)&&(e=0),(null==n||n>r.length)&&(n=r.length);var a=new t(n-e);return a.set(r.subarray(e,n)),a},o=function(r,e,n,a){if(t.prototype.fill)return t.prototype.fill.call(r,e,n,a);for((null==n||n<0)&&(n=0),(null==a||a>r.length)&&(a=r.length);n<a;++n)r[n]=e;return r},u=function(r,e,n,a){if(t.prototype.copyWithin)return t.prototype.copyWithin.call(r,e,n,a);for((null==n||n<0)&&(n=0),(null==a||a>r.length)&&(a=r.length);n<a;)r[e++]=r[n++]};_e.ZstdErrorCode={InvalidData:0,WindowSizeTooLarge:1,InvalidBlockType:2,FSEAccuracyTooHigh:3,DistanceTooFarBack:4,UnexpectedEOF:5};var h=["invalid zstd data","window size too large (>2046MB)","invalid block type","FSE accuracy too high","match distance too far back","unexpected EOF"],f=function(r,t,e){var n=Error(t||h[r]);if(n.code=r,Error.captureStackTrace&&Error.captureStackTrace(n,f),!e)throw n;return n},l=function(r,t,e){for(var n=0,a=0;n<e;++n)a|=r[t++]<<(n<<3);return a},v=function(r,t){return(r[t]|r[t+1]<<8|r[t+2]<<16|r[t+3]<<24)>>>0},c=function(r,e){var n=r[0]|r[1]<<8|r[2]<<16;if(3126568==n&&253==r[3]){var a=r[4],i=a>>5&1,o=a>>2&1,u=3&a,h=a>>6;8&a&&f(0);var c=6-i,b=3==u?4:u,y=l(r,c,b),p=h?1<<h:i,w=l(r,c+=b,p)+(1==h&&256),g=w;if(!i){var d=1<<10+(r[5]>>3);g=d+(d>>3)*(7&r[5])}g>2145386496&&f(1);var m=new t((1==e?w||g:e?0:g)+12);return m[0]=1,m[4]=4,m[8]=8,{b:c+p,y:0,l:0,d:y,w:e&&1!=e?e:m.subarray(12),e:g,o:new s(m.buffer,0,3),u:w,c:o,m:Math.min(131072,g)}}if(25481893==(n>>4|r[3]<<20))return v(r,4)+8;f(0)},b=function(r){for(var t=0;1<<t<=r;++t);return t-1},y=function(a,s,i){var o=4+(s<<3),u=5+(15&a[s]);u>i&&f(3);for(var h=1<<u,l=h,v=-1,c=-1,y=-1,p=h,w=new r(512+(h<<2)),g=new n(w,0,256),d=new e(w,0,256),m=new e(w,512,h),z=512+(h<<1),E=new t(w,z,h),k=new t(w,z+h);v<255&&l>0;){var A=b(l+1),T=o>>3,x=(1<<A+1)-1,F=(a[T]|a[T+1]<<8|a[T+2]<<16)>>(7&o)&x,S=(1<<A)-1,B=x-l-1,I=F&S;if(I<B?(o+=A,F=I):(o+=A+1,F>S&&(F-=B)),g[++v]=--F,-1==F?(l+=F,E[--p]=v):l-=F,!F)do{var U=o>>3;c=(a[U]|a[U+1]<<8)>>(7&o)&3,o+=2,v+=c}while(3==c)}(v>255||l)&&f(0);for(var D=0,M=(h>>1)+(h>>3)+3,W=h-1,O=0;O<=v;++O){var j=g[O];if(j<1)d[O]=-j;else for(y=0;y<j;++y){E[D]=O;do{D=D+M&W}while(D>=p)}}for(D&&f(0),y=0;y<h;++y){var C=d[E[y]]++,H=k[y]=u-b(C);m[y]=(C<<H)-h}return[o+7>>3,{b:u,s:E,n:k,t:m}]},p=function(r,n){var a=0,s=-1,i=new t(292),u=r[n],h=i.subarray(0,256),l=i.subarray(256,268),v=new e(i.buffer,268);if(u<128){var c=y(r,n+1,6),p=c[1],w=c[0]<<3,g=r[n+=u];g||f(0);for(var d=0,m=0,z=p.b,E=z,k=(++n<<3)-8+b(g);!((k-=z)<w);){var A=k>>3;if(h[++s]=p.s[d+=(r[A]|r[A+1]<<8)>>(7&k)&(1<<z)-1],(k-=E)<w)break;h[++s]=p.s[m+=(r[A=k>>3]|r[A+1]<<8)>>(7&k)&(1<<E)-1],z=p.n[d],d=p.t[d],E=p.n[m],m=p.t[m]}++s>255&&f(0)}else{for(s=u-127;a<s;a+=2){var T=r[++n];h[a]=T>>4,h[a+1]=15&T}++n}var x=0;for(a=0;a<s;++a)(I=h[a])>11&&f(0),x+=I&&1<<I-1;var F=b(x)+1,S=1<<F,B=S-x;for(B&B-1&&f(0),h[s++]=b(B)+1,a=0;a<s;++a){var I;++l[h[a]=(I=h[a])&&F+1-I]}var U=new t(S<<1),D=U.subarray(0,S),M=U.subarray(S);for(v[F]=0,a=F;a>0;--a){var W=v[a];o(M,a,W,v[a-1]=W+l[a]*(1<<F-a))}for(v[0]!=S&&f(0),a=0;a<s;++a){var O=h[a];if(O){var j=v[O];o(D,a,j,v[O]=j+(1<<F-O))}}return[n,{n:M,b:F,s:D}]},w=y(new t([81,16,99,140,49,198,24,99,12,33,196,24,99,102,102,134,70,146,4]),0,6)[1],g=y(new t([33,20,196,24,99,140,33,132,16,66,8,33,132,16,66,8,33,68,68,68,68,68,68,68,68,36,9]),0,6)[1],d=y(new t([32,132,16,66,102,70,68,68,68,68,36,73,2]),0,5)[1],m=function(r,t){for(var e=r.length,n=new s(e),a=0;a<e;++a)n[a]=t,t+=1<<r[a];return n},z=new t(new s([0,0,0,0,16843009,50528770,134678020,202050057,269422093]).buffer,0,36),E=m(z,0),k=new t(new s([0,0,0,0,0,0,0,0,16843009,50528770,117769220,185207048,252579084,16]).buffer,0,53),A=m(k,3),T=function(r,t,e){var n=r.length,a=t.length,s=r[n-1],i=(1<<e.b)-1,o=-e.b;s||f(0);for(var u=0,h=e.b,l=(n<<3)-8+b(s)-h,v=-1;l>o&&v<a;){var c=l>>3;t[++v]=e.s[u=(u<<h|(r[c]|r[c+1]<<8|r[c+2]<<16)>>(7&l))&i],l-=h=e.n[u]}l==o&&v+1==a||f(0)},x=function(r,t,e){var n=6,a=t.length+3>>2,s=a<<1,i=a+s;T(r.subarray(n,n+=r[0]|r[1]<<8),t.subarray(0,a),e),T(r.subarray(n,n+=r[2]|r[3]<<8),t.subarray(a,s),e),T(r.subarray(n,n+=r[4]|r[5]<<8),t.subarray(s,i),e),T(r.subarray(n),t.subarray(i),e)},F=function(r,n,a){var s,u=n.b,h=r[u],l=h>>1&3;n.l=1&h;var v=h>>3|r[u+1]<<5|r[u+2]<<13,c=(u+=3)+v;if(1==l){if(u>=r.length)return;return n.b=u+1,a?(o(a,r[u],n.y,n.y+=v),a):o(new t(v),r[u])}if(!(c>r.length)){if(0==l)return n.b=c,a?(a.set(r.subarray(u,c),n.y),n.y+=v,a):i(r,u,c);if(2==l){var m=r[u],F=3&m,S=m>>2&3,B=m>>4,I=0,U=0;F<2?1&S?B|=r[++u]<<4|(2&S&&r[++u]<<12):B=m>>3:(U=S,S<2?(B|=(63&r[++u])<<4,I=r[u]>>6|r[++u]<<2):2==S?(B|=r[++u]<<4|(3&r[++u])<<12,I=r[u]>>2|r[++u]<<6):(B|=r[++u]<<4|(63&r[++u])<<12,I=r[u]>>6|r[++u]<<2|r[++u]<<10)),++u;var D=a?a.subarray(n.y,n.y+n.m):new t(n.m),M=D.length-B;if(0==F)D.set(r.subarray(u,u+=B),M);else if(1==F)o(D,r[u++],M);else{var W=n.h;if(2==F){var O=p(r,u);I+=u-(u=O[0]),n.h=W=O[1]}else W||f(0);(U?x:T)(r.subarray(u,u+=I),D.subarray(M),W)}var j=r[u++];if(j){255==j?j=32512+(r[u++]|r[u++]<<8):j>127&&(j=j-128<<8|r[u++]);var C=r[u++];3&C&&f(0);for(var H=[g,d,w],L=2;L>-1;--L){var Z=C>>2+(L<<1)&3;if(1==Z){var q=new t([0,0,r[u++]]);H[L]={s:q.subarray(2,3),n:q.subarray(0,1),t:new e(q.buffer,0,1),b:0}}else 2==Z?(u=(s=y(r,u,9-(1&L)))[0],H[L]=s[1]):3==Z&&(n.t||f(0),H[L]=n.t[L])}var G=n.t=H,J=G[0],K=G[1],N=G[2],P=r[c-1];P||f(0);var Q=(c<<3)-8+b(P)-N.b,R=Q>>3,V=0,X=(r[R]|r[R+1]<<8)>>(7&Q)&(1<<N.b)-1,Y=(r[R=(Q-=K.b)>>3]|r[R+1]<<8)>>(7&Q)&(1<<K.b)-1,$=(r[R=(Q-=J.b)>>3]|r[R+1]<<8)>>(7&Q)&(1<<J.b)-1;for(++j;--j;){var _=N.s[X],rr=N.n[X],tr=J.s[$],er=J.n[$],nr=K.s[Y],ar=K.n[Y],sr=1<<nr,ir=sr+((r[R=(Q-=nr)>>3]|r[R+1]<<8|r[R+2]<<16|r[R+3]<<24)>>>(7&Q)&sr-1);R=(Q-=k[tr])>>3;var or=A[tr]+((r[R]|r[R+1]<<8|r[R+2]<<16)>>(7&Q)&(1<<k[tr])-1);R=(Q-=z[_])>>3;var ur=E[_]+((r[R]|r[R+1]<<8|r[R+2]<<16)>>(7&Q)&(1<<z[_])-1);if(R=(Q-=rr)>>3,X=N.t[X]+((r[R]|r[R+1]<<8)>>(7&Q)&(1<<rr)-1),R=(Q-=er)>>3,$=J.t[$]+((r[R]|r[R+1]<<8)>>(7&Q)&(1<<er)-1),R=(Q-=ar)>>3,Y=K.t[Y]+((r[R]|r[R+1]<<8)>>(7&Q)&(1<<ar)-1),ir>3)n.o[2]=n.o[1],n.o[1]=n.o[0],n.o[0]=ir-=3;else{var hr=ir-(0!=ur);hr?(ir=3==hr?n.o[0]-1:n.o[hr],hr>1&&(n.o[2]=n.o[1]),n.o[1]=n.o[0],n.o[0]=ir):ir=n.o[0]}for(L=0;L<ur;++L)D[V+L]=D[M+L];M+=ur;var fr=(V+=ur)-ir;if(fr<0){var lr=-fr,vr=n.e+fr;for(lr>or&&(lr=or),L=0;L<lr;++L)D[V+L]=n.w[vr+L];V+=lr,or-=lr,fr=0}for(L=0;L<or;++L)D[V+L]=D[fr+L];V+=or}if(V!=M)for(;M<D.length;)D[V++]=D[M++];else V=D.length;a?n.y+=V:D=i(D,0,V)}else if(a){if(n.y+=B,M)for(L=0;L<B;++L)D[L]=D[M+L]}else M&&(D=i(D,M));return n.b=c,D}f(2)}},S=function(r,e){if(1==r.length)return r[0];for(var n=new t(e),a=0,s=0;a<r.length;++a){var i=r[a];n.set(i,s),s+=i.length}return n};function B(r,t){for(var e=[],n=+!t,a=0,s=0;r.length;){var i=c(r,n||t);if("object"==typeof i){for(n?(t=null,i.w.length==i.u&&(e.push(t=i.w),s+=i.u)):(e.push(t),i.e=0);!i.l;){var o=F(r,i,t);o||f(5),t?i.e=i.y:(e.push(o),s+=o.length,u(i.w,0,o.length),i.w.set(o,i.w.length-o.length))}a=i.b+4*i.c}else a=i;r=r.subarray(a)}return S(e,s)}_e.decompress=B;var I=function(){function r(r){this.ondata=r,this.c=[],this.l=0,this.z=0}return r.prototype.push=function(r,e){if("number"==typeof this.s){var n=Math.min(r.length,this.s);r=r.subarray(n),this.s-=n}var a=r.length+this.l;if(!this.s){if(e){if(!a)return void this.ondata(new t(0),!0);a<5&&f(5)}else if(a<18)return this.c.push(r),void(this.l=a);if(this.l&&(this.c.push(r),r=S(this.c,a),this.c=[],this.l=0),"number"==typeof(this.s=c(r)))return this.push(r,e)}if("number"!=typeof this.s){if(a<(this.z||3))return e&&f(5),this.c.push(r),void(this.l=a);if(this.l&&(this.c.push(r),r=S(this.c,a),this.c=[],this.l=0),!this.z&&a<(this.z=2&r[this.s.b]?4:3+(r[this.s.b]>>3|r[this.s.b+1]<<5|r[this.s.b+2]<<13)))return e&&f(5),this.c.push(r),void(this.l=a);for(this.z=0;;){var s=F(r,this.s);if(!s){e&&f(5);var i=r.subarray(this.s.b);return this.s.b=0,this.c.push(i),void(this.l+=i.length)}if(this.ondata(s,!1),u(this.s.w,0,s.length),this.s.w.set(s,this.s.w.length-s.length),this.s.l){var o=r.subarray(this.s.b);return this.s=4*this.s.c,void this.push(o,e)}}}else e&&f(5)},r}();_e.Decompress=I;return _e})</script>
 <script id="core">
@@ -366,8 +388,8 @@ function loadPersonas() {
     if (Array.isArray(j) && j.length) { personas = j; return; }
   } catch (e) { /* 保存が無ければ初期の2人を入れる */ }
   personas = [
-    { id: 1, name: "そら", type: "friend", tone: "明るく親しみやすく、友だちに話すように", role: "教育", greet: "こんにちは！そらだよ。知りたいことを聞いてね。一緒に調べよう。" },
-    { id: 2, name: "ひかり", type: "sister", tone: "元気でていねいに、順番にやさしく", role: "文化", greet: "こんにちは、ひかりです。ゆっくり、やさしくお話ししましょう。" }
+    { id: 1, name: "そら", type: "friend", tone: "明るく親しみやすく、友だちに話すように", role: "教育", greet: "こんにちは！そらだよ。知りたいことを聞いてね。一緒に調べよう。", pitch: 1.1, rate: 1.0 },
+    { id: 2, name: "ひかり", type: "sister", tone: "元気でていねいに、順番にやさしく", role: "文化", greet: "こんにちは、ひかりです。ゆっくり、やさしくお話ししましょう。", pitch: 1.5, rate: 1.05 }
   ];
   savePersonas();
 }
@@ -388,7 +410,8 @@ function renderPersonas() {
     const dt = document.createElement("div");
     dt.className = "dt";
     dt.textContent = (TYPE_NAMES[p.type] || p.type) + "／役割: " + (p.role || "—") +
-      (p.tone ? "／口調: " + p.tone : "") + (p.greet ? "／あいさつ: " + p.greet : "");
+      (p.tone ? "／口調: " + p.tone : "") + (p.greet ? "／あいさつ: " + p.greet : "") +
+      "／声: 高さ" + voiceOf(p).pitch + "・速さ" + voiceOf(p).rate;
     meta.appendChild(nm); meta.appendChild(dt);
     const bChat = document.createElement("button");
     bChat.textContent = chatPartnerId === p.id ? "会話相手（選択中）" : "会話相手にする";
@@ -420,7 +443,8 @@ $("padd").addEventListener("click", () => {
   if (!name) { $("pstatus").textContent = "名前を入れてください。"; return; }
   personas.push({
     id: Date.now(), name, type: $("ptype").value, tone: $("ptone").value.trim(),
-    role: $("prole").value, greet: $("pgreet").value.trim(), inRound: false
+    role: $("prole").value, greet: $("pgreet").value.trim(), inRound: false,
+    pitch: parseFloat($("ppitch").value), rate: parseFloat($("prate").value)
   });
   savePersonas(); renderPersonas();
   $("pstatus").textContent = "「" + name + "」を登録しました。登録は全部で " + personas.length + " 人です。";
@@ -435,6 +459,43 @@ function personaSystem(p) {
   return s;
 }
 function currentPersona() { return personas.find(p => p.id === chatPartnerId) || null; }
+
+// ===== 音声（端末の読み上げを使います。文章が外に送信されることはありません） =====
+let jaVoices = [];
+function refreshVoices() {
+  try {
+    const vs = speechSynthesis.getVoices();
+    jaVoices = vs.filter(v => (v.lang || "").toLowerCase().startsWith("ja"));
+    if (!jaVoices.length) jaVoices = vs;
+  } catch (e) { jaVoices = []; }
+}
+if ("speechSynthesis" in window) {
+  refreshVoices();
+  speechSynthesis.onvoiceschanged = refreshVoices;
+}
+const TYPE_VOICE = { friend: [1.1, 1.0], sister: [1.5, 1.05], teacher: [0.9, 0.95], guide: [1.2, 1.0], free: [1.0, 1.0] };
+function voiceOf(p) {
+  const d = TYPE_VOICE[p.type] || [1.0, 1.0];
+  return { pitch: p.pitch || d[0], rate: p.rate || d[1] };
+}
+function speak(text, p) {
+  return new Promise(res => {
+    if (!("speechSynthesis" in window) || !text) { res(); return; }
+    const v = voiceOf(p);
+    const u = new SpeechSynthesisUtterance(text.replace(/\s+/g, " ").slice(0, 600));
+    if (jaVoices.length) u.voice = jaVoices[0];
+    u.lang = "ja-JP";
+    u.pitch = v.pitch;
+    u.rate = v.rate;
+    let done = false;
+    const fin = () => { if (!done) { done = true; res(); } };
+    u.onend = fin;
+    u.onerror = fin;
+    setTimeout(fin, Math.min(45000, 4000 + text.length * 350));
+    speechSynthesis.speak(u);
+  });
+}
+function stopSpeech() { if ("speechSynthesis" in window) speechSynthesis.cancel(); }
 
 // ===== 会話 =====
 const histories = {}; // personaId -> [{role, content}] 直近だけ保持
@@ -468,6 +529,7 @@ async function sendChat() {
   const q = $("qin").value.trim();
   if (!q) return;
   $("qin").value = "";
+  stopSpeech();
   busy = true; $("send").disabled = true;
   addMsg($("log"), "あなた", q, "me");
   const bodyEl = addMsg($("log"), p.name, "考え中…", "ai");
@@ -478,6 +540,7 @@ async function sendChat() {
     messages.push({ role: "user", content: (g ? "参考記事「" + g.title + "」:\n" + g.text + "\n\n質問: " : "") + q });
     const ans = await window.__friendEngine.chat(messages, t => { bodyEl.textContent = t; }, 400);
     histories[p.id] = hist.concat([{ role: "user", content: q }, { role: "assistant", content: ans }]);
+    if ($("voicechat").checked) speak(ans, p);
     if (g) addMsg($("log"), "根拠", "カプセルの記事「" + g.title + "」をもとに答えました。", "sys");
   } catch (e) {
     bodyEl.textContent = "うまく答えられませんでした: " + e.message;
@@ -497,7 +560,7 @@ $("tabround").addEventListener("click", () => {
   $("tabround").className = "on"; $("tabchat").className = "";
   $("paneround").classList.remove("hidden"); $("panechat").classList.add("hidden");
 });
-$("stopround").addEventListener("click", () => { roundStop = true; });
+$("stopround").addEventListener("click", () => { roundStop = true; stopSpeech(); });
 async function runRoundtable() {
   if (busy) return;
   if (!(await engineReady())) { addMsg($("roundlog"), "お知らせ", "先に「AIを読み込む」を押してください。", "sys"); return; }
@@ -529,6 +592,7 @@ async function runRoundtable() {
         ];
         const speech = await window.__friendEngine.chat(messages, t => { bodyEl.textContent = t; }, 220);
         transcript.push({ name: p.name, text: speech });
+        if ($("voiceround").checked && !roundStop) await speak(speech, p);
       }
     }
     if (!roundStop && transcript.length) {
@@ -545,6 +609,111 @@ async function runRoundtable() {
   $("startround").disabled = false; $("stopround").disabled = true;
 }
 $("startround").addEventListener("click", runRoundtable);
+
+// ===== 音声入力（端末の中で認識します。声は外に送信されません） =====
+async function recordOnce() {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  const actx = new AudioContext();
+  const srcNode = actx.createMediaStreamSource(stream);
+  const analyser = actx.createAnalyser();
+  analyser.fftSize = 512;
+  srcNode.connect(analyser);
+  const rec = new MediaRecorder(stream);
+  const chunks = [];
+  rec.ondataavailable = e => chunks.push(e.data);
+  const stopped = new Promise(r => { rec.onstop = r; });
+  rec.start();
+  const data = new Uint8Array(analyser.frequencyBinCount);
+  let lastLoud = performance.now();
+  const start = performance.now();
+  await new Promise(res => {
+    const iv = setInterval(() => {
+      analyser.getByteTimeDomainData(data);
+      let peak = 0;
+      for (const v of data) peak = Math.max(peak, Math.abs(v - 128));
+      const now = performance.now();
+      if (peak > 12) lastLoud = now;
+      if ((now - lastLoud > 1400 && now - start > 1200) || now - start > 20000) { clearInterval(iv); res(); }
+    }, 120);
+  });
+  rec.stop();
+  await stopped;
+  stream.getTracks().forEach(t => t.stop());
+  const blob = new Blob(chunks, { type: rec.mimeType });
+  const arr = await blob.arrayBuffer();
+  const dctx = new AudioContext({ sampleRate: 16000 });
+  const decoded = await dctx.decodeAudioData(arr);
+  actx.close(); dctx.close();
+  return decoded.getChannelData(0);
+}
+async function micToInput(targetId, statusId, btn) {
+  if (!window.__friendASR) { $(statusId).textContent = "音声入力の準備ができていません。ページを開き直してください。"; return; }
+  btn.disabled = true;
+  try {
+    $(statusId).textContent = "聞き取り中… 話し終わると自動で止まります";
+    const audio = await recordOnce();
+    $(statusId).textContent = "認識中…（最初の一回は、認識モデルをダウンロードします）";
+    const text = await window.__friendASR.transcribe(audio);
+    if (text) {
+      const el = $(targetId);
+      el.value = (el.value ? el.value + " " : "") + text;
+      $(statusId).textContent = "認識しました: " + text;
+    } else {
+      $(statusId).textContent = "うまく聞き取れませんでした。もう一度お試しください。";
+    }
+  } catch (e) {
+    $(statusId).textContent = "音声入力に失敗しました: " + e.message;
+  }
+  btn.disabled = false;
+}
+$("micbtn").addEventListener("click", () => micToInput("qin", "micstatus", $("micbtn")));
+$("micbtn2").addEventListener("click", () => micToInput("theme", "micstatus2", $("micbtn2")));
+
+// ===== ライブ会話（声で話す → 端末内認識 → AIが答えて声で返す、の繰り返し） =====
+let liveOn = false;
+$("livestop").addEventListener("click", () => { liveOn = false; stopSpeech(); });
+async function runLive() {
+  const p = currentPersona();
+  if (!p) { $("livestatus").textContent = "先にAIの友だちを登録してください。"; return; }
+  if (!(await engineReady())) { $("livestatus").textContent = "先に「AIを読み込む」を押してください。"; return; }
+  if (!window.__friendASR) { $("livestatus").textContent = "音声入力の準備ができていません。ページを開き直してください。"; return; }
+  liveOn = true;
+  $("livestart").disabled = true; $("livestop").disabled = false;
+  addMsg($("log"), "ライブ会話", p.name + " との声の会話をはじめます。", "sys");
+  if (p.greet) {
+    addMsg($("log"), p.name, p.greet, "ai");
+    await speak(p.greet, p);
+  }
+  while (liveOn) {
+    $("livestatus").textContent = "聞き取り中… どうぞ話してください（話し終わると自動で進みます）";
+    let audio;
+    try { audio = await recordOnce(); } catch (e) { break; }
+    if (!liveOn) break;
+    $("livestatus").textContent = "認識中…";
+    let text = "";
+    try { text = await window.__friendASR.transcribe(audio); } catch (e) { /* 聞き取れなければ次へ */ }
+    if (!text) { $("livestatus").textContent = "聞き取れませんでした。もう一度どうぞ。"; continue; }
+    addMsg($("log"), "あなた（声）", text, "me");
+    const bodyEl = addMsg($("log"), p.name, "考え中…", "ai");
+    try {
+      const g = await groundFor(text, 1800);
+      const hist = (histories[p.id] || []).slice(-4);
+      const messages = [{ role: "system", content: personaSystem(p) }].concat(hist);
+      messages.push({ role: "user", content: (g ? "参考記事「" + g.title + "」:\n" + g.text + "\n\n質問: " : "") + text });
+      $("livestatus").textContent = p.name + " が考え中…";
+      const ans = await window.__friendEngine.chat(messages, t => { bodyEl.textContent = t; }, 400);
+      histories[p.id] = hist.concat([{ role: "user", content: text }, { role: "assistant", content: ans }]);
+      if (g) addMsg($("log"), "根拠", "カプセルの記事「" + g.title + "」をもとに答えました。", "sys");
+      $("livestatus").textContent = p.name + " が話しています…";
+      await speak(ans, p);
+    } catch (e) {
+      bodyEl.textContent = "うまく答えられませんでした: " + e.message;
+    }
+  }
+  $("livestatus").textContent = "ライブ会話を終わりました。";
+  $("livestart").disabled = false; $("livestop").disabled = true;
+}
+$("livestart").addEventListener("click", runLive);
 
 // ===== AIエンジン読み込み =====
 $("loadai").addEventListener("click", async () => {
@@ -595,6 +764,17 @@ window.__friendEngine = {
       if (onToken) onToken(out);
     }
     return out;
+  }
+};
+let asrPipe = null;
+window.__friendASR = {
+  async transcribe(audioData) {
+    if (!asrPipe) {
+      const { pipeline } = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3/+esm");
+      asrPipe = await pipeline("automatic-speech-recognition", "onnx-community/whisper-tiny", { dtype: "q8", device: "wasm" });
+    }
+    const out = await asrPipe(audioData, { language: "japanese", task: "transcribe" });
+    return (out && out.text ? out.text : "").trim();
   }
 };
 </script>
