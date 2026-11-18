@@ -71,7 +71,7 @@
   </div>
   <div class="card" id="mapcard">
     <label>画像の対応表（jawiki_image_map.jsonl）</label>
-    <p style="margin:0;font-size:13px">対応表を読み込むと、記事の画像を外部（Wikimedia）から接続して表示します。端末に保存した対応表ファイルを選ぶか、下のボタンでこのページと同じ場所から取得してください。</p>
+    <p style="margin:0;font-size:13px">対応表を読み込むと、記事の画像を外部（Wikimedia）から接続して表示します。対応表が内蔵されたカプセル（jawiki_full.zdot）では、カプセルを開くと自動で読み込まれます。端末に保存した対応表ファイルを選ぶか、下のボタンで取得することもできます。</p>
     <input type="file" id="mapfile">
     <button id="mapfetch">対応表を取得する</button>
     <div id="mapstatus">対応表は未読み込み（画像は表示されません）</div>
@@ -168,7 +168,24 @@ class ZDotCapsule {
       const last = utf8(raw.subarray(p, p + ll)); p += ll;
       this.blocks.push({ off, len, raw: rl, cert, n, first, last });
     }
-    this.merkle = hex(raw.subarray(p, p + 32));
+    this.merkle = hex(raw.subarray(p, p + 32)); p += 32;
+    // 拡張参照: Merkleの後ろに48バイト単位（位置・長さ・証明）で並ぶ。
+    // 層3=条件ドット、層4=対応表ドット。古い形式では存在しない。
+    this.extras = [];
+    while (raw.length - p >= 48) {
+      const eoff = be64(raw, p);
+      const elen = be64(raw, p + 8);
+      const ecert = hex(raw.subarray(p + 16, p + 48));
+      this.extras.push({ off: eoff, len: elen, cert: ecert });
+      p += 48;
+    }
+    this.mapDot = null;
+    for (const e of this.extras) {
+      try {
+        const hdr = await this.read(e.off, 56);
+        if (utf8(hdr.subarray(0, 4)) === "ZDOT" && hdr[4] === 4) { this.mapDot = e; break; }
+      } catch (err) { /* 読めない参照は飛ばす */ }
+    }
     return this;
   }
   async loadTitles() {
@@ -321,6 +338,18 @@ async function openWithSource(src, label) {
     $("hits").innerHTML = "";
     $("sstat").textContent = "";
     $("q").value = "";
+    if (capsule.mapDot) {
+      try {
+        const md = await capsule.readDot(capsule.mapDot.off);
+        if (md.cert === capsule.mapDot.cert && (await sha256hex(md.raw)) === capsule.mapDot.cert) {
+          await setImageMap(utf8(md.raw), "内蔵");
+        } else {
+          $("mapstatus").textContent = "内蔵の対応表の証明が一致しませんでした";
+        }
+      } catch (e) {
+        $("mapstatus").textContent = "内蔵の対応表の読み込みに失敗しました: " + e.message;
+      }
+    }
   } catch (e) {
     capsule = null;
     $("status").textContent = "読み込みに失敗しました: " + e.message;
