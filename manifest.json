@@ -5,6 +5,20 @@
       "dbname": "jawiki",
       "articles": 1515389,
       "url": "https://zenodo.org/api/records/24292888/files/jawiki.zdot/content"
+    },
+    {
+      "name": "日本語版Wikipedia（対応表内蔵・第3版）",
+      "dbname": "jawiki",
+      "articles": 1515389,
+      "file": "jawiki_full.zdot.part00〜part03",
+      "zenodo_doi": "10.5281/zenodo.24330325",
+      "parts": [
+        "https://zenodo.org/api/records/24330325/files/jawiki_full.zdot.part00/content",
+        "https://zenodo.org/api/records/24330325/files/jawiki_full.zdot.part01/content",
+        "https://zenodo.org/api/records/24330325/files/jawiki_full.zdot.part02/content",
+        "https://zenodo.org/api/records/24330325/files/jawiki_full.zdot.part03/content"
+      ],
+      "note": "第3版の jawiki_full.zdot は部品4つに分かれています。4つともダウンロードしてから、このページのファイル選択で4つ全部をまとめて選ぶと、繋いで開けます。"
     }
   ]
 }
