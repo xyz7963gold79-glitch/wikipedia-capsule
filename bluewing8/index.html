@@ -842,6 +842,21 @@ async function loadRealNews(){
     const j=await r.json();
     const items=[];
     const strip=h=>(h||'').replace(/<[^>]+>/g,'');
+    try{
+      const wr=await fetch('https://ja.wikipedia.org/w/api.php?action=parse&page=Template:%E6%9C%80%E8%BF%91%E3%81%AE%E5%87%BA%E6%9D%A5%E4%BA%8B&prop=wikitext&format=json&origin=*');
+      if(wr.ok){
+        const wj=await wr.json();
+        const wt=(wj.parse&&wj.parse.wikitext&&wj.parse.wikitext['*'])||'';
+        const seg=wt.split('<onlyinclude>')[1]||'';
+        seg.split('\n').filter(l=>l.trim().startsWith('* ')).slice(0,5).forEach((l,i)=>{
+          const raw=l.trim().replace(/^\*\s*/,'');
+          const m=raw.match(/\[\[([^\]|]+)/);
+          let text=raw.replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g,'$2').replace(/\[\[([^\]]+)\]\]/g,'$1').replace(/'{2,3}/g,'').replace(/<[^>]+>/g,'').trim();
+          const link=m?m[1]:'';
+          items.push({id:900+i,cat:'時事ニュース',date:'最近の出来事',title:text,intro:text,body:'<p>'+text+'</p>'+(link?'<p><a href="https://ja.wikipedia.org/wiki/'+encodeURIComponent(link)+'" target="_blank" rel="noopener">関連記事を読む</a></p>':'')});
+        });
+      }
+    }catch(e){}
     if(j.news){ j.news.forEach((n,i)=>{
       const text=strip(n.story);
       const link=(n.links&&n.links[0])?n.links[0].title:'';
