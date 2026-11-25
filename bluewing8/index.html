@@ -830,6 +830,33 @@ document.getElementById('btn-ja').addEventListener('click',()=>setLang('ja'));
 document.getElementById('btn-en').addEventListener('click',()=>setLang('en'));
 Object.entries(tabs).forEach(([k,v])=>v.addEventListener('click',()=>show(k)));
 document.getElementById('art-back').addEventListener('click',()=>show('list'));
+/* 本物のニュース（ウィキメディア自動配信） */
+async function loadRealNews(){
+  try{
+    const d=new Date();
+    const url='https://api.wikimedia.org/feed/v1/wikipedia/ja/featured/'+d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0');
+    const r=await fetch(url);
+    if(!r.ok) return;
+    const j=await r.json();
+    const items=[];
+    const strip=h=>(h||'').replace(/<[^>]+>/g,'');
+    if(j.news){ j.news.forEach((n,i)=>{
+      const text=strip(n.story);
+      const link=(n.links&&n.links[0])?n.links[0].title:'';
+      const u=link?('https://ja.wikipedia.org/wiki/'+encodeURIComponent(link)):'';
+      items.push({id:1000+i,cat:'ニュース',date:'今日',title:link||'今日のニュース',intro:text.slice(0,120),body:'<p>'+text+'</p>'+(u?'<p><a href="'+u+'" target="_blank" rel="noopener">ウィキペディアで続きを読む</a></p>':'')});
+    }); }
+    if(j.tfa){ const t=j.tfa; items.push({id:1100,cat:'特集記事',date:'今日',title:strip(t.titles.display),intro:(t.extract||'').slice(0,120),body:'<p>'+(t.extract||'')+'</p><p><a href="https://ja.wikipedia.org/wiki/'+encodeURIComponent(t.titles.canonical)+'" target="_blank" rel="noopener">ウィキペディアで続きを読む</a></p>'}); }
+    if(j.mostread&&j.mostread.articles){ j.mostread.articles.slice(0,5).forEach((a,i)=>{ items.push({id:1200+i,cat:'よく読まれている記事',date:'今日',title:strip(a.titles.display),intro:(a.extract||'').slice(0,120),body:'<p>'+(a.extract||'')+'</p><p><a href="https://ja.wikipedia.org/wiki/'+encodeURIComponent(a.titles.canonical)+'" target="_blank" rel="noopener">ウィキペディアで続きを読む</a></p>'}); }); }
+    if(items.length){
+      articles.splice(0,articles.length,...items);
+      const tag=document.querySelector('#view-news .section-head .tag');
+      if(tag){ tag.textContent='ウィキメディアから自動配信'; tag.setAttribute('data-ja','ウィキメディアから自動配信'); tag.setAttribute('data-en','Live from Wikimedia'); }
+      renderList();
+    }
+  }catch(e){}
+}
+loadRealNews();
 renderList(); renderTimeline(); renderProfilePosts(); doSearch();
 </script>
 </body>
