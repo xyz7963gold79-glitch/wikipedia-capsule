@@ -27,6 +27,8 @@
   @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
   .article-card{display:flex;flex-direction:column;gap:8px}
   .card-img{width:100%;height:auto;border-radius:16px;display:block}
+  .yt-wrap{position:relative;padding-top:56.25%}
+  .yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:16px}
   .meta{font-size:.78rem;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .dot{width:6px;height:6px;border-radius:50%;background:var(--blue)}
   .tag{display:inline-block;font-size:.72rem;background:#e8efff;color:var(--blue);padding:3px 10px;border-radius:999px;font-weight:700}
@@ -416,6 +418,17 @@ const articles=[
  {id:3,cat:"歌",date:"2026年11月26日",title:"ホシカの歌がつなぐもの",intro:"届け人ホシカの口ずさむ、らららの歌。乾いた星で水の音に聞こえた理由をやさしく解説。",body:""},
  {id:4,cat:"鉄道",date:"2026年11月26日",title:"星海鉄道の光るカプセル",intro:"海から空へ、空から雲へ、雲から雨へ。光の雫で水のめぐり方を見せる新しいカプセルの話。",body:""}
 ];
+const ytItems=[
+ {id:5001,yt:'NsECaMXrM4w',cat:'動画',date:'YouTube',title:'星海鉄道カプセル便 第8話「手紙の届かない星の少女」',intro:'女子会の最新作です。YouTubeの動画を、このまま見られます。'},
+ {id:5002,yt:'eDWQh7VZGnc',cat:'動画',date:'YouTube',title:'星海鉄道カプセル便 第7話「古い駅のロボット駅長」',intro:'車掌エリカの初登場の回です。'},
+ {id:5003,yt:'_QMnMGwPP6k',cat:'動画',date:'YouTube',title:'星海鉄道カプセル便 第6話「砂の星の姉弟」',intro:'砂の星の姉と弟の物語です。'},
+ {id:5004,yt:'Z19jaKQGFaE',cat:'動画',date:'YouTube',title:'光の巨人ルクス 第1話「泣いている怪獣」',intro:'CG特撮の第1話です。'},
+ {id:5005,yt:'eZus2kFaWwk',cat:'動画',date:'YouTube',title:'星海鉄道カプセル便 第1話（フルアニメ版）',intro:'物語のはじまりの回です。'},
+ {id:5101,yt:'uTqUiqszKAg',cat:'配信音楽',date:'YouTube',title:'銀河鉄道999 ／ ゴダイゴ',intro:'日本コロムビアの公式動画です。YouTubeの仕組みで、そのまま聞けます。'},
+ {id:5102,yt:'7taxv3NsKb4',cat:'配信音楽',date:'YouTube',title:'宇宙戦艦ヤマト ／ ささきいさお',intro:'公式の音源動画です。'},
+ {id:5103,yt:'BsrbzZHkSkM',cat:'配信音楽',date:'YouTube',title:'あんなに一緒だったのに ／ See-Saw',intro:'ガンダムSEEDのエンディング曲。公式の音源動画です。'}
+];
+function allArticles(){return articles.concat(ytItems);}
 let posts=[
  {id:101,name:"サラ",body:"井戸のそばに葉っぱの器を置いてみた。明日、雨が帰ってくるかも。",date:"2026/11/26 08:20",likes:5,liked:false},
  {id:102,name:"ナギ",body:"ぽつん、と一滴。ほっぺに落ちたのが初めての雨だった。",date:"2026/11/25 18:05",likes:12,liked:false},
@@ -436,19 +449,19 @@ function show(name){
 }
 function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function cardHTML(a){
-  return `<article class="card article-card">${a.thumb?`<img class="card-img" src="${a.thumb}" alt="" loading="lazy">`:``}<div class="meta"><span class="dot"></span><span class="tag">${a.cat}</span><span>${a.date}</span></div><h3 class="title"><a href="#" onclick="openArticle(${a.id});return false;">${a.title}</a></h3><p class="desc">${a.intro}</p>${a.audio?`<audio controls preload="none" src="${a.audio}" style="width:100%"></audio>`:``}<div class="actions"><button class="btn btn-fb" onclick="shareArticle(${a.id})">${lang==='ja'?'Facebookで共有':'Share on Facebook'}</button></div></article>`;
+  return `<article class="card article-card">${a.thumb?`<img class="card-img" src="${a.thumb}" alt="" loading="lazy">`:``}<div class="meta"><span class="dot"></span><span class="tag">${a.cat}</span><span>${a.date}</span></div><h3 class="title"><a href="#" onclick="openArticle(${a.id});return false;">${a.title}</a></h3><p class="desc">${a.intro}</p>${a.yt?`<div class="yt-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${a.yt}" title="YouTube" loading="lazy" allowfullscreen></iframe></div>`:``}${a.audio?`<audio controls preload="none" src="${a.audio}" style="width:100%"></audio>`:``}<div class="actions"><button class="btn btn-fb" onclick="shareArticle(${a.id})">${lang==='ja'?'Facebookで共有':'Share on Facebook'}</button></div></article>`;
 }
-function renderList(){document.getElementById('list-grid').innerHTML=articles.map(cardHTML).join('');}
+function renderList(){document.getElementById('list-grid').innerHTML=allArticles().map(cardHTML).join('');}
 function openArticle(id){
-  const a=articles.find(x=>x.id===id); if(!a) return;
+  const a=allArticles().find(x=>x.id===id); if(!a) return;
   document.getElementById('art-meta').textContent=a.date+' • '+a.cat;
   document.getElementById('art-title').textContent=a.title;
-  document.getElementById('art-body').innerHTML=a.body?a.body:`<p>${a.intro}</p>`;
+  document.getElementById('art-body').innerHTML=a.body?a.body:(a.yt?`<div class="yt-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${a.yt}" title="YouTube" allowfullscreen></iframe></div><p>${a.intro}</p>`:`<p>${a.intro}</p>`);
   document.getElementById('art-share').onclick=()=>shareArticle(id);
   show('article');
 }
 function shareArticle(id){
-  const a=articles.find(x=>x.id===id); if(!a) return;
+  const a=allArticles().find(x=>x.id===id); if(!a) return;
   const url=location.href.split('#')[0]+'#'+encodeURIComponent(a.title);
   window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url)+'&quote='+encodeURIComponent(a.title+' - ブルーウィング8'),'_blank','width=600,height=520');
 }
