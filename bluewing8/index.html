@@ -121,7 +121,9 @@
   .video-frame .voverlay.show{display:grid}
   @media(max-width:640px){
     .head-in{flex-wrap:wrap}
-    h1{font-size:1.3rem}
+    .brand{flex:1 1 100%}
+    .head-in>div:last-child{flex:1 1 100%}
+    h1{font-size:1.3rem;white-space:nowrap}
     .logo{width:50px;height:50px;flex-basis:50px}
     .head-in>div:last-child{flex-wrap:wrap;row-gap:6px}
     #authBtn,#ntfBtn{white-space:nowrap}
@@ -425,7 +427,7 @@ const profilePosts=[
 let lang='ja';
 let isFollowing=false;
 const views={};['list','timeline','search','profile','article','comments','notifications','pages','corners','login','messages','settings','people','photos','events','videos'].forEach(n=>views[n]=document.getElementById('view-'+n));
-const tabs={};['list','timeline','search','profile','pages','corners','messages','settings','people','photos','events','videos'].forEach(n=>tabs[n]=document.getElementById('tab-'+n));
+const tabs={};['list','timeline','search','profile','pages','corners','messages','people','photos','events','videos'].forEach(n=>tabs[n]=document.getElementById('tab-'+n));
 function show(name){
   Object.entries(views).forEach(([k,v])=>v.classList.toggle('show',k===name));
   Object.entries(tabs).forEach(([k,v])=>v.classList.toggle('active',k===name));
@@ -850,7 +852,7 @@ async function loadRealNews(){
     if(j.mostread&&j.mostread.articles){ j.mostread.articles.slice(0,5).forEach((a,i)=>{ items.push({id:1200+i,cat:'よく読まれている記事',date:'今日',title:strip(a.titles.display),intro:(a.extract||'').slice(0,120),body:'<p>'+(a.extract||'')+'</p><p><a href="https://ja.wikipedia.org/wiki/'+encodeURIComponent(a.titles.canonical)+'" target="_blank" rel="noopener">ウィキペディアで続きを読む</a></p>'}); }); }
     if(items.length){
       articles.splice(0,articles.length,...items);
-      const tag=document.querySelector('#view-news .section-head .tag');
+      const tag=document.querySelector('#view-list .section-head .tag');
       if(tag){ tag.textContent='ウィキメディアから自動配信'; tag.setAttribute('data-ja','ウィキメディアから自動配信'); tag.setAttribute('data-en','Live from Wikimedia'); }
       renderList();
     }
