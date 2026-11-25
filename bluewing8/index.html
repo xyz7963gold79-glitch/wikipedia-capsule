@@ -119,6 +119,15 @@
   .video-frame .vlen{position:absolute;right:10px;bottom:8px;background:rgba(0,0,0,.65);color:#fff;padding:3px 10px;border-radius:999px;font-size:.82rem}
   .video-frame .voverlay{position:absolute;inset:0;background:rgba(16,47,191,.72);display:none;place-items:center;color:#fff;font-weight:800;font-size:1.1rem}
   .video-frame .voverlay.show{display:grid}
+  @media(max-width:640px){
+    .head-in{flex-wrap:wrap}
+    h1{font-size:1.3rem}
+    .logo{width:50px;height:50px;flex-basis:50px}
+    .head-in>div:last-child{flex-wrap:wrap;row-gap:6px}
+    #authBtn,#ntfBtn{white-space:nowrap}
+    nav{overflow-x:auto;justify-content:flex-start}
+    nav button{flex:0 0 auto;padding:10px 14px}
+  }
 </style>
 </head>
 <body>
