@@ -165,7 +165,14 @@
 <main>
   <!-- ニュース一覧 -->
   <section id="view-list" class="view show">
-    <div class="section-head"><h2 data-ja="新着ニュース" data-en="Latest News">新着ニュース</h2><span class="tag" data-ja="見本データ" data-en="Sample data">見本データ</span></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:2px 0 10px">
+<span style="font-size:.85rem;color:var(--muted)">🌐 あなたの言語 / Your language</span>
+<select id="newsLang" style="padding:8px 10px;border-radius:10px;border:1px solid #c9d8ff;font-family:inherit;font-size:.9rem">
+<option value="ja">日本語</option><option value="en">English</option><option value="es">Español</option><option value="pt">Português</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="zh">中文</option><option value="ko">한국어</option><option value="ru">Русский</option>
+</select>
+<span style="font-size:.78rem;color:var(--muted)">Wikipediaに、その言語の本物があれば、それを出します。無いものは Google翻訳で読めます。</span>
+</div>
+<div class="section-head"><h2 data-ja="新着ニュース" data-en="Latest News">新着ニュース</h2><span class="tag" data-ja="見本データ" data-en="Sample data">見本データ</span></div>
     <div id="list-grid" class="grid"></div>
   </section>
 
@@ -854,16 +861,19 @@ document.getElementById('btn-en').addEventListener('click',()=>setLang('en'));
 Object.entries(tabs).forEach(([k,v])=>v.addEventListener('click',()=>show(k)));
 document.getElementById('art-back').addEventListener('click',()=>show('list'));
 /* 本物のニュース（ウィキメディア自動配信） */
+let newsLang='ja';
+function gtUrl(u,tl){ try{ const url=new URL(u); const host=url.hostname.replace(/\./g,'-')+'.translate.goog'; return 'https://'+host+url.pathname+'?_x_tr_sl=auto&_x_tr_tl='+tl+'&_x_tr_hl='+tl; }catch(e){ return 'https://translate.google.com/translate?sl=auto&tl='+tl+'&u='+encodeURIComponent(u); } }
 async function loadRealNews(){
+  const myLang=newsLang;
   try{
     const d=new Date();
-    const url='https://api.wikimedia.org/feed/v1/wikipedia/ja/featured/'+d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0');
+    const url='https://api.wikimedia.org/feed/v1/wikipedia/'+newsLang+'/featured/'+d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0');
     const r=await fetch(url);
-    if(!r.ok) return;
-    const j=await r.json();
+    const j=r.ok?await r.json():null;
     const items=[];
     const strip=h=>(h||'').replace(/<[^>]+>/g,'');
     try{
+      if(newsLang!=='ja') throw new Error('skip');
       const wr=await fetch('https://ja.wikipedia.org/w/api.php?action=parse&page=Template:%E6%9C%80%E8%BF%91%E3%81%AE%E5%87%BA%E6%9D%A5%E4%BA%8B&prop=wikitext&format=json&origin=*');
       if(wr.ok){
         const wj=await wr.json();
@@ -878,15 +888,15 @@ async function loadRealNews(){
         });
       }
     }catch(e){}
-    if(j.news){ j.news.forEach((n,i)=>{
+    if(j&&j.news){ j.news.forEach((n,i)=>{
       const text=strip(n.story);
       const link=(n.links&&n.links[0])?n.links[0].title:'';
-      const u=link?('https://ja.wikipedia.org/wiki/'+encodeURIComponent(link)):'';
+      const u=link?('https://'+newsLang+'.wikipedia.org/wiki/'+encodeURIComponent(link)):'';
       items.push({id:1000+i,cat:'ニュース',date:'今日',title:link||'今日のニュース',intro:text.slice(0,120),body:'<p>'+text+'</p>'+(u?'<p><a href="'+u+'" target="_blank" rel="noopener">ウィキペディアで続きを読む</a></p>':'')});
     }); }
-    if(j.tfa){ const t=j.tfa; items.push({id:1100,cat:'特集記事',date:'今日',title:strip(t.titles.display),intro:(t.extract||'').slice(0,120),thumb:(t.thumbnail&&t.thumbnail.source)||'',body:'<p>'+(t.extract||'')+'</p><p><a href="https://ja.wikipedia.org/wiki/'+encodeURIComponent(t.titles.canonical)+'" target="_blank" rel="noopener">ウィキペディアで続きを読む</a></p>'}); }
+    if(j&&j.tfa){ const t=j.tfa; items.push({id:1100,cat:'特集記事',date:'今日',title:strip(t.titles.display),intro:(t.extract||'').slice(0,120),thumb:(t.thumbnail&&t.thumbnail.source)||'',body:'<p>'+(t.extract||'')+'</p><p><a href="https://'+newsLang+'.wikipedia.org/wiki/'+encodeURIComponent(t.titles.canonical)+'" target="_blank" rel="noopener">ウィキペディアで続きを読む</a></p>'}); }
     if(j.image&&j.image.thumbnail){ const im=j.image; const ttl=(im.title||'今日の写真').replace(/^File:/,'').replace(/\.[A-Za-z]+$/,''); const big=(im.image&&im.image.source)||im.thumbnail.source; items.push({id:1150,cat:'今日の写真',date:'今日',title:ttl,intro:'ウィキメディア・コモンズの「今日の写真」です。',thumb:im.thumbnail.source,body:'<p><img class="card-img" src="'+big+'" alt=""></p><p>ウィキメディア・コモンズの「今日の写真」です。</p>'+(im.file_page?'<p><a href="'+im.file_page+'" target="_blank" rel="noopener">写真のページを見る</a></p>':'')}); }
-    if(j.mostread&&j.mostread.articles){ j.mostread.articles.slice(0,5).forEach((a,i)=>{ items.push({id:1200+i,cat:'よく読まれている記事',date:'今日',title:strip(a.titles.display),intro:(a.extract||'').slice(0,120),body:'<p>'+(a.extract||'')+'</p><p><a href="https://ja.wikipedia.org/wiki/'+encodeURIComponent(a.titles.canonical)+'" target="_blank" rel="noopener">ウィキペディアで続きを読む</a></p>'}); }); }
+    if(j.mostread&&j.mostread.articles){ j.mostread.articles.slice(0,5).forEach((a,i)=>{ items.push({id:1200+i,cat:'よく読まれている記事',date:'今日',title:strip(a.titles.display),intro:(a.extract||'').slice(0,120),body:'<p>'+(a.extract||'')+'</p><p><a href="https://'+newsLang+'.wikipedia.org/wiki/'+encodeURIComponent(a.titles.canonical)+'" target="_blank" rel="noopener">ウィキペディアで続きを読む</a></p>'}); }); }
     const wnCats=[['芸能・文化','Culture and entertainment'],['スポーツ','Sports'],['科学・技術','Science and technology'],['経済','Economy and business'],['世界・政治','Politics and conflicts']];
     for(let ci=0; ci<wnCats.length; ci++){
       try{
@@ -899,8 +909,25 @@ async function loadRealNews(){
           if(added>=4) break;
           if(/^(Category|Wikinews|Template|Help|File|MediaWiki):/.test(pg.title||'')) continue;
           const ex=(pg.extract||'').trim();
-          items.push({id:2000+ci*100+added,cat:wnCats[ci][0],date:'ウィキニュース（英語）',thumb:(pg.thumbnail&&pg.thumbnail.source)||'',title:pg.title,intro:ex.slice(0,120),body:'<p>'+ex+'</p><p><a href="'+(pg.fullurl||'')+'" target="_blank" rel="noopener">Wikinewsで続きを読む</a></p>'});
+          items.push({id:2000+ci*100+added,cat:wnCats[ci][0],date:'ウィキニュース（英語）',thumb:(pg.thumbnail&&pg.thumbnail.source)||'',title:pg.title,intro:ex.slice(0,120),body:'<p>'+ex+'</p><p><a href="'+(pg.fullurl||'')+'" target="_blank" rel="noopener">Wikinewsで続きを読む</a></p>'+(newsLang!=='en'?'<p><a href="'+gtUrl(pg.fullurl||'',newsLang)+'" target="_blank" rel="noopener">Google翻訳で読む</a></p>':'')});
           added++;
+        }
+      }catch(e){}
+    }
+    if(newsLang!=='ja'&&newsLang!=='en'){
+      try{
+        const lr=await fetch('https://'+newsLang+'.wikinews.org/w/api.php?action=query&format=json&origin=*&generator=recentchanges&grcnamespace=0&grclimit=24&grctype=new&prop=extracts%7Cinfo%7Cpageimages&piprop=thumbnail&pithumbsize=640&exintro=1&explaintext=1&exsentences=2&inprop=url');
+        if(lr.ok){
+          const lj=await lr.json();
+          const pages=Object.values((lj.query&&lj.query.pages)||{});
+          let added=0;
+          for(const pg of pages){
+            if(added>=5) break;
+            if(!pg.title||pg.title.includes(':')) continue;
+            const ex=(pg.extract||'').trim();
+            items.push({id:2500+added,cat:'ウィキニュース',date:'Wikinews',thumb:(pg.thumbnail&&pg.thumbnail.source)||'',title:pg.title,intro:ex.slice(0,120),body:'<p>'+ex+'</p><p><a href=\"'+(pg.fullurl||'')+'\" target=\"_blank\" rel=\"noopener\">Wikinews</a></p>'});
+            added++;
+          }
         }
       }catch(e){}
     }
@@ -921,7 +948,7 @@ async function loadRealNews(){
         }
       }
     }catch(e){}
-    if(items.length){
+    if(items.length&&myLang===newsLang){
       articles.splice(0,articles.length,...items);
       const tag=document.querySelector('#view-list .section-head .tag');
       if(tag){ tag.textContent='ウィキメディアから自動配信'; tag.setAttribute('data-ja','ウィキメディアから自動配信'); tag.setAttribute('data-en','Live from Wikimedia'); }
@@ -929,6 +956,8 @@ async function loadRealNews(){
     }
   }catch(e){}
 }
+const $newsLang=document.getElementById('newsLang');
+if($newsLang){ $newsLang.addEventListener('change',()=>{ newsLang=$newsLang.value; currentCat='すべて'; loadRealNews(); }); }
 loadRealNews();
 renderList(); renderTimeline(); renderProfilePosts(); doSearch();
 </script>
