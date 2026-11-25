@@ -443,7 +443,12 @@ const ytItems=[
  {id:5102,yt:'7taxv3NsKb4',cat:'配信音楽',date:'YouTube',title:'宇宙戦艦ヤマト ／ ささきいさお',intro:'公式の音源動画です。'},
  {id:5103,yt:'BsrbzZHkSkM',cat:'配信音楽',date:'YouTube',title:'あんなに一緒だったのに ／ See-Saw',intro:'ガンダムSEEDのエンディング曲。公式の音源動画です。'}
 ];
-function allArticles(){return articles.concat(ytItems);}
+const specialItems=[
+ {id:6001,cat:'学会の記事紹介',date:'リンク',title:'聖教新聞 電子版',intro:'聖教新聞の公式サイトです。日々の記事や、イブニングニュースが読めます。',body:'<p>聖教新聞の公式サイトへのリンクです。</p><p><a href="https://www.seikyoonline.com/" target="_blank" rel="noopener">聖教新聞 電子版を開く</a></p>'},
+ {id:6002,cat:'学会の記事紹介',date:'リンク',title:'創価学会 公式サイト',intro:'創価学会の公式サイトです。活動や行事の案内があります。',body:'<p>創価学会の公式サイトへのリンクです。</p><p><a href="https://www.sokagakkai.jp/" target="_blank" rel="noopener">創価学会 公式サイトを開く</a></p>'},
+ {id:6003,cat:'学会の記事紹介',date:'リンク',title:'SGI（創価学会インタナショナル）',intro:'世界の創価学会の公式サイトです。英語など、多くの言語で読めます。',body:'<p>SGIの公式サイトへのリンクです。</p><p><a href="https://www.sokaglobal.org/" target="_blank" rel="noopener">SGI 公式サイトを開く</a></p>'}
+];
+function allArticles(){return articles.concat(ytItems,specialItems);}
 let posts=[
  {id:101,name:"サラ",body:"井戸のそばに葉っぱの器を置いてみた。明日、雨が帰ってくるかも。",date:"2026/11/26 08:20",likes:5,liked:false},
  {id:102,name:"ナギ",body:"ぽつん、と一滴。ほっぺに落ちたのが初めての雨だった。",date:"2026/11/25 18:05",likes:12,liked:false},
