@@ -484,7 +484,7 @@ function shareArticle(id){
 const $name=document.getElementById('nameInput'),$body=document.getElementById('bodyInput');
 function postHTML(p){
   const initial=esc(p.name.trim().charAt(0)||'？').toUpperCase();
-  return `<article class="card post"><div class="who"><div class="avatar">${initial}</div><div><div class="pname">${esc(p.name)}</div><div class="pdate">${esc(p.date)}</div></div></div><div class="pbody">${esc(p.body)}</div><div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button></div></article>`;
+  return `<article class="card post"><div class="who"><div class="avatar">${initial}</div><div><div class="pname">${esc(p.name)}</div><div class="pdate">${esc(p.date)}</div></div></div><div class="pbody">${esc(p.body)}</div><div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'通報':'Report'}</button></div></article>`;
 }
 function renderTimeline(){
   document.getElementById('timeline').innerHTML=posts.map(postHTML).join('');
@@ -494,8 +494,32 @@ function toggleLike(id){
   const p=posts.find(x=>x.id===id)||profilePosts.find(x=>x.id===id); if(!p) return;
   p.liked=!p.liked; p.likes+=p.liked?1:-1; renderTimeline(); renderProfilePosts();
 }
+/* 保護機能（Wick型）：言葉の見守り・連投の防止・通報と非表示 */
+const NG_WORDS=['死ね','殺す','ばかやろう','アホ','ボケ','カス','うざい','きもい','無料で稼','副業で月','出会い系'];
+let lastPostAt=0;
+function guardText(text){
+  const t=(text||'').toLowerCase();
+  if(NG_WORDS.some(w=>t.includes(w.toLowerCase()))) return '言葉の保護';
+  if(((text||'').match(/https?:\/\//g)||[]).length>=2) return 'リンクの保護';
+  if(/(.)\1{9,}/.test(text||'')) return '繰り返しの保護';
+  return '';
+}
+function guardPost(text){
+  const reason=guardText(text);
+  if(reason){ alert('保護機能が働きました（'+reason+'）。この内容は投稿できません。'); return false; }
+  const now=Date.now();
+  if(now-lastPostAt<10000){ alert('保護機能が働きました（連投の防止）。少し待ってから投稿してください。'); return false; }
+  lastPostAt=now; return true;
+}
+function reportPost(id){
+  const rm=arr=>{ const i=arr.findIndex(x=>x.id===id); if(i>=0) arr.splice(i,1); };
+  rm(posts); rm(profilePosts);
+  renderTimeline(); renderProfilePosts();
+  alert('通報を受け付けました。保護機能により、この投稿を非表示にしました。運営者が確認します。');
+}
 function addPost(){
   const bodyVal=$body.value.trim(); if(!bodyVal){$body.focus();return;}
+  if(!guardPost(bodyVal)) return;
   const nameVal=$name.value.trim()||(lang==='ja'?'あなた':'You');
   posts.unshift({id:Date.now(),name:nameVal,body:bodyVal,date:lang==='ja'?'たった今':'Just now',likes:0,liked:false});
   $body.value=''; renderTimeline();
@@ -503,7 +527,7 @@ function addPost(){
 document.getElementById('postBtn').addEventListener('click',addPost);
 /* プロフィール */
 function renderProfilePosts(){
-  document.getElementById('profile-posts').innerHTML=profilePosts.map(p=>`<article class="card post"><div class="pdate">${p.date}</div><div class="pbody">${p.body}</div><div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button></div></article>`).join('');
+  document.getElementById('profile-posts').innerHTML=profilePosts.map(p=>`<article class="card post"><div class="pdate">${p.date}</div><div class="pbody">${p.body}</div><div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'通報':'Report'}</button></div></article>`).join('');
 }
 const $followBtn=document.getElementById('followBtn');
 $followBtn.addEventListener('click',()=>{
@@ -567,6 +591,7 @@ function likeComment(cid){
 }
 document.getElementById('cm-addBtn').addEventListener('click',()=>{
   const bodyVal=document.getElementById('cm-bodyInput').value.trim(); if(!bodyVal){document.getElementById('cm-bodyInput').focus();return;}
+  const gr=guardText(bodyVal); if(gr){ alert('保護機能が働きました（'+gr+'）。この内容は投稿できません。'); return; }
   const nameVal=document.getElementById('cm-nameInput').value.trim()||(lang==='ja'?'あなた':'You');
   const now=new Date();
   const ds=now.getFullYear()+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
