@@ -1,0 +1,13 @@
+{
+  "name": "ブルーウィング8",
+  "short_name": "ブルーウィング8",
+  "description": "Wikipedia-based SNS for Dialogue & Peace",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f6ff",
+  "theme_color": "#102fbf",
+  "icons": [
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
+  ]
+}
