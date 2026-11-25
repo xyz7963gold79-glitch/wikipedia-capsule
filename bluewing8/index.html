@@ -436,7 +436,7 @@ function show(name){
 }
 function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function cardHTML(a){
-  return `<article class="card article-card">${a.thumb?`<img class="card-img" src="${a.thumb}" alt="" loading="lazy">`:``}<div class="meta"><span class="dot"></span><span class="tag">${a.cat}</span><span>${a.date}</span></div><h3 class="title"><a href="#" onclick="openArticle(${a.id});return false;">${a.title}</a></h3><p class="desc">${a.intro}</p><div class="actions"><button class="btn btn-fb" onclick="shareArticle(${a.id})">${lang==='ja'?'Facebookで共有':'Share on Facebook'}</button></div></article>`;
+  return `<article class="card article-card">${a.thumb?`<img class="card-img" src="${a.thumb}" alt="" loading="lazy">`:``}<div class="meta"><span class="dot"></span><span class="tag">${a.cat}</span><span>${a.date}</span></div><h3 class="title"><a href="#" onclick="openArticle(${a.id});return false;">${a.title}</a></h3><p class="desc">${a.intro}</p>${a.audio?`<audio controls preload="none" src="${a.audio}" style="width:100%"></audio>`:``}<div class="actions"><button class="btn btn-fb" onclick="shareArticle(${a.id})">${lang==='ja'?'Facebookで共有':'Share on Facebook'}</button></div></article>`;
 }
 function renderList(){document.getElementById('list-grid').innerHTML=articles.map(cardHTML).join('');}
 function openArticle(id){
@@ -884,6 +884,23 @@ async function loadRealNews(){
         }
       }catch(e){}
     }
+    try{
+      const ar=await fetch('https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrsearch='+encodeURIComponent('filetype:audio (Beethoven OR Mozart OR Chopin OR Bach OR Debussy)')+'&gsrnamespace=6&gsrlimit=14&prop=imageinfo&iiprop=url');
+      if(ar.ok){
+        const aj=await ar.json();
+        const pages=Object.values((aj.query&&aj.query.pages)||{}).sort((a,b)=>(a.index||0)-(b.index||0));
+        let added=0;
+        for(const pg of pages){
+          if(added>=6) break;
+          const ii=(pg.imageinfo&&pg.imageinfo[0])||{};
+          const url=(ii.url||'').split('?')[0];
+          if(!/\.(ogg|oga|mp3|wav)$/i.test(url)) continue;
+          const ttl=(pg.title||'音楽').replace(/^File:/,'').replace(/\.[A-Za-z0-9]+$/,'');
+          items.push({id:3000+added,cat:'音楽',date:'ウィキメディア・コモンズ',title:ttl,intro:'コモンズの自由な音楽です。下の再生ボタンで聞けます。',audio:url,body:'<p>ウィキメディア・コモンズの自由な音楽です。</p><p><audio controls src="'+url+'" style="width:100%"></audio></p>'});
+          added++;
+        }
+      }
+    }catch(e){}
     if(items.length){
       articles.splice(0,articles.length,...items);
       const tag=document.querySelector('#view-list .section-head .tag');
