@@ -36,6 +36,10 @@
   .card-img{width:100%;height:auto;border-radius:16px;display:block}
   .yt-wrap{position:relative;padding-top:56.25%}
   .yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:16px}
+  .yt-facade{position:relative;padding-top:56.25%;border-radius:16px;overflow:hidden;cursor:pointer;background:#000;margin-bottom:10px}
+  .yt-facade img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .yt-facade .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;color:var(--blue);font-size:1.7rem}
+  .yt-facade iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
   .meta{font-size:.78rem;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .dot{width:6px;height:6px;border-radius:50%;background:var(--blue)}
   .tag{display:inline-block;font-size:.72rem;background:#e8efff;color:var(--blue);padding:3px 10px;border-radius:999px;font-weight:700}
@@ -427,6 +431,9 @@
       <h3 style="margin:0 0 4px;font-size:1.05rem" data-ja="作品CM" data-en="Work trailers">作品CM</h3>
       <p style="color:var(--muted);font-size:.9rem;margin:0 0 12px" data-ja="岡崎幸雄の作品の紹介動画です" data-en="Trailers of Yukio Okazaki's works">岡崎幸雄の作品の紹介動画です</p>
       <div id="cm-list"></div>
+      <h3 style="margin:18px 0 4px;font-size:1.05rem" data-ja="音楽コーナー" data-en="Music corner">音楽コーナー</h3>
+      <p style="color:var(--muted);font-size:.9rem;margin:0 0 12px" data-ja="歌手・作品ごとの公式配信です。絵を押すと再生します" data-en="Official songs grouped by series. Tap a picture to play.">歌手・作品ごとの公式配信です。絵を押すと再生します</p>
+      <div id="music-list"></div>
       <div id="video-list"></div>
     </article>
   </section>
@@ -448,7 +455,24 @@ const ytItems=[
  {id:5005,yt:'eZus2kFaWwk',cat:'動画',date:'YouTube',title:'星海鉄道カプセル便 第1話（フルアニメ版）',intro:'物語のはじまりの回です。'},
  {id:5101,yt:'uTqUiqszKAg',cat:'配信音楽',date:'YouTube',title:'銀河鉄道999 ／ ゴダイゴ',intro:'日本コロムビアの公式動画です。YouTubeの仕組みで、そのまま聞けます。'},
  {id:5102,yt:'7taxv3NsKb4',cat:'配信音楽',date:'YouTube',title:'宇宙戦艦ヤマト ／ ささきいさお',intro:'公式の音源動画です。'},
- {id:5103,yt:'BsrbzZHkSkM',cat:'配信音楽',date:'YouTube',title:'あんなに一緒だったのに ／ See-Saw',intro:'ガンダムSEEDのエンディング曲。公式の音源動画です。'}
+ {id:5103,yt:'BsrbzZHkSkM',cat:'配信音楽',date:'YouTube',title:'あんなに一緒だったのに ／ See-Saw',intro:'ガンダムSEEDのエンディング曲。公式の音源動画です。'},
+ {id:5201,yt:'Mpmr5UCkZvM',cat:'配信音楽',date:'YouTube',group:'ガンダム',title:'翔べ！ガンダム ／ 池田鴻',intro:'『機動戦士ガンダム』の主題歌。公式の音源動画です。'},
+ {id:5202,yt:'DB-dio9aPdA',cat:'配信音楽',date:'YouTube',group:'ガンダム',title:'哀戦士 ／ 井上大輔',intro:'劇場版『機動戦士ガンダムII 哀・戦士編』の主題歌。公式の音源動画です。'},
+ {id:5203,yt:'YAvSKaT4Tnw',cat:'配信音楽',date:'YouTube',group:'ガンダム',title:'めぐりあい ／ 井上大輔',intro:'劇場版『機動戦士ガンダムIII めぐりあい宇宙編』の主題歌。公式の音源動画です。'},
+ {id:5204,yt:'oBpcxICf-xU',cat:'配信音楽',date:'YouTube',group:'ガンダム',title:'水の星へ愛をこめて ／ 森口博子',intro:'『機動戦士Zガンダム』の曲。KING RECORDSの公式MVです。'},
+ {id:5205,yt:'1gyFVYI62TY',cat:'配信音楽',date:'YouTube',group:'ガンダム',title:'ETERNAL WIND ～ほほえみは光る風の中～ ／ 森口博子',intro:'『機動戦士ガンダムF91』の主題歌。公式の音源動画です。'},
+ {id:5206,yt:'aQqHqaeM0xQ',cat:'配信音楽',date:'YouTube',group:'ガンダム',title:'BEYOND THE TIME ／ TM NETWORK',intro:'『機動戦士ガンダム 逆襲のシャア』の主題歌。公式の音源動画です。'},
+ {id:5207,yt:'rkcaLGdwXcs',cat:'配信音楽',date:'YouTube',group:'ガンダム',title:'INVOKE ／ T.M.Revolution',intro:'『機動戦士ガンダムSEED』の主題歌。公式の音源動画です。'},
+ {id:5208,yt:'my7Rtb6ToZ4',cat:'配信音楽',date:'YouTube',group:'ガンダム',title:'ignited ／ T.M.Revolution',intro:'『機動戦士ガンダムSEED DESTINY』の主題歌。公式MVです。'},
+ {id:5209,yt:'VUOgmg0RXrE',cat:'配信音楽',date:'YouTube',group:'ガンダム',title:'DAYBREAK\'S BELL ／ L\'Arc-en-Ciel',intro:'『機動戦士ガンダム00』の主題歌。公式のMusic Clipです。'},
+ {id:5210,yt:'ptwH69_0EAo',cat:'配信音楽',date:'YouTube',group:'ガンダム',title:'Re:I Am ／ Aimer',intro:'『機動戦士ガンダムUC』の曲。公式の音源動画です。'},
+ {id:5211,yt:'3eytpBOkOFA',cat:'配信音楽',date:'YouTube',group:'ガンダム',title:'祝福 ／ YOASOBI',intro:'『機動戦士ガンダム 水星の魔女』の主題歌。公式MVです。'},
+ {id:5212,yt:'5EYYJbMJrFU',cat:'配信音楽',date:'YouTube',group:'ガンダム',title:'サイレント・ヴォイス ／ ひろえ純',intro:'『機動戦士ガンダムZZ』の主題歌。公式の音源動画です。'},
+ {id:5213,yt:'fGGTf044UPI',cat:'配信音楽',date:'YouTube',group:'マクロスF',title:'ライオン ／ シェリル・ノーム starring May\'n・ランカ・リー＝中島愛',intro:'『マクロスF』の曲。公式の音源動画です。'},
+ {id:5214,yt:'2CnvZOs8TWM',cat:'配信音楽',date:'YouTube',group:'マクロスF',title:'星間飛行 ／ ランカ・リー＝中島愛',intro:'『マクロスF』の曲。公式の音源動画です。'},
+ {id:5215,yt:'YYxRvpLPyLQ',cat:'配信音楽',date:'YouTube',group:'マクロスF',title:'ダイアモンド クレバス ／ シェリル・ノーム starring May\'n',intro:'『マクロスF』の曲。公式の音源動画です。'},
+ {id:5216,yt:'-HS1M97Iw9M',cat:'配信音楽',date:'YouTube',group:'マクロスF',title:'トライアングラー ／ 坂本真綾',intro:'『マクロスF』の主題歌。公式MVです。'},
+ {id:5217,yt:'a4DIBf1jJ2Y',cat:'配信音楽',date:'YouTube',group:'マクロスF',title:'ノーザンクロス ／ シェリル・ノーム starring May\'n',intro:'『マクロスF』の曲。公式の音源動画です。'}
 ];
 const specialItems=[
  {id:6001,cat:'学会の記事紹介',date:'リンク',title:'聖教新聞 電子版',intro:'聖教新聞の公式サイトです。日々の記事や、イブニングニュースが読めます。',body:'<p>聖教新聞の公式サイトへのリンクです。</p><p><a href="https://www.seikyoonline.com/" target="_blank" rel="noopener">聖教新聞 電子版を開く</a></p>'},
@@ -1158,6 +1182,27 @@ function renderCms(){
   el.innerHTML=bwCms.map(v=>`<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${v.yt}" title="YouTube" allowfullscreen loading="lazy"></iframe></div><div class="ptitle" style="font-size:1.05rem">${esc(lang==='ja'?v.titleJa:v.titleEn)}</div><p style="margin:4px 0 8px">${esc(lang==='ja'?v.descJa:v.descEn)}</p></div>`).join('');
 }
 renderCms();
+/* 音楽コーナー（歌手・作品別の公式配信） */
+const bwMusicGroups=[
+ {nameJa:'ガンダムの曲',nameEn:'Gundam Songs',ids:[5201,5202,5203,5204,5205,5206,5207,5208,5209,5210,5211,5212],extra:[{yt:'BsrbzZHkSkM',title:'あんなに一緒だったのに ／ See-Saw',intro:'ガンダムSEEDのエンディング曲。公式の音源動画です。'}]},
+ {nameJa:'マクロスFの曲',nameEn:'Macross Frontier Songs',ids:[5213,5214,5215,5216,5217],extra:[]},
+ {nameJa:'名作アニメの曲',nameEn:'Classic Anime Songs',ids:[],extra:[{yt:'uTqUiqszKAg',title:'銀河鉄道999 ／ ゴダイゴ',intro:'日本コロムビアの公式動画です。YouTubeの仕組みで、そのまま聞けます。'},{yt:'7taxv3NsKb4',title:'宇宙戦艦ヤマト ／ ささきいさお',intro:'公式の音源動画です。'}]}
+];
+function bwMusicCard(m){
+  return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayMusic(this,'${m.yt}')"><img src="https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">${esc(m.title)}</div><p style="margin:4px 0 8px">${esc(m.intro)}</p></div>`;
+}
+function renderMusic(){
+  const el=document.getElementById('music-list'); if(!el) return;
+  el.innerHTML=bwMusicGroups.map(g=>{
+    const items=g.ids.map(id=>ytItems.find(x=>x.id===id)).filter(Boolean).concat(g.extra||[]);
+    return `<h4 style="margin:16px 0 4px;font-size:1rem">${esc(lang==='ja'?g.nameJa:g.nameEn)}</h4>`+items.map(bwMusicCard).join('');
+  }).join('');
+}
+function bwPlayMusic(el,yt){
+  el.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=1" title="YouTube" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+  el.style.cursor='default'; el.onclick=null;
+}
+renderMusic();
 renderVideos();
 renderList(); renderTimeline(); renderProfilePosts(); doSearch(); if(typeof renderNotifications==='function') renderNotifications(); if(typeof renderBwPages==='function') renderBwPages(); if(typeof renderCorners==='function') renderCorners();
 if(typeof openBwPage==='function')window.openBwPage=openBwPage;
@@ -1177,6 +1222,7 @@ if(typeof openComments==='function')window.openComments=openComments;
 if(typeof likeComment==='function')window.likeComment=likeComment;
 if(typeof reportPost==='function')window.reportPost=reportPost;
 if(typeof toggleLike==='function')window.toggleLike=toggleLike;
+if(typeof bwPlayMusic==='function')window.bwPlayMusic=bwPlayMusic;
 if(typeof openArticle==='function')window.openArticle=openArticle;
 if(typeof shareArticle==='function')window.shareArticle=shareArticle;
 }
