@@ -875,7 +875,7 @@ const bwCorners=[
   {titleJa:"ケニア便り：井戸と植林",titleEn:"Letter from Kenya: Wells and Tree Planting",introJa:"水を守るために始めた小さな森づくり。",introEn:"Small forest project started to protect water.",date:"2026/11/23"}]},
  {id:5,nameJa:"ゲーム",nameEn:"Games",descJa:"クイズ、ぬりえ、なぞなぞ、神経衰弱で遊べます。遊びながら、知識が届きます。",descEn:"Quizzes made from Wikipedia knowledge.",articles:[]},
  {id:6,nameJa:"映画・ドラマ",nameEn:"Movies & Drama",descJa:"円谷プロ公式の特撮配信と、パブリックドメインの古典映画を集めました。タップでそのまま見られます。",descEn:"Official tokusatsu episodes and public-domain classic films. Tap to watch.",articles:[]},
- {id:7,nameJa:"機関・マスコミ",nameEn:"Institutions & Media",descJa:"創価大学をはじめ、公的機関・大学・学会・マスコミの公式発信を集めました。公式の動画と、公式サイトへの案内です。",descEn:"Official videos and site links from Soka University, public institutions, universities, societies and media.",articles:[]}
+ {id:7,nameJa:"機関・マスコミ",nameEn:"Institutions & Media",descJa:"創価大学をはじめ、公的機関・大学・学会・マスコミ・世界の機関と賞の公式発信を集めました。公式の動画と、公式サイトへの案内です。",descEn:"Official videos and site links from Soka University, public institutions, universities, societies, media, and world institutions and prizes.",articles:[]}
 ];
 let cnCurrent=null;
 function renderCorners(){
@@ -1394,6 +1394,22 @@ const officialSections=[
    {url:'https://news.ntv.co.jp/',labelJa:'日テレNEWS 公式サイト',labelEn:'NTV News Official Site'},
    {url:'https://newsdig.tbs.co.jp/',labelJa:'TBS NEWS DIG 公式サイト',labelEn:'TBS NEWS DIG Official Site'},
    {url:'https://www.asahi.com/',labelJa:'朝日新聞 公式サイト',labelEn:'Asahi Shimbun Official Site'}
+  ]},
+ {titleJa:'世界の機関と賞',titleEn:'World Institutions & Prizes',
+  noteJa:'CERN（欧州原子核研究機構）・ノーベル賞・アーベル賞の公式チャンネルの動画です。',
+  noteEn:'Videos from the official channels of CERN, the Nobel Prize and the Abel Prize.',
+  videos:[
+   {yt:'u6nfe7VMpqk',title:'CERN：360° video - Inside the tunnel, with the team who upgrades the LHC',intro:'CERN公式チャンネルの、LHCトンネルの中を案内する360度動画です（英語）。'},
+   {yt:'rsmBMuTFdkA',title:'CERN：LHCb - The Beauty Experiment',intro:'CERN公式チャンネルの、LHCb実験を紹介する映画です（英語）。'},
+   {yt:'6-A4dUowT4Q',title:'ノーベル賞：2024 Nobel Prize award ceremony',intro:'ノーベル賞公式チャンネルの、2024年の授賞式の映像です（英語）。'},
+   {yt:'qqNEpXAPP7Q',title:'ノーベル賞：2023 Nobel Prize award ceremony',intro:'ノーベル賞公式チャンネルの、2023年の授賞式の映像です（英語）。'},
+   {yt:'VGG4O5OOmi0',title:'アーベル賞：Abel Prize award ceremony 2023: Luis A. Caffarelli',intro:'アーベル賞公式チャンネルの、2023年の授賞式の映像です（英語）。'},
+   {yt:'GUxV0usbGLE',title:'アーベル賞：Masaki Kashiwara\u2019s reaction to being awarded the 2025 Abel Prize',intro:'アーベル賞公式チャンネルの、2025年受賞者・柏原正樹氏へ受賞を知らせる映像です（英語）。'}
+  ],
+  links:[
+   {url:'https://home.cern/',labelJa:'CERN 公式サイト',labelEn:'CERN Official Site'},
+   {url:'https://www.nobelprize.org/',labelJa:'ノーベル賞 公式サイト',labelEn:'Nobel Prize Official Site'},
+   {url:'https://abelprize.no/',labelJa:'アーベル賞 公式サイト',labelEn:'The Abel Prize Official Site'}
   ]}
 ];
 function bwOfficialCard(m){
