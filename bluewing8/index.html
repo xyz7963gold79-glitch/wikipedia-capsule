@@ -994,6 +994,7 @@ renderList(); renderTimeline(); renderProfilePosts(); doSearch(); if(typeof rend
 }
 document.getElementById('btn-ja').addEventListener('click',()=>setLang('ja'));
 document.getElementById('btn-en').addEventListener('click',()=>setLang('en'));
+setLang('ja');
 Object.entries(tabs).forEach(([k,v])=>v.addEventListener('click',()=>show(k)));
 document.getElementById('art-back').addEventListener('click',()=>show('list'));
 /* 本物のニュース（ウィキメディア自動配信） */
