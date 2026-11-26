@@ -1099,7 +1099,7 @@ async function loadRealNews(){
     const wnCats=[['芸能・文化','Culture and entertainment'],['スポーツ','Sports'],['科学・技術','Science and technology'],['経済','Economy and business'],['世界・政治','Politics and conflicts']];
     for(let ci=0; ci<wnCats.length; ci++){
       try{
-        const cr=await fetch('https://en.wikinews.org/w/api.php?action=query&format=json&origin=*&generator=categorymembers&gcmtitle=Category:'+encodeURIComponent(wnCats[ci][1])+'&gcmtype=page&gcmsort=timestamp&gcmdir=desc&gcmlimit=8&prop=extracts%7Cinfo%7Cpageimages&piprop=thumbnail&pithumbsize=640&exintro=1&explaintext=1&exsentences=2&inprop=url');
+        const cr=await fetch('https://en.wikinews.org/w/api.php?action=query&format=json&origin=*&generator=categorymembers&gcmtitle=Category:'+encodeURIComponent(wnCats[ci][1])+'&gcmtype=page&gcmsort=timestamp&gcmdir=desc&gcmlimit=8&prop=extracts%7Cinfo%7Cpageimages&piprop=thumbnail&pithumbsize=640&exintro=1&explaintext=1&exsentences=6&inprop=url');
         if(!cr.ok) continue;
         const cj=await cr.json();
         const pages=Object.values((cj.query&&cj.query.pages)||{}).sort((a,b)=>(a.index||0)-(b.index||0));
@@ -1115,7 +1115,7 @@ async function loadRealNews(){
     }
     if(newsLang!=='ja'&&newsLang!=='en'){
       try{
-        const lr=await fetch('https://'+newsLang+'.wikinews.org/w/api.php?action=query&format=json&origin=*&generator=recentchanges&grcnamespace=0&grclimit=24&grctype=new&prop=extracts%7Cinfo%7Cpageimages&piprop=thumbnail&pithumbsize=640&exintro=1&explaintext=1&exsentences=2&inprop=url');
+        const lr=await fetch('https://'+newsLang+'.wikinews.org/w/api.php?action=query&format=json&origin=*&generator=recentchanges&grcnamespace=0&grclimit=24&grctype=new&prop=extracts%7Cinfo%7Cpageimages&piprop=thumbnail&pithumbsize=640&exintro=1&explaintext=1&exsentences=6&inprop=url');
         if(lr.ok){
           const lj=await lr.json();
           const pages=Object.values((lj.query&&lj.query.pages)||{});
