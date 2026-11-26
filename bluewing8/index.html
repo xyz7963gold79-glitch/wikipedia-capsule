@@ -665,29 +665,46 @@ const commentsByPost={201:[
  {id:3,name:"ルーカス",date:"2026/11/26 07:15",body:"ブラジルでも同じ教材を使っています。子どもたちが葉っぱの器を作りました。",likes:5,liked:false}
 ]};
 let currentPostId=null;
+const serverComments={};
 function findPost(id){return posts.find(x=>x.id===id)||profilePosts.find(x=>x.id===id);}
-function openComments(id){
+function isServerPost(id){const p=findPost(id); return !!(p&&p.srv&&bwSrvIds[id]);}
+async function loadServerComments(id){
+  const list=await bwApi('/api/posts/'+bwSrvIds[id]+'/comments');
+  serverComments[id]=list.map(c=>({id:c.id,name:c.display_name||'',date:bwFmtDate(c.created_at),body:c.content,likes:0,liked:false}));
+}
+function commentsFor(id){ return isServerPost(id)?(serverComments[id]||[]):(commentsByPost[id]||[]); }
+async function openComments(id){
   const p=findPost(id); if(!p) return;
   currentPostId=id;
   document.getElementById('cm-avatar').textContent=(p.name||'M').charAt(0);
   document.getElementById('cm-name').textContent=p.name||'マリア・サトウ';
   document.getElementById('cm-date').textContent=p.date;
   document.getElementById('cm-body').textContent=p.body;
+  if(isServerPost(id)){ try{ await loadServerComments(id); }catch(e){ serverComments[id]=[]; } }
   renderComments(); show('comments');
 }
 function renderComments(){
-  const list=commentsByPost[currentPostId]||[];
+  const list=commentsFor(currentPostId);
   document.getElementById('cm-list').innerHTML=list.map(c=>`<article class="card post"><div class="who"><div class="avatar">${esc(c.name.charAt(0))}</div><div><div class="pname">${esc(c.name)}</div><div class="pdate">${esc(c.date)}</div></div></div><div class="pbody">${esc(c.body)}</div><div class="post-actions"><button class="like ${c.liked?'active':''}" onclick="likeComment(${c.id})">${lang==='ja'?'いいね':'Like'} <span>${c.likes}</span></button></div></article>`).join('');
   document.getElementById('cm-count').textContent=lang==='ja'?list.length+'件':list.length+' comments';
 }
 function likeComment(cid){
-  const list=commentsByPost[currentPostId]||[];
+  const list=commentsFor(currentPostId);
   const c=list.find(x=>x.id===cid); if(!c) return;
   c.liked=!c.liked; c.likes+=c.liked?1:-1; renderComments();
 }
-document.getElementById('cm-addBtn').addEventListener('click',()=>{
+document.getElementById('cm-addBtn').addEventListener('click',async ()=>{
   const bodyVal=document.getElementById('cm-bodyInput').value.trim(); if(!bodyVal){document.getElementById('cm-bodyInput').focus();return;}
   const gr=guardText(bodyVal); if(gr){ alert('保護機能が働きました（'+gr+'）。この内容は投稿できません。'); return; }
+  if(isServerPost(currentPostId)){
+    if(!bwToken()){ alert(lang==='ja'?'コメントには、ログインが必要です。':'Please log in to comment.'); return; }
+    try{
+      await bwApi('/api/comments',{method:'POST',body:{post_id:bwSrvIds[currentPostId],content:bodyVal}});
+      document.getElementById('cm-bodyInput').value='';
+      await loadServerComments(currentPostId); renderComments();
+    }catch(e){ alert((lang==='ja'?'コメントできませんでした。':'Could not comment. ')+e.message); }
+    return;
+  }
   const nameVal=document.getElementById('cm-nameInput').value.trim()||(lang==='ja'?'あなた':'You');
   const now=new Date();
   const ds=now.getFullYear()+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
