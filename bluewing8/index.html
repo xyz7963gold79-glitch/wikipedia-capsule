@@ -557,7 +557,28 @@ function shareArticle(id){
 const $name=document.getElementById('nameInput'),$body=document.getElementById('bodyInput');
 function postHTML(p){
   const initial=esc(p.name.trim().charAt(0)||'？').toUpperCase();
-  return `<article class="card post"><div class="who"><div class="avatar">${initial}</div><div><div class="pname">${esc(p.name)}</div><div class="pdate">${esc(p.date)}</div></div></div><div class="pbody">${esc(p.body)}</div><div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'通報':'Report'}</button></div></article>`;
+  return `<article class="card post"><div class="who"><div class="avatar">${initial}</div><div><div class="pname">${esc(p.name)}</div><div class="pdate">${esc(p.date)}</div></div></div><div class="pbody">${esc(p.body)}</div>${bwPostVideoHTML(p)}<div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'通報':'Report'}</button></div></article>`;
+}
+/* 投稿内YouTubeリンクの動画化：本文から動画IDを厳密に検証して取り出し、ファサードを出す */
+function bwYtId(text){
+  const re=/(?:^|[^\w.-])(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com\/(?:watch|shorts)|youtu\.be)[^\s<>"']*/gi;
+  let m;
+  while((m=re.exec(text||''))!==null){
+    const u=m[0];
+    const mm=u.match(/[?&]v=([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])/)||u.match(/shorts\/([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])/)||u.match(/youtu\.be\/([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])/);
+    if(mm) return mm[1];
+  }
+  return null;
+}
+function bwPostVideoHTML(p){
+  const id=bwYtId(p&&p.body);
+  if(!id) return '';
+  return `<div class="yt-facade" style="margin-top:10px" onclick="bwPlayPostVideo(this,'${id}')"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div>`;
+}
+function bwPlayPostVideo(el,yt){
+  if(!/^[A-Za-z0-9_-]{11}$/.test(yt||'')) return;
+  el.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=1" title="YouTube" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+  el.style.cursor='default'; el.onclick=null;
 }
 function renderTimeline(){
   document.getElementById('timeline').innerHTML=posts.map(postHTML).join('');
@@ -852,7 +873,8 @@ const bwCorners=[
  {id:4,nameJa:"世界の声",nameEn:"Voices Around the World",descJa:"世界中のメンバーの声を集める。ブラジル、日本、アフリカからの便り。",descEn:"Voices from members worldwide.",articles:[
   {titleJa:"ブラジル便り：葉っぱの器で雨を待つ",titleEn:"Letter from Brazil: Waiting for Rain with a Leaf Bowl",introJa:"サラとナギの実践が学校に広がった様子。",introEn:"How Sara and Nagi's practice spread to their school.",date:"2026/11/26"},
   {titleJa:"ケニア便り：井戸と植林",titleEn:"Letter from Kenya: Wells and Tree Planting",introJa:"水を守るために始めた小さな森づくり。",introEn:"Small forest project started to protect water.",date:"2026/11/23"}]},
- {id:5,nameJa:"ゲーム",nameEn:"Games",descJa:"クイズ、ぬりえ、なぞなぞ、神経衰弱で遊べます。遊びながら、知識が届きます。",descEn:"Quizzes made from Wikipedia knowledge.",articles:[]}
+ {id:5,nameJa:"ゲーム",nameEn:"Games",descJa:"クイズ、ぬりえ、なぞなぞ、神経衰弱で遊べます。遊びながら、知識が届きます。",descEn:"Quizzes made from Wikipedia knowledge.",articles:[]},
+ {id:6,nameJa:"映画・ドラマ",nameEn:"Movies & Drama",descJa:"円谷プロ公式の特撮配信と、パブリックドメインの古典映画を集めました。タップでそのまま見られます。",descEn:"Official tokusatsu episodes and public-domain classic films. Tap to watch.",articles:[]}
 ];
 let cnCurrent=null;
 function renderCorners(){
@@ -860,7 +882,7 @@ function renderCorners(){
   if(cnCurrent){
     document.getElementById('cn-dtitle').textContent=lang==='ja'?cnCurrent.nameJa:cnCurrent.nameEn;
     document.getElementById('cn-ddesc').textContent=lang==='ja'?cnCurrent.descJa:cnCurrent.descEn;
-    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_COLOR2_HTML+BW_GAME2_HTML+'<p class="desc" style="text-align:center;margin-top:16px">制作：女子会</p>';bwQuizStart();bwRiddleStart();bwMemStart();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
+    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_COLOR2_HTML+BW_GAME2_HTML+'<p class="desc" style="text-align:center;margin-top:16px">制作：女子会</p>';bwQuizStart();bwRiddleStart();bwMemStart();}else if(cnCurrent.id===6){document.getElementById('cn-articles').innerHTML=renderMovies();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
   }
 }
 
@@ -1243,6 +1265,52 @@ function bwPlayMusic(el,yt){
   el.style.cursor='default'; el.onclick=null;
 }
 renderMusic();
+/* 映画・ドラマコーナー */
+const movieItems={
+ tokusatsu:[
+  {yt:'-AYXYzN4ueQ',title:'『ウルトラマンオメガ』第4話「爪痕の謎を追え」',intro:'円谷プロダクション公式チャンネルの公式配信です。'},
+  {yt:'gH3SzIxsk6o',title:'ULTRAMAN DECKER Episode 24 "End of a Dream"',intro:'ウルトラマンデッカー第24話。円谷プロ公式チャンネルの配信です（英語字幕）。'},
+  {yt:'eFBhOea1558',title:'Ultraman Geed Ep.6 "So That I Can Be Me"',intro:'ウルトラマンジード第6話。公式英語チャンネルの配信です。'},
+  {yt:'8Nys9dqLBDM',title:'ULTRAMAN BLAZAR Episode 6 "The Invading Aurora"',intro:'ウルトラマンブレーザー第6話。公式英語チャンネルの配信です（英語吹替）。'},
+  {yt:'2Wt2_QP_EQc',title:'ULTRAMAN TEO Episode 19 "Alien Pandemic"',intro:'放送中シリーズの同時配信です。公式英語チャンネルの配信です（英語吹替）。',limited:true}
+ ],
+ classics:[
+  {aid:'the-gold-rush-1925-tmdb962',title:'黄金狂時代 The Gold Rush（1925）',intro:'チャップリン監督・主演の代表作。パブリックドメインの古典映画です。'},
+  {aid:'the-circus-charlie-chaplin',title:'サーカス The Circus（1928）',intro:'チャップリン監督・主演。パブリックドメインの古典映画です。'},
+  {aid:'nosferatu_201508',title:'吸血鬼ノスフェラトゥ Nosferatu（1922）',intro:'ドイツ表現主義を代表するホラーの古典です。'},
+  {aid:'TheCabinetOfDoctorCaligari',title:'カリガリ博士 The Cabinet of Dr. Caligari（1920）',intro:'ドイツ表現主義の金字塔です。'},
+  {aid:'metropolis-1927-bdrip-1080p-x-265-dts-hd-ma-5.1-d-0ct-0r-lew-sev',title:'メトロポリス Metropolis（1927）',intro:'フリッツ・ラング監督のSF映画の古典です。'},
+  {aid:'battle-1',title:'戦艦ポチョムキン Battleship Potemkin（1925）',intro:'エイゼンシュテイン監督の歴史的名作です。'},
+  {aid:'the-general-1926_202506',title:'大列車追跡 The General（1926）',intro:'バスター・キートン監督・主演の喜劇です。'},
+  {aid:'night-of-the-living-dead-1968-720p',title:'ナイト・オブ・ザ・リビングデッド Night of the Living Dead（1968）',intro:'ジョージ・A・ロメロ監督のホラーの古典です。'},
+  {aid:'charade-1963-4k',title:'シャレード Charade（1963）',intro:'ケイリー・グラント、オードリー・ヘプバーン出演のサスペンスです。'},
+  {aid:'HisGirlFriday',title:'彼の女房 His Girl Friday（1940）',intro:'ハワード・ホークス監督のスクリューボール・コメディです。'}
+ ]
+};
+function bwMovieCard(m){
+  const badge=m.limited?'<span style="display:inline-block;background:#dc2626;color:#fff;font-size:.72rem;font-weight:700;border-radius:999px;padding:2px 8px;margin-left:8px;vertical-align:middle">期間限定</span>':'';
+  return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayMovie(this,'${m.yt}')"><img src="https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">${esc(m.title)}${badge}</div><p style="margin:4px 0 8px">${esc(m.intro)}</p></div>`;
+}
+function bwClassicCard(m){
+  return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayClassic(this,'${m.aid}')"><img src="https://archive.org/services/img/${m.aid}" alt="" loading="lazy" onerror="this.style.display='none'"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">${esc(m.title)}</div><p style="margin:4px 0 8px">${esc(m.intro)}</p></div>`;
+}
+function bwPlayMovie(el,yt){
+  el.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=1" title="YouTube" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+  el.style.cursor='default'; el.onclick=null;
+}
+function bwPlayClassic(el,aid){
+  el.innerHTML=`<iframe src="https://archive.org/embed/${aid}" title="Internet Archive" allowfullscreen allow="autoplay; fullscreen"></iframe>`;
+  el.style.cursor='default'; el.onclick=null;
+}
+function renderMovies(){
+  const t1=lang==='ja'?'特撮・公式配信':'Tokusatsu (Official Streaming)';
+  const t2=lang==='ja'?'古典映画':'Classic Films';
+  const t3=lang==='ja'?'ドラマの案内':'Drama Guide';
+  let h=`<article class="card"><h3 class="title" style="font-size:1.1rem">${t1}</h3><p class="desc">${lang==='ja'?'円谷プロダクション公式チャンネルの無料配信です。サムネイルをタップすると再生します。配信ラインナップは入れ替わることがあります。':'Free episodes from the official Tsuburaya channel. Tap a thumbnail to play. The lineup may change.'}</p>`+movieItems.tokusatsu.map(bwMovieCard).join('')+'</article>';
+  h+=`<article class="card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">${t2}</h3><p class="desc">${lang==='ja'?'著作権の保護期間を終えたパブリックドメイン作品を、archive.org（インターネットアーカイブ）の公式プレイヤーで上映します。':'Public-domain classics, shown with the official Internet Archive player.'}</p>`+movieItems.classics.map(bwClassicCard).join('')+'</article>';
+  h+=`<article class="card article-card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">${t3}：TVer</h3><p class="desc">${lang==='ja'?'日本のテレビドラマの見逃し配信は、公式サービス「TVer（ティーバー）」で無料で見られます。このアプリの中では再生できないため、TVerのサイトへ案内します。':'Japanese TV dramas are available free on the official service TVer. Playback is not possible inside this app, so we link to the TVer site.'}</p><div class="actions"><a class="btn btn-blue" href="https://tver.jp/" target="_blank" rel="noopener">${lang==='ja'?'TVerを開く':'Open TVer'}</a></div></article>`;
+  return h;
+}
 renderVideos();
 renderList(); renderTimeline(); renderProfilePosts(); doSearch(); if(typeof renderNotifications==='function') renderNotifications(); if(typeof renderBwPages==='function') renderBwPages(); if(typeof renderCorners==='function') renderCorners();
 if(typeof openBwPage==='function')window.openBwPage=openBwPage;
@@ -1263,6 +1331,9 @@ if(typeof likeComment==='function')window.likeComment=likeComment;
 if(typeof reportPost==='function')window.reportPost=reportPost;
 if(typeof toggleLike==='function')window.toggleLike=toggleLike;
 if(typeof bwPlayMusic==='function')window.bwPlayMusic=bwPlayMusic;
+if(typeof bwPlayPostVideo==='function')window.bwPlayPostVideo=bwPlayPostVideo;
+if(typeof bwPlayMovie==='function')window.bwPlayMovie=bwPlayMovie;
+if(typeof bwPlayClassic==='function')window.bwPlayClassic=bwPlayClassic;
 if(typeof openArticle==='function')window.openArticle=openArticle;
 if(typeof shareArticle==='function')window.shareArticle=shareArticle;
 }
