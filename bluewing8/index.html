@@ -792,7 +792,7 @@ const bwCorners=[
  {id:4,nameJa:"世界の声",nameEn:"Voices Around the World",descJa:"世界中のメンバーの声を集める。ブラジル、日本、アフリカからの便り。",descEn:"Voices from members worldwide.",articles:[
   {titleJa:"ブラジル便り：葉っぱの器で雨を待つ",titleEn:"Letter from Brazil: Waiting for Rain with a Leaf Bowl",introJa:"サラとナギの実践が学校に広がった様子。",introEn:"How Sara and Nagi's practice spread to their school.",date:"2026/11/26"},
   {titleJa:"ケニア便り：井戸と植林",titleEn:"Letter from Kenya: Wells and Tree Planting",introJa:"水を守るために始めた小さな森づくり。",introEn:"Small forest project started to protect water.",date:"2026/11/23"}]},
- {id:5,nameJa:"ゲーム",nameEn:"Games",descJa:"ウィキペディアの知識で作ったクイズです。遊びながら、知識が届きます。",descEn:"Quizzes made from Wikipedia knowledge.",articles:[]}
+ {id:5,nameJa:"ゲーム",nameEn:"Games",descJa:"クイズ、ぬりえ、なぞなぞ、神経衰弱で遊べます。遊びながら、知識が届きます。",descEn:"Quizzes made from Wikipedia knowledge.",articles:[]}
 ];
 let cnCurrent=null;
 function renderCorners(){
@@ -800,7 +800,7 @@ function renderCorners(){
   if(cnCurrent){
     document.getElementById('cn-dtitle').textContent=lang==='ja'?cnCurrent.nameJa:cnCurrent.nameEn;
     document.getElementById('cn-ddesc').textContent=lang==='ja'?cnCurrent.descJa:cnCurrent.descEn;
-    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_GAME2_HTML;bwQuizStart();bwRiddleStart();bwMemStart();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
+    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_COLOR2_HTML+BW_GAME2_HTML;bwQuizStart();bwRiddleStart();bwMemStart();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
   }
 }
 
@@ -820,7 +820,15 @@ const bwRiddles=[
  {q:"目があるのに、見えないものは？",a:"じゃがいも（芽が「目」と呼ばれます）"},
  {q:"雨の日でも、傘をささない動物は？",a:"魚"},
  {q:"叩くと、音が出る楽器は？",a:"太鼓"},
- {q:"朝は4本足、昼は2本足、夜は3本足の生き物は？",a:"人間（赤ちゃん、成人、杖をつく老人）"}
+ {q:"朝は4本足、昼は2本足、夜は3本足の生き物は？",a:"人間（赤ちゃん、成人、杖をつく老人）"},
+ {q:"パンはパンでも、食べられないパンは何？",a:"フライパン"},
+ {q:"足が4本あるのに、歩けないものは何？",a:"机（つくえ）"},
+ {q:"耳があるのに、聞こえないものは何？",a:"なべ（鍋には「耳」と呼ばれる取っ手があります）"},
+ {q:"お風呂に入ると、だんだん小さくなるものは何？",a:"石けん"},
+ {q:"翼がないのに、空を飛べるものは何？",a:"凧（たこ）"},
+ {q:"切れば切るほど、目が痛くなる野菜は何？",a:"たまねぎ"},
+ {q:"手も足もないのに、遠くの人まで届くものは何？",a:"手紙"},
+ {q:"いつも頭の上にいて、雨の日だけ働くものは何？",a:"傘（かさ）"}
 ];
 let bwRiddleState=null;
 function bwRiddleStart(){ bwRiddleState={i:0,show:false}; bwRiddleRender(); }
@@ -866,6 +874,7 @@ function bwMemFlip(idx){
     else{ bwMem.lock=true; setTimeout(()=>{ bwMem.open=[]; bwMem.lock=false; bwMemRender(); },900); }
   }
 }
+const BW_COLOR2_HTML='<article class="card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">ぬりえ2：手紙のカプセル</h3><p class="desc">第8話のカプセルです。上の色を使って、塗ってみてください。</p><svg viewBox="0 0 320 210" style="width:100%;max-width:520px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="320" height="210" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="0" y="180" width="320" height="30" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><circle cx="46" cy="44" r="24" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><ellipse cx="46" cy="44" rx="40" ry="10" fill="none" stroke="#333" stroke-width="2.5"/><circle cx="104" cy="32" r="9" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><polygon points="272,18 277,31 291,32 280,41 284,54 272,47 260,54 264,41 253,32 267,31" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><polygon points="36,114 40,123 49,124 42,130 44,139 36,134 28,139 30,130 23,124 32,123" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><polygon points="292,116 295,124 303,124 297,130 299,138 292,133 285,138 287,130 281,124 289,124" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><ellipse cx="160" cy="122" rx="78" ry="40" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="70" y="96" width="26" height="52" rx="10" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="224" y="96" width="26" height="52" rx="10" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><circle cx="160" cy="122" r="16" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="132" y="52" width="56" height="36" rx="3" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><polygon points="132,52 188,52 160,74" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/></svg></article>';
 const bwQuizData=[
  {q:"水が、海から空へ、空から雨へとめぐる仕組みを、何といいますか？",c:["水の循環","光合成","潮の満ち引き"],a:0,ex:"海の水が蒸発し、雲になり、雨になって戻る大きなめぐりです。",wiki:"水循環"},
  {q:"国際宇宙ステーションは、地上から約何kmの上空を回っていますか？",c:["約200km","約400km","約1000km"],a:1,ex:"約400km上空を、約90分で地球を1周しています。",wiki:"国際宇宙ステーション"},
@@ -876,7 +885,17 @@ const bwQuizData=[
  {q:"月が地球の周りを1周するのに、約何日かかりますか？",c:["約7日","約27日","約100日"],a:1,ex:"月は約27日で地球を1周します。満ち欠けは約29.5日周期です。",wiki:"月"},
  {q:"ジャイアントパンダの主食は、どれですか？",c:["肉","魚","笹・竹"],a:2,ex:"パンダは1日のほとんどを、笹や竹を食べて過ごします。",wiki:"ジャイアントパンダ"},
  {q:"世界で一番長い川は、どれですか？",c:["ナイル川","アマゾン川","長江"],a:0,ex:"ナイル川は約6,650kmで、世界最長の川とされます。",wiki:"ナイル川"},
- {q:"地球から一番近い恒星（星）は、どれですか？",c:["北極星","シリウス","太陽"],a:2,ex:"太陽は地球から一番近い恒星です。その光が、地球を温めています。",wiki:"太陽"}
+ {q:"地球から一番近い恒星（星）は、どれですか？",c:["北極星","シリウス","太陽"],a:2,ex:"太陽は地球から一番近い恒星です。その光が、地球を温めています。",wiki:"太陽"},
+ {q:"太陽系で一番大きな惑星は、どれですか？",c:["土星", "木星", "火星"],a:1,ex:"木星は太陽系で一番大きな惑星で、地球が約1,300個入る大きさです。",wiki:"木星"},
+ {q:"雨上がりに見える虹は、どうしてできますか？",c:["太陽の光が雨粒の中で分かれるから", "雲が空に色を塗るから", "風が色を運んでくるから"],a:0,ex:"虹は、空中の水滴の中で太陽の光が分かれて、色の帯になって見えるものです。",wiki:"虹"},
+ {q:"陸の上で一番大きな動物は、どれですか？",c:["キリン", "シロクマ", "アフリカゾウ"],a:2,ex:"アフリカゾウは陸の上で一番大きな動物で、重さは約6トンにもなります。",wiki:"アフリカゾウ"},
+ {q:"昼と夜ができるのは、地球がどうしているからですか？",c:["1日に1回、自分で回っているから", "止まっているから", "月が太陽を隠すから"],a:0,ex:"地球は1日1回、自分で回っています（自転）。そのため、太陽の光が当たる所が昼、当たらない所が夜になります。",wiki:"地球の自転"},
+ {q:"心臓は、体の中の何を送り出すポンプですか？",c:["水", "空気", "血液"],a:2,ex:"心臓はポンプのように縮んだり広がったりして、体中に血液を送り出しています。",wiki:"心臓"},
+ {q:"世界で一番広い海は、どれですか？",c:["大西洋", "太平洋", "インド洋"],a:1,ex:"太平洋は世界で一番広い海で、地球の表面の約3分の1を占めています。",wiki:"太平洋"},
+ {q:"コアラが食べて暮らしている葉は、どれですか？",c:["ユーカリの葉", "笹", "りんごの葉"],a:0,ex:"コアラはユーカリの葉を食べて暮らしています。1日のほとんどを、木の上で眠って過ごします。",wiki:"コアラ"},
+ {q:"日本で一番長い川は、どれですか？",c:["利根川", "石狩川", "信濃川"],a:2,ex:"信濃川は長さ約367kmで、日本で一番長い川です。新潟県から日本海へ流れます。",wiki:"信濃川"},
+ {q:"チョウが育つ順番で、幼虫の次になるのは、どれですか？",c:["成虫", "さなぎ", "卵"],a:1,ex:"チョウは、卵→幼虫→さなぎ→成虫の順に姿を変えて育ちます。これを変態といいます。",wiki:"チョウ"},
+ {q:"大人の体には、骨が約何本ありますか？",c:["約200本", "約50本", "約100本"],a:0,ex:"大人の骨は約206本あります。赤ちゃんの時はもっと多く、育つにつれて、いくつかの骨がくっついて減ります。",wiki:"骨"}
 ];
 let bwQuizState=null;
 function bwQuizStart(){
