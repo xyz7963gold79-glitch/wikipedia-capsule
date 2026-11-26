@@ -791,7 +791,8 @@ const bwCorners=[
   {titleJa:"アニメで学ぶ対話の力",titleEn:"Learning Dialogue Through Anime",introJa:"星海鉄道の物語に見る、届けることの意味。",introEn:"What it means to deliver, in the Star-Sea Railway story.",date:"2026/11/24"}]},
  {id:4,nameJa:"世界の声",nameEn:"Voices Around the World",descJa:"世界中のメンバーの声を集める。ブラジル、日本、アフリカからの便り。",descEn:"Voices from members worldwide.",articles:[
   {titleJa:"ブラジル便り：葉っぱの器で雨を待つ",titleEn:"Letter from Brazil: Waiting for Rain with a Leaf Bowl",introJa:"サラとナギの実践が学校に広がった様子。",introEn:"How Sara and Nagi's practice spread to their school.",date:"2026/11/26"},
-  {titleJa:"ケニア便り：井戸と植林",titleEn:"Letter from Kenya: Wells and Tree Planting",introJa:"水を守るために始めた小さな森づくり。",introEn:"Small forest project started to protect water.",date:"2026/11/23"}]}
+  {titleJa:"ケニア便り：井戸と植林",titleEn:"Letter from Kenya: Wells and Tree Planting",introJa:"水を守るために始めた小さな森づくり。",introEn:"Small forest project started to protect water.",date:"2026/11/23"}]},
+ {id:5,nameJa:"ゲーム",nameEn:"Games",descJa:"ウィキペディアの知識で作ったクイズです。遊びながら、知識が届きます。",descEn:"Quizzes made from Wikipedia knowledge.",articles:[]}
 ];
 let cnCurrent=null;
 function renderCorners(){
@@ -799,8 +800,52 @@ function renderCorners(){
   if(cnCurrent){
     document.getElementById('cn-dtitle').textContent=lang==='ja'?cnCurrent.nameJa:cnCurrent.nameEn;
     document.getElementById('cn-ddesc').textContent=lang==='ja'?cnCurrent.descJa:cnCurrent.descEn;
-    document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');
+    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>';bwQuizStart();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
   }
+}
+
+const bwQuizData=[
+ {q:"水が、海から空へ、空から雨へとめぐる仕組みを、何といいますか？",c:["水の循環","光合成","潮の満ち引き"],a:0,ex:"海の水が蒸発し、雲になり、雨になって戻る大きなめぐりです。",wiki:"水循環"},
+ {q:"国際宇宙ステーションは、地上から約何kmの上空を回っていますか？",c:["約200km","約400km","約1000km"],a:1,ex:"約400km上空を、約90分で地球を1周しています。",wiki:"国際宇宙ステーション"},
+ {q:"日本で一番高い山は、どれですか？",c:["北岳","槍ヶ岳","富士山"],a:2,ex:"富士山は標高3,776mで、日本で一番高い山です。",wiki:"富士山"},
+ {q:"光の速さに一番近いのは、どれですか？",c:["秒速 約3万km","秒速 約30万km","秒速 約300万km"],a:1,ex:"光は1秒間に約30万km進み、地球を約7周半します。",wiki:"光速"},
+ {q:"人の体で、一番大きな臓器はどれですか？",c:["皮膚","心臓","肝臓"],a:0,ex:"皮膚は体全体を包む、一番大きな臓器です。",wiki:"皮膚"},
+ {q:"蜂蜜を作る昆虫は、どれですか？",c:["アリ","ミツバチ","チョウ"],a:1,ex:"ミツバチが花の蜜を集めて、蜂蜜を作ります。",wiki:"ミツバチ"},
+ {q:"月が地球の周りを1周するのに、約何日かかりますか？",c:["約7日","約27日","約100日"],a:1,ex:"月は約27日で地球を1周します。満ち欠けは約29.5日周期です。",wiki:"月"},
+ {q:"ジャイアントパンダの主食は、どれですか？",c:["肉","魚","笹・竹"],a:2,ex:"パンダは1日のほとんどを、笹や竹を食べて過ごします。",wiki:"ジャイアントパンダ"},
+ {q:"世界で一番長い川は、どれですか？",c:["ナイル川","アマゾン川","長江"],a:0,ex:"ナイル川は約6,650kmで、世界最長の川とされます。",wiki:"ナイル川"},
+ {q:"地球から一番近い恒星（星）は、どれですか？",c:["北極星","シリウス","太陽"],a:2,ex:"太陽は地球から一番近い恒星です。その光が、地球を温めています。",wiki:"太陽"}
+];
+let bwQuizState=null;
+function bwQuizStart(){
+  bwQuizState={i:0,score:0,done:false};
+  bwQuizRender();
+}
+function bwQuizRender(){
+  const box=document.getElementById('quiz-box'); if(!box||!bwQuizState) return;
+  const s=bwQuizState;
+  if(s.done){
+    box.innerHTML=`<h3 class="title" style="font-size:1.1rem">結果</h3><p class="desc" style="font-size:1.05rem">${bwQuizData.length}問中、${s.score}問 正解でした。</p><div class="actions"><button class="btn btn-blue" onclick="bwQuizStart()">もう一度あそぶ</button></div>`;
+    return;
+  }
+  const item=bwQuizData[s.i];
+  let h=`<p class="desc" style="font-weight:700">第${s.i+1}問 ／ ${bwQuizData.length}問</p><h3 class="title" style="font-size:1.1rem">${item.q}</h3>`;
+  item.c.forEach((ch,idx)=>{ h+=`<div class="actions" style="margin-top:8px"><button class="btn" style="width:100%;text-align:left" onclick="bwQuizAnswer(${idx})">${ch}</button></div>`; });
+  if(s.feedback){ h+=`<p class="desc" style="margin-top:10px">${s.feedback}</p><div class="actions"><button class="btn btn-blue" onclick="bwQuizNext()">${s.i+1>=bwQuizData.length?'結果を見る':'次の問題へ'}</button></div>`; }
+  box.innerHTML=h;
+}
+function bwQuizAnswer(idx){
+  const s=bwQuizState; if(!s||s.done||s.feedback) return;
+  const item=bwQuizData[s.i];
+  if(idx===item.a){ s.score++; s.feedback='正解です。'+item.ex+' <a href="https://ja.wikipedia.org/wiki/'+encodeURIComponent(item.wiki)+'" target="_blank" rel="noopener">ウィキペディアで読む</a>'; }
+  else{ s.feedback='残念。正解は「'+item.c[item.a]+'」です。'+item.ex+' <a href="https://ja.wikipedia.org/wiki/'+encodeURIComponent(item.wiki)+'" target="_blank" rel="noopener">ウィキペディアで読む</a>'; }
+  bwQuizRender();
+}
+function bwQuizNext(){
+  const s=bwQuizState; if(!s) return;
+  s.feedback=null; s.i++;
+  if(s.i>=bwQuizData.length){ s.done=true; }
+  bwQuizRender();
 }
 function openCorner(id){
   cnCurrent=bwCorners.find(x=>x.id===id); if(!cnCurrent) return;
@@ -1034,6 +1079,9 @@ renderVideos();
 renderList(); renderTimeline(); renderProfilePosts(); doSearch(); if(typeof renderNotifications==='function') renderNotifications(); if(typeof renderBwPages==='function') renderBwPages(); if(typeof renderCorners==='function') renderCorners();
 if(typeof openBwPage==='function')window.openBwPage=openBwPage;
 if(typeof openCorner==='function')window.openCorner=openCorner;
+if(typeof bwQuizStart==='function')window.bwQuizStart=bwQuizStart;
+if(typeof bwQuizAnswer==='function')window.bwQuizAnswer=bwQuizAnswer;
+if(typeof bwQuizNext==='function')window.bwQuizNext=bwQuizNext;
 if(typeof toggleBwLike==='function')window.toggleBwLike=toggleBwLike;
 if(typeof openComments==='function')window.openComments=openComments;
 if(typeof likeComment==='function')window.likeComment=likeComment;
