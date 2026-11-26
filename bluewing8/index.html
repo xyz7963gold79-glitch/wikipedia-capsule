@@ -800,7 +800,7 @@ function renderCorners(){
   if(cnCurrent){
     document.getElementById('cn-dtitle').textContent=lang==='ja'?cnCurrent.nameJa:cnCurrent.nameEn;
     document.getElementById('cn-ddesc').textContent=lang==='ja'?cnCurrent.descJa:cnCurrent.descEn;
-    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML;bwQuizStart();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
+    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_GAME2_HTML;bwQuizStart();bwRiddleStart();bwMemStart();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
   }
 }
 
@@ -810,6 +810,62 @@ let bwColorSel='#42a5f5';
 function bwColorPick(btn,color){ bwColorSel=color; document.querySelectorAll('#color-palette button').forEach(b=>b.style.outline=''); btn.style.outline='3px solid #333'; }
 function bwPaint(el){ el.setAttribute('fill',bwColorSel); }
 function bwColorReset(){ document.querySelectorAll('#cn-articles svg [onclick]').forEach(el=>{ if(el.getAttribute('fill')!=='none') el.setAttribute('fill','#ffffff'); }); }
+const BW_GAME2_HTML='<article class="card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">なぞなぞ</h3><div id="riddle-box"></div></article><article class="card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">神経衰弱（しんけいすいじゃく）</h3><p class="desc">カードを2枚めくって、同じ印をそろえましょう。</p><p class="desc" id="mem-msg"></p><div id="mem-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"></div><div class="actions" style="margin-top:10px"><button class="btn" onclick="bwMemStart()">最初から</button></div></article>';
+
+const bwRiddles=[
+ {q:"上から読んでも、下から読んでも、同じ名前の野菜は？",a:"トマト"},
+ {q:"ひっくり返すと、数が増える数字は？",a:"6（ひっくり返すと9になります）"},
+ {q:"いつも走っているのに、前に進まないものは？",a:"時計の針"},
+ {q:"口があるのに、話せないものは？",a:"びん（瓶）"},
+ {q:"目があるのに、見えないものは？",a:"じゃがいも（芽が「目」と呼ばれます）"},
+ {q:"雨の日でも、傘をささない動物は？",a:"魚"},
+ {q:"叩くと、音が出る楽器は？",a:"太鼓"},
+ {q:"朝は4本足、昼は2本足、夜は3本足の生き物は？",a:"人間（赤ちゃん、成人、杖をつく老人）"}
+];
+let bwRiddleState=null;
+function bwRiddleStart(){ bwRiddleState={i:0,show:false}; bwRiddleRender(); }
+function bwRiddleRender(){
+  const box=document.getElementById('riddle-box'); if(!box||!bwRiddleState) return;
+  const r=bwRiddles[bwRiddleState.i];
+  let h='<p class="desc" style="font-weight:700">第'+(bwRiddleState.i+1)+'問</p><h3 class="title" style="font-size:1.1rem">'+r.q+'</h3>';
+  if(bwRiddleState.show){ h+='<p class="desc" style="font-size:1.05rem">答え：'+r.a+'</p><div class="actions"><button class="btn btn-blue" onclick="bwRiddleNext()">次のなぞなぞ</button></div>'; }
+  else{ h+='<div class="actions"><button class="btn btn-blue" onclick="bwRiddleShow()">答えを見る</button></div>'; }
+  box.innerHTML=h;
+}
+function bwRiddleShow(){ if(bwRiddleState){ bwRiddleState.show=true; bwRiddleRender(); } }
+function bwRiddleNext(){ if(bwRiddleState){ bwRiddleState.i=(bwRiddleState.i+1)%bwRiddles.length; bwRiddleState.show=false; bwRiddleRender(); } }
+const bwMemSymbols=['★','●','▲','■','♥','◆','☀','☾'];
+const bwMemColors=['#e65100','#1565c0','#2e7d32','#6a1b9a','#c62828','#00838f','#f9a825','#4e342e'];
+let bwMem=null;
+function bwMemStart(){
+  let deck=[];
+  bwMemSymbols.forEach((s,idx)=>{ deck.push({s:s,c:bwMemColors[idx]}); deck.push({s:s,c:bwMemColors[idx]}); });
+  for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const tmp=deck[i]; deck[i]=deck[j]; deck[j]=tmp; }
+  bwMem={deck:deck,open:[],matched:{},lock:false,moves:0};
+  bwMemRender();
+}
+function bwMemRender(){
+  const grid=document.getElementById('mem-grid'); if(!grid||!bwMem) return;
+  const msg=document.getElementById('mem-msg');
+  let done=0; for(const k in bwMem.matched) done++;
+  if(msg){ msg.textContent = done===16 ? ('全部そろいました。'+bwMem.moves+'回で出来ました。') : (bwMem.moves+'回めくりました。そろった組：'+(done/2)+'／8'); }
+  grid.innerHTML=bwMem.deck.map((card,idx)=>{
+    const up=bwMem.open.includes(idx)||bwMem.matched[idx];
+    if(up){ return '<button style="height:64px;font-size:1.7rem;border-radius:10px;border:2px solid #888;background:#fff;color:'+card.c+'" onclick="bwMemFlip('+idx+')">'+card.s+'</button>'; }
+    return '<button style="height:64px;font-size:1.4rem;border-radius:10px;border:2px solid #1565c0;background:#42a5f5;color:#fff;cursor:pointer" onclick="bwMemFlip('+idx+')">？</button>';
+  }).join('');
+}
+function bwMemFlip(idx){
+  if(!bwMem||bwMem.lock) return;
+  if(bwMem.matched[idx]||bwMem.open.includes(idx)) return;
+  bwMem.open.push(idx); bwMemRender();
+  if(bwMem.open.length===2){
+    bwMem.moves++;
+    const a=bwMem.deck[bwMem.open[0]], b=bwMem.deck[bwMem.open[1]];
+    if(a.s===b.s){ bwMem.matched[bwMem.open[0]]=true; bwMem.matched[bwMem.open[1]]=true; bwMem.open=[]; bwMemRender(); }
+    else{ bwMem.lock=true; setTimeout(()=>{ bwMem.open=[]; bwMem.lock=false; bwMemRender(); },900); }
+  }
+}
 const bwQuizData=[
  {q:"水が、海から空へ、空から雨へとめぐる仕組みを、何といいますか？",c:["水の循環","光合成","潮の満ち引き"],a:0,ex:"海の水が蒸発し、雲になり、雨になって戻る大きなめぐりです。",wiki:"水循環"},
  {q:"国際宇宙ステーションは、地上から約何kmの上空を回っていますか？",c:["約200km","約400km","約1000km"],a:1,ex:"約400km上空を、約90分で地球を1周しています。",wiki:"国際宇宙ステーション"},
@@ -1089,6 +1145,10 @@ if(typeof bwQuizStart==='function')window.bwQuizStart=bwQuizStart;
 if(typeof bwPaint==='function')window.bwPaint=bwPaint;
 if(typeof bwColorPick==='function')window.bwColorPick=bwColorPick;
 if(typeof bwColorReset==='function')window.bwColorReset=bwColorReset;
+if(typeof bwRiddleShow==='function')window.bwRiddleShow=bwRiddleShow;
+if(typeof bwRiddleNext==='function')window.bwRiddleNext=bwRiddleNext;
+if(typeof bwMemFlip==='function')window.bwMemFlip=bwMemFlip;
+if(typeof bwMemStart==='function')window.bwMemStart=bwMemStart;
 if(typeof bwQuizAnswer==='function')window.bwQuizAnswer=bwQuizAnswer;
 if(typeof bwQuizNext==='function')window.bwQuizNext=bwQuizNext;
 if(typeof toggleBwLike==='function')window.toggleBwLike=toggleBwLike;
