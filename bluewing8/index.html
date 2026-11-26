@@ -1060,6 +1060,19 @@ async function loadRealNews(){
         });
       }
     }catch(e){}
+    await Promise.all(items.filter(x=>x.id>=900&&x.id<1000).map(async it=>{
+      const m=(it.body||'').match(/ja\.wikipedia\.org\/wiki\/([^"]+)/);
+      if(!m) return;
+      const title=decodeURIComponent(m[1]);
+      try{
+        const er=await fetch('https://ja.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro=1&explaintext=1&titles='+encodeURIComponent(title));
+        if(!er.ok) return;
+        const ej=await er.json();
+        const pg=Object.values((ej.query&&ej.query.pages)||{})[0];
+        const ex=pg&&pg.extract?pg.extract.trim():'';
+        if(ex){ it.body=ex.split(/\n+/).map(p=>'<p>'+p.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</p>').join('')+'<p><a href="https://ja.wikipedia.org/wiki/'+encodeURIComponent(title)+'" target="_blank" rel="noopener">関連記事を読む</a></p>'; }
+      }catch(e){}
+    }));
     if(j&&j.news){ j.news.forEach((n,i)=>{
       const text=strip(n.story);
       const link=(n.links&&n.links[0])?n.links[0].title:'';
