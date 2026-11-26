@@ -874,7 +874,8 @@ const bwCorners=[
   {titleJa:"ブラジル便り：葉っぱの器で雨を待つ",titleEn:"Letter from Brazil: Waiting for Rain with a Leaf Bowl",introJa:"サラとナギの実践が学校に広がった様子。",introEn:"How Sara and Nagi's practice spread to their school.",date:"2026/11/26"},
   {titleJa:"ケニア便り：井戸と植林",titleEn:"Letter from Kenya: Wells and Tree Planting",introJa:"水を守るために始めた小さな森づくり。",introEn:"Small forest project started to protect water.",date:"2026/11/23"}]},
  {id:5,nameJa:"ゲーム",nameEn:"Games",descJa:"クイズ、ぬりえ、なぞなぞ、神経衰弱で遊べます。遊びながら、知識が届きます。",descEn:"Quizzes made from Wikipedia knowledge.",articles:[]},
- {id:6,nameJa:"映画・ドラマ",nameEn:"Movies & Drama",descJa:"円谷プロ公式の特撮配信と、パブリックドメインの古典映画を集めました。タップでそのまま見られます。",descEn:"Official tokusatsu episodes and public-domain classic films. Tap to watch.",articles:[]}
+ {id:6,nameJa:"映画・ドラマ",nameEn:"Movies & Drama",descJa:"円谷プロ公式の特撮配信と、パブリックドメインの古典映画を集めました。タップでそのまま見られます。",descEn:"Official tokusatsu episodes and public-domain classic films. Tap to watch.",articles:[]},
+ {id:7,nameJa:"機関・マスコミ",nameEn:"Institutions & Media",descJa:"創価大学をはじめ、公的機関・大学・学会・マスコミの公式発信を集めました。公式の動画と、公式サイトへの案内です。",descEn:"Official videos and site links from Soka University, public institutions, universities, societies and media.",articles:[]}
 ];
 let cnCurrent=null;
 function renderCorners(){
@@ -882,7 +883,7 @@ function renderCorners(){
   if(cnCurrent){
     document.getElementById('cn-dtitle').textContent=lang==='ja'?cnCurrent.nameJa:cnCurrent.nameEn;
     document.getElementById('cn-ddesc').textContent=lang==='ja'?cnCurrent.descJa:cnCurrent.descEn;
-    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_COLOR2_HTML+BW_GAME2_HTML+'<p class="desc" style="text-align:center;margin-top:16px">制作：女子会</p>';bwQuizStart();bwRiddleStart();bwMemStart();}else if(cnCurrent.id===6){document.getElementById('cn-articles').innerHTML=renderMovies();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
+    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_COLOR2_HTML+BW_GAME2_HTML+'<p class="desc" style="text-align:center;margin-top:16px">制作：女子会</p>';bwQuizStart();bwRiddleStart();bwMemStart();}else if(cnCurrent.id===6){document.getElementById('cn-articles').innerHTML=renderMovies();}else if(cnCurrent.id===7){document.getElementById('cn-articles').innerHTML=renderInstitutions();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
   }
 }
 
@@ -1311,6 +1312,94 @@ function renderMovies(){
   h+=`<article class="card article-card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">${t3}：TVer</h3><p class="desc">${lang==='ja'?'日本のテレビドラマの見逃し配信は、公式サービス「TVer（ティーバー）」で無料で見られます。このアプリの中では再生できないため、TVerのサイトへ案内します。':'Japanese TV dramas are available free on the official service TVer. Playback is not possible inside this app, so we link to the TVer site.'}</p><div class="actions"><a class="btn btn-blue" href="https://tver.jp/" target="_blank" rel="noopener">${lang==='ja'?'TVerを開く':'Open TVer'}</a></div></article>`;
   return h;
 }
+/* 機関・マスコミコーナー（公式発信：埋め込み＋紹介リンクのみ） */
+const officialSections=[
+ {titleJa:'創価大学',titleEn:'Soka University',
+  noteJa:'創価大学公式チャンネルの動画です。サムネイルをタップすると再生します。',
+  noteEn:'Videos from the official Soka University channel. Tap a thumbnail to play.',
+  videos:[
+   {yt:'ep8HNrcXBWU',title:'創価大学紹介ムービー2026｜創価大学',intro:'創価大学の公式紹介ムービーです。'},
+   {yt:'k9jC2VbGsvA',title:'捨てられるはずの米粉から「食べられるスプーン」を開発！？中学校の給食で試供を実施！｜創価大学',intro:'創価大学の学生の取り組みを紹介する公式動画です。'},
+   {yt:'QuSTju6kWFk',title:'学生歌プロモーション映像≪公式≫',intro:'創価大学の学生歌の公式プロモーション映像です。'},
+   {yt:'_rQIBBC4WzM',title:'第56回創大祭・第42回白鳥祭記念フェスティバル｜ダイジェスト動画',intro:'創大祭・白鳥祭のダイジェスト動画です。'},
+   {yt:'IqkArQQGYc0',title:'創価大学総合型選抜小論文入試のポイント解説',intro:'総合型選抜の小論文入試について解説する公式動画です。'}
+  ],
+  links:[
+   {url:'https://www.soka.ac.jp/',labelJa:'創価大学 公式サイト',labelEn:'Soka University Official Site'},
+   {url:'https://www.soka.ac.jp/news/',labelJa:'創価大学 お知らせ',labelEn:'Soka University News'}
+  ]},
+ {titleJa:'公的機関',titleEn:'Public Institutions',
+  noteJa:'JAXA・気象庁・国立天文台・理化学研究所の公式チャンネルの動画です。',
+  noteEn:'Videos from the official channels of JAXA, JMA, NAOJ and RIKEN.',
+  videos:[
+   {yt:'xX_NegTzj7I',title:'JAXA：月極域探査機（LUPEX）に関する記者説明会',intro:'JAXA（宇宙航空研究開発機構）公式チャンネルの記者説明会の映像です。'},
+   {yt:'H65ovjc9jiE',title:'気象庁：緊急記者会見',intro:'気象庁公式チャンネルの記者会見の映像です。'},
+   {yt:'-kDxPRCOPYI',title:'気象庁：気象防災アドバイザー任用事例共有セミナー（第4回）',intro:'気象庁「知識・解説」公式チャンネルのセミナー映像です。'},
+   {yt:'wnTSJMP_Eio',title:'国立天文台：2026年12月の星空情報',intro:'国立天文台公式チャンネルの星空情報です。'},
+   {yt:'uhdzT6pzqZ0',title:'理化学研究所：「富岳NEXT」の挑戦 AI×HPCで科学の未来をひらく',intro:'理化学研究所公式チャンネルの動画です。'},
+   {yt:'3L6VFgWLO7U',title:'理化学研究所：理研の研究者と研究支援職に質問してみた',intro:'理化学研究所公式チャンネルの動画です。'}
+  ],
+  links:[
+   {url:'https://www.jaxa.jp/',labelJa:'JAXA 公式サイト',labelEn:'JAXA Official Site'},
+   {url:'https://www.jma.go.jp/',labelJa:'気象庁 公式サイト',labelEn:'JMA Official Site'},
+   {url:'https://www.nao.ac.jp/',labelJa:'国立天文台 公式サイト',labelEn:'NAOJ Official Site'},
+   {url:'https://www.riken.jp/',labelJa:'理化学研究所 公式サイト',labelEn:'RIKEN Official Site'}
+  ]},
+ {titleJa:'学会・団体',titleEn:'Societies & Organizations',
+  noteJa:'創価学会公式チャンネルと、SGI（創価学会インタナショナル）公式チャンネルの動画です。',
+  noteEn:'Videos from the official Soka Gakkai channel and SGI (Soka Gakkai International).',
+  videos:[
+   {yt:'hXvtxZwCQX0',title:'「誰もが宝石を秘めている」～池田先生の青春対話 Vol.2～｜創価学会公式',intro:'創価学会公式チャンネルの動画です。'},
+   {yt:'-QMUybcLeus',title:'学会歌「21世紀のマーチ」｜創価学会公式',intro:'創価学会公式チャンネルの動画です。'},
+   {yt:'rREz023F0ac',title:'わたしと宇宙展 ― 生命（ほし）の地球と共に ―｜創価学会',intro:'創価学会公式チャンネルの動画です。'},
+   {yt:'uTM2g9MmNWU',title:'SGI: History of the Soka Gakkai',intro:'SGI（創価学会インタナショナル）公式チャンネルの動画です（英語）。'},
+   {yt:'JBjb_6ajUv0',title:'SGI: Origins of Nichiren Buddhism',intro:'SGI公式チャンネルの動画です（英語）。'},
+   {yt:'y3xOf-jXJSY',title:'SGI: Our Shared Humanity — Soka Gakkai Buddhist Movement',intro:'SGI公式チャンネルの動画です（英語）。'}
+  ],
+  links:[
+   {url:'https://www.sokagakkai.jp/',labelJa:'創価学会 公式サイト',labelEn:'Soka Gakkai Official Site'},
+   {url:'https://www.sokaglobal.org/',labelJa:'SGI 公式サイト',labelEn:'SGI Official Site'},
+   {url:'https://www.seikyoonline.com/',labelJa:'聖教新聞電子版',labelEn:'Seikyo Shimbun Online'}
+  ]},
+ {titleJa:'大学',titleEn:'Universities',
+  noteJa:'東京大学と京都大学の公式チャンネルの動画です。',
+  noteEn:'Videos from the official channels of the University of Tokyo and Kyoto University.',
+  videos:[
+   {yt:'sS1xVQ10JaI',title:'東京大学：辻 大和（第24回東京大学東洋文化研究所公開講座）',intro:'UTokyo Channel（東京大学公式）の公開講座の映像です。'},
+   {yt:'eS-JXjdOkuM',title:'東京大学：池田 紘士（第71回農学部公開セミナー）',intro:'UTokyo Channel（東京大学公式）の公開セミナーの映像です。'},
+   {yt:'HNa4rvUUae0',title:'京都大学：京大医学部を語る#1 なぜ教授たちは大学院に？',intro:'京都大学公式チャンネルの動画です。'},
+   {yt:'8DcgMZlmmvo',title:'京都大学：京大医学部を語る#2 人生一度は大学院へ',intro:'京都大学公式チャンネルの動画です。'}
+  ],
+  links:[
+   {url:'https://www.u-tokyo.ac.jp/',labelJa:'東京大学 公式サイト',labelEn:'University of Tokyo Official Site'},
+   {url:'https://www.kyoto-u.ac.jp/',labelJa:'京都大学 公式サイト',labelEn:'Kyoto University Official Site'}
+  ]},
+ {titleJa:'マスコミ',titleEn:'Media',
+  noteJa:'テレビ朝日（ANN）・日本テレビ・TBS・朝日新聞の公式チャンネルの動画です。',
+  noteEn:'Videos from the official channels of ANN, NTV, TBS and the Asahi Shimbun.',
+  videos:[
+   {yt:'v3sumWdf9Mg',title:'ANN：11/26 深夜ニュースまとめ 最新情報を厳選してお届け',intro:'テレビ朝日「ANNnewsCH」公式チャンネルのニュース動画です。'},
+   {yt:'61IpVxQGbgs',title:'日テレNEWS：関文科相「問責」27日採決へ ── 政治ニュースまとめ',intro:'日本テレビ「日テレNEWS」公式チャンネルのニュース動画です。'},
+   {yt:'PqoNVcRz344',title:'TBS NEWS DIG：石破茂元幹事長 政策発表の記者会見（自民党総裁選）',intro:'TBS NEWS DIG公式チャンネルの記者会見の映像です。'},
+   {yt:'zTEX5iw7_Ao',title:'朝日新聞：JAXAが月面探査車の試験機を公開',intro:'朝日新聞公式チャンネルのニュース動画です。'}
+  ],
+  links:[
+   {url:'https://news.tv-asahi.co.jp/',labelJa:'テレ朝news 公式サイト',labelEn:'TV Asahi News Official Site'},
+   {url:'https://news.ntv.co.jp/',labelJa:'日テレNEWS 公式サイト',labelEn:'NTV News Official Site'},
+   {url:'https://newsdig.tbs.co.jp/',labelJa:'TBS NEWS DIG 公式サイト',labelEn:'TBS NEWS DIG Official Site'},
+   {url:'https://www.asahi.com/',labelJa:'朝日新聞 公式サイト',labelEn:'Asahi Shimbun Official Site'}
+  ]}
+];
+function bwOfficialCard(m){
+  return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayOfficial(this,'${m.yt}')"><img src="https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">${esc(m.title)}</div><p style="margin:4px 0 8px">${esc(m.intro)}</p></div>`;
+}
+function bwPlayOfficial(el,yt){
+  el.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=1" title="YouTube" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+  el.style.cursor='default'; el.onclick=null;
+}
+function renderInstitutions(){
+  return officialSections.map((sec,i)=>`<article class="card" style="${i?'margin-top:14px;':''}"><h3 class="title" style="font-size:1.1rem">${esc(lang==='ja'?sec.titleJa:sec.titleEn)}</h3><p class="desc">${esc(lang==='ja'?sec.noteJa:sec.noteEn)}</p>`+sec.videos.map(bwOfficialCard).join('')+((sec.links&&sec.links.length)?`<div class="actions" style="margin-top:10px;flex-wrap:wrap;gap:8px">`+sec.links.map(l=>`<a class="btn" href="${l.url}" target="_blank" rel="noopener">${esc(lang==='ja'?l.labelJa:l.labelEn)}</a>`).join('')+'</div>':'')+'</article>').join('');
+}
 renderVideos();
 renderList(); renderTimeline(); renderProfilePosts(); doSearch(); if(typeof renderNotifications==='function') renderNotifications(); if(typeof renderBwPages==='function') renderBwPages(); if(typeof renderCorners==='function') renderCorners();
 if(typeof openBwPage==='function')window.openBwPage=openBwPage;
@@ -1334,6 +1423,7 @@ if(typeof bwPlayMusic==='function')window.bwPlayMusic=bwPlayMusic;
 if(typeof bwPlayPostVideo==='function')window.bwPlayPostVideo=bwPlayPostVideo;
 if(typeof bwPlayMovie==='function')window.bwPlayMovie=bwPlayMovie;
 if(typeof bwPlayClassic==='function')window.bwPlayClassic=bwPlayClassic;
+if(typeof bwPlayOfficial==='function')window.bwPlayOfficial=bwPlayOfficial;
 if(typeof openArticle==='function')window.openArticle=openArticle;
 if(typeof shareArticle==='function')window.shareArticle=shareArticle;
 }
