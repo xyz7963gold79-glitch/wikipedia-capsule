@@ -873,9 +873,9 @@ const bwCorners=[
  {id:4,nameJa:"世界の声",nameEn:"Voices Around the World",descJa:"世界中のメンバーの声を集める。ブラジル、日本、アフリカからの便り。",descEn:"Voices from members worldwide.",articles:[
   {titleJa:"ブラジル便り：葉っぱの器で雨を待つ",titleEn:"Letter from Brazil: Waiting for Rain with a Leaf Bowl",introJa:"サラとナギの実践が学校に広がった様子。",introEn:"How Sara and Nagi's practice spread to their school.",date:"2026/11/26"},
   {titleJa:"ケニア便り：井戸と植林",titleEn:"Letter from Kenya: Wells and Tree Planting",introJa:"水を守るために始めた小さな森づくり。",introEn:"Small forest project started to protect water.",date:"2026/11/23"}]},
- {id:5,nameJa:"ゲーム",nameEn:"Games",descJa:"クイズ、ぬりえ、なぞなぞ、神経衰弱で遊べます。遊びながら、知識が届きます。",descEn:"Quizzes made from Wikipedia knowledge.",articles:[]},
- {id:6,nameJa:"映画・ドラマ",nameEn:"Movies & Drama",descJa:"円谷プロ公式の特撮配信と、パブリックドメインの古典映画を集めました。タップでそのまま見られます。",descEn:"Official tokusatsu episodes and public-domain classic films. Tap to watch.",articles:[]},
- {id:7,nameJa:"機関・マスコミ",nameEn:"Institutions & Media",descJa:"創価大学をはじめ、公的機関・大学・学会・マスコミ・世界の機関と賞の公式発信を集めました。公式の動画と、公式サイトへの案内です。",descEn:"Official videos and site links from Soka University, public institutions, universities, societies, media, and world institutions and prizes.",articles:[]}
+ {id:5,nameJa:"ゲーム",nameEn:"Games",descJa:"クイズ、ぬりえ、なぞなぞ、神経衰弱と、パソコンの古典ゲームで遊べます。遊びながら、知識が届きます。",descEn:"Quizzes, coloring, riddles, memory games and classic PC games from the Internet Archive.",articles:[]},
+ {id:6,nameJa:"映画・ドラマ",nameEn:"Movies & Drama",descJa:"円谷プロと東映の特撮、手塚治虫などのアニメの名作、ガンダムやマクロスの予告、銀河鉄道の映像と、パブリックドメインの古典映画を集めました。タップでそのまま見られます。",descEn:"Official tokusatsu, classic anime, Gundam and Macross trailers, Galaxy Express videos and public-domain classic films. Tap to watch.",articles:[]},
+ {id:7,nameJa:"機関・マスコミ",nameEn:"Institutions & Media",descJa:"創価大学をはじめ、公的機関・大学・世界の大学・学会・マスコミ・世界の機関と賞の公式発信を集めました。公式の動画と、公式サイトへの案内です。",descEn:"Official videos and site links from Soka University, public institutions, universities in Japan and around the world, societies, media, and world institutions and prizes.",articles:[]}
 ];
 let cnCurrent=null;
 function renderCorners(){
@@ -883,7 +883,7 @@ function renderCorners(){
   if(cnCurrent){
     document.getElementById('cn-dtitle').textContent=lang==='ja'?cnCurrent.nameJa:cnCurrent.nameEn;
     document.getElementById('cn-ddesc').textContent=lang==='ja'?cnCurrent.descJa:cnCurrent.descEn;
-    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_COLOR2_HTML+BW_GAME2_HTML+'<p class="desc" style="text-align:center;margin-top:16px">制作：女子会</p>';bwQuizStart();bwRiddleStart();bwMemStart();}else if(cnCurrent.id===6){document.getElementById('cn-articles').innerHTML=renderMovies();}else if(cnCurrent.id===7){document.getElementById('cn-articles').innerHTML=renderInstitutions();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
+    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_COLOR2_HTML+BW_GAME2_HTML+BW_CLASSIC_GAMES_HTML+'<p class="desc" style="text-align:center;margin-top:16px">制作：女子会</p>';bwQuizStart();bwRiddleStart();bwMemStart();}else if(cnCurrent.id===6){document.getElementById('cn-articles').innerHTML=renderMovies();}else if(cnCurrent.id===7){document.getElementById('cn-articles').innerHTML=renderInstitutions();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
   }
 }
 
@@ -957,6 +957,7 @@ function bwMemFlip(idx){
     else{ bwMem.lock=true; setTimeout(()=>{ bwMem.open=[]; bwMem.lock=false; bwMemRender(); },900); }
   }
 }
+const BW_CLASSIC_GAMES_HTML="<article class=\"card\" style=\"margin-top:14px\"><h3 class=\"title\" style=\"font-size:1.1rem\">古典ゲーム（インターネットアーカイブ）</h3><p class=\"desc\">1980〜90年代のパソコンの名作ゲームを、archive.org（インターネットアーカイブ）の公式プレイヤーで遊べます。絵をタップすると読み込みます。操作はパソコンのキーボードとマウスが中心です。スマホでは遊びにくいゲームがありますので、ご了承ください。</p><div class=\"post\" style=\"border-top:1px solid #eef2ff;padding-top:14px\"><div class=\"yt-facade\" onclick=\"bwPlayClassic(this,'msdos_Oregon_Trail_The_1990')\"><img src=\"https://archive.org/services/img/msdos_Oregon_Trail_The_1990\" alt=\"\" loading=\"lazy\" onerror=\"this.style.display='none'\"><div class=\"play\">▶</div></div><div class=\"ptitle\" style=\"font-size:1.05rem\">オレゴン・トレイル The Oregon Trail（1990）</div><p style=\"margin:4px 0 8px\">開拓時代のアメリカを旅する教育ゲームです。家族向けのおすすめです。</p></div><div class=\"post\" style=\"border-top:1px solid #eef2ff;padding-top:14px\"><div class=\"yt-facade\" onclick=\"bwPlayClassic(this,'msdos_Prince_of_Persia_1990')\"><img src=\"https://archive.org/services/img/msdos_Prince_of_Persia_1990\" alt=\"\" loading=\"lazy\" onerror=\"this.style.display='none'\"><div class=\"play\">▶</div></div><div class=\"ptitle\" style=\"font-size:1.05rem\">プリンス・オブ・ペルシャ Prince of Persia（1990）</div><p style=\"margin:4px 0 8px\">映画のような動きで知られる、アクションゲームの名作です。</p></div><div class=\"post\" style=\"border-top:1px solid #eef2ff;padding-top:14px\"><div class=\"yt-facade\" onclick=\"bwPlayClassic(this,'msdos_SimCity_1989')\"><img src=\"https://archive.org/services/img/msdos_SimCity_1989\" alt=\"\" loading=\"lazy\" onerror=\"this.style.display='none'\"><div class=\"play\">▶</div></div><div class=\"ptitle\" style=\"font-size:1.05rem\">シムシティ SimCity（1989）</div><p style=\"margin:4px 0 8px\">市長になって、街を育てるシミュレーションです。</p></div><div class=\"post\" style=\"border-top:1px solid #eef2ff;padding-top:14px\"><div class=\"yt-facade\" onclick=\"bwPlayClassic(this,'msdos_Lemmings_1991')\"><img src=\"https://archive.org/services/img/msdos_Lemmings_1991\" alt=\"\" loading=\"lazy\" onerror=\"this.style.display='none'\"><div class=\"play\">▶</div></div><div class=\"ptitle\" style=\"font-size:1.05rem\">レミングス Lemmings（1991）</div><p style=\"margin:4px 0 8px\">行進するレミングスをゴールへ導くパズルです。家族向けです。</p></div><div class=\"post\" style=\"border-top:1px solid #eef2ff;padding-top:14px\"><div class=\"yt-facade\" onclick=\"bwPlayClassic(this,'msdos_Sid_Meiers_Civilization_1991')\"><img src=\"https://archive.org/services/img/msdos_Sid_Meiers_Civilization_1991\" alt=\"\" loading=\"lazy\" onerror=\"this.style.display='none'\"><div class=\"play\">▶</div></div><div class=\"ptitle\" style=\"font-size:1.05rem\">シヴィライゼーション Civilization（1991）</div><p style=\"margin:4px 0 8px\">文明を育てる、歴史戦略シミュレーションの古典です。</p></div><div class=\"post\" style=\"border-top:1px solid #eef2ff;padding-top:14px\"><div class=\"yt-facade\" onclick=\"bwPlayClassic(this,'msdos_Commander_Keen_1_-_Marooned_on_Mars_1990')\"><img src=\"https://archive.org/services/img/msdos_Commander_Keen_1_-_Marooned_on_Mars_1990\" alt=\"\" loading=\"lazy\" onerror=\"this.style.display='none'\"><div class=\"play\">▶</div></div><div class=\"ptitle\" style=\"font-size:1.05rem\">コマンダー・キーン Commander Keen 1（1990）</div><p style=\"margin:4px 0 8px\">火星を舞台にした、横スクロールのアクションゲームです。</p></div><div class=\"post\" style=\"border-top:1px solid #eef2ff;padding-top:14px\"><div class=\"yt-facade\" onclick=\"bwPlayClassic(this,'arcade_galaga88')\"><img src=\"https://archive.org/services/img/arcade_galaga88\" alt=\"\" loading=\"lazy\" onerror=\"this.style.display='none'\"><div class=\"play\">▶</div></div><div class=\"ptitle\" style=\"font-size:1.05rem\">ギャラガ'88 Galaga '88</div><p style=\"margin:4px 0 8px\">ナムコの名作シューティングの続編です。アーケード版です。</p></div></article>";
 const BW_COLOR2_HTML='<article class="card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">ぬりえ2：手紙のカプセル</h3><p class="desc">第8話のカプセルです。上の色を使って、塗ってみてください。</p><svg viewBox="0 0 320 210" style="width:100%;max-width:520px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="320" height="210" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="0" y="180" width="320" height="30" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><circle cx="46" cy="44" r="24" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><ellipse cx="46" cy="44" rx="40" ry="10" fill="none" stroke="#333" stroke-width="2.5"/><circle cx="104" cy="32" r="9" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><polygon points="272,18 277,31 291,32 280,41 284,54 272,47 260,54 264,41 253,32 267,31" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><polygon points="36,114 40,123 49,124 42,130 44,139 36,134 28,139 30,130 23,124 32,123" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><polygon points="292,116 295,124 303,124 297,130 299,138 292,133 285,138 287,130 281,124 289,124" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><ellipse cx="160" cy="122" rx="78" ry="40" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="70" y="96" width="26" height="52" rx="10" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="224" y="96" width="26" height="52" rx="10" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><circle cx="160" cy="122" r="16" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="132" y="52" width="56" height="36" rx="3" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><polygon points="132,52 188,52 160,74" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/></svg></article>';
 const bwQuizData=[
  {q:"水が、海から空へ、空から雨へとめぐる仕組みを、何といいますか？",c:["水の循環","光合成","潮の満ち引き"],a:0,ex:"海の水が蒸発し、雲になり、雨になって戻る大きなめぐりです。",wiki:"水循環"},
@@ -1275,6 +1276,114 @@ const movieItems={
   {yt:'8Nys9dqLBDM',title:'ULTRAMAN BLAZAR Episode 6 "The Invading Aurora"',intro:'ウルトラマンブレーザー第6話。公式英語チャンネルの配信です（英語吹替）。'},
   {yt:'2Wt2_QP_EQc',title:'ULTRAMAN TEO Episode 19 "Alien Pandemic"',intro:'放送中シリーズの同時配信です。公式英語チャンネルの配信です（英語吹替）。',limited:true}
  ],
+ rider:[
+  {yt:'ucxPnj5IQhM',title:'仮面ライダーセイバー 第01話',intro:'東映特撮YouTube Officialの公式配信です。'},
+  {yt:'rQOQyr2y8ck',title:'仮面ライダーセイバー 第02話',intro:'東映特撮YouTube Officialの公式配信です。'},
+  {yt:'9eY6r90gGg0',title:'仮面ライダーストロンガー 第01話',intro:'東映特撮YouTube Officialの公式配信です。'},
+  {yt:'8K_XRVz0nn0',title:'【特報】「仮面ライダー1号」2016.3.26公開',intro:'映画『仮面ライダー1号』の特報映像です。東映特撮YouTube Officialの配信です。'},
+  {yt:'9y56V0RHYOg',title:'KAMEN RIDER #1（初代『仮面ライダー』第1話）',intro:'TOEI TOKUSATSU WORLD OFFICIALの配信です（英語字幕）。'},
+  {yt:'lWb_yQFHNbs',title:'KAMEN RIDER #2（初代『仮面ライダー』第2話）',intro:'TOEI TOKUSATSU WORLD OFFICIALの配信です（英語字幕）。'},
+  {yt:'lr77oI4DP1E',title:'KAMEN RIDER W #1（『仮面ライダーW』第1話）',intro:'TOEI TOKUSATSU WORLD OFFICIALの配信です（英語字幕）。'},
+  {yt:'5DAJ4WDt3RI',title:'仮面ライダークウガ 第01話',intro:'25周年・全話順次配信の第1話です。東映特撮YouTube Officialの配信です。',limited:true},
+  {yt:'1vUHjeyUTmA',title:'仮面ライダーエグゼイド 第18話',intro:'10周年・全45話特別配信の1話です。東映特撮YouTube Officialの配信です。',limited:true},
+  {yt:'qstfDQaQ1Kk',title:'仮面ライダーフォーゼ 第42話',intro:'レギュラー枠の順次配信です（話数は入れ替わります）。東映特撮YouTube Officialの配信です。',limited:true}
+ ],
+ tezuka:[
+  {yt:'KGq6z1mEU9Q',title:'鉄腕アトム（1963）',intro:'手塚プロダクション公式チャンネルの本編配信です。'},
+  {yt:'EdX-TwsfmYI',title:'GO!GO!アトム 第1話「イチかバチかのミツバチミッション」',intro:'手塚プロダクション公式チャンネルの本編配信です。'},
+  {yt:'wuoxlyQk7Bw',title:'ブラック・ジャック 第1話『オペの順番』',intro:'手塚プロダクション公式チャンネルの本編配信です。'},
+  {yt:'Y4jaJheHHaQ',title:'どろろ 第1話『百鬼丸の巻・その一』',intro:'手塚プロダクション公式チャンネルの本編配信です。'},
+  {yt:'ZDVRHmZocnc',title:'どろろ（AI4K版）第1話',intro:'手塚プロダクション公式チャンネルの本編配信です。'},
+  {yt:'lhFy4x97xYw',title:'リボンの騎士（本編）',intro:'手塚プロダクション公式チャンネルの本編配信です。'},
+  {yt:'0ASXbhQzUwk',title:'リボンの騎士（パイロット版）',intro:'手塚プロダクション公式チャンネルの配信です。'},
+  {yt:'1zu9JHiYKvE',title:'ジャングル大帝（1965）',intro:'手塚プロダクション公式チャンネルの本編配信です。'},
+  {yt:'s3T0KE1sCBA',title:'ジャングル大帝（1989）',intro:'手塚プロダクション公式チャンネルの本編配信です。'},
+  {yt:'U2TVBaC6Sqo',title:'火の鳥鳳凰編',intro:'手塚プロダクション公式チャンネルの本編配信です。'}
+ ],
+ doraemon:[
+  {yt:'JamjqpLWUbk',title:'【ドラえもん】ミラクルムービーを撮ってみた',intro:'TV本編です。【公式】ドラえもん / 藤子・F・不二雄チャンネルの定期配信です。'},
+  {yt:'TdRVxz084bA',title:'【ドラえもん】ターザンパンツ',intro:'TV本編です。【公式】ドラえもん / 藤子・F・不二雄チャンネルの定期配信です。'},
+  {yt:'uk_Qye16KMk',title:'【ドラえもん】ドラえもんだってママがほしい',intro:'TV本編です。【公式】ドラえもん / 藤子・F・不二雄チャンネルの定期配信です。'},
+  {yt:'ck04v-5kQ2g',title:'【ドラえもん】四角いドラえもん',intro:'TV本編です。【公式】ドラえもん / 藤子・F・不二雄チャンネルの定期配信です。'},
+  {yt:'m9iperdA28E',title:'『映画ドラえもん のび太の絵世界物語』予告',intro:'東宝MOVIEチャンネルの公式予告です。'},
+  {yt:'MCuR4goNTyg',title:'『映画ドラえもん 新・のび太の日本誕生』予告編',intro:'東宝MOVIEチャンネルの公式予告です。'},
+  {yt:'DIwIWRi8Vpk',title:'【キテレツ大百科】忘れ競争！ミョウガＶＳ逆境タイマツ',intro:'藤子・F・不二雄作品のTV本編です。ドラえもん公式チャンネルの定期配信です。'},
+  {yt:'z1cnV74ucI8',title:'【パーマン】先生のお見合い',intro:'藤子・F・不二雄作品のTV本編です。ドラえもん公式チャンネルの定期配信です。'},
+  {yt:'iuh5U6YLpcs',title:'【チンプイ】お姉さんがやってきた',intro:'藤子・F・不二雄作品のTV本編です。ドラえもん公式チャンネルの定期配信です。'}
+ ],
+ sailormoon:[
+  {yt:'22qS-xw57lg',title:'美少女戦士セーラームーン 第1話「泣き虫うさぎの華麗なる変身」',intro:'TV本編の第1話です。東映アニメーションミュージアムチャンネルの公式配信です。'},
+  {yt:'qEescksRBDs',title:'劇場版「美少女戦士セーラームーンCosmos」予告1',intro:'sailormoon-official（公式）の予告です。'},
+  {yt:'c4g1-tHZYJg',title:'劇場版「美少女戦士セーラームーンCosmos」予告2',intro:'sailormoon-official（公式）の予告です。'},
+  {yt:'4hL-ChmRIU0',title:'劇場版「美少女戦士セーラームーンCosmos」特報',intro:'sailormoon-official（公式）の特報です。'},
+  {yt:'LhmHTock6R0',title:'劇場版「美少女戦士セーラームーンCosmos」《後編》予告',intro:'sailormoon-official（公式）の予告です。'},
+  {yt:'Aci1w_--cpc',title:'劇場版「美少女戦士セーラームーンEternal」《後編》予告映像',intro:'sailormoon-official（公式）の予告です。'},
+  {yt:'p4ntci4Sr8U',title:'劇場版「美少女戦士セーラームーンEternal」《前編》予告映像60秒',intro:'sailormoon-official（公式）の予告です。'},
+  {yt:'EhoU6gn0eKU',title:'劇場版「美少女戦士セーラームーンEternal」《後編》予告映像',intro:'東映映画チャンネルの公式予告です。'},
+  {yt:'dmgkqrDqE4U',title:'劇場版「美少女戦士セーラームーンEternal」《前編》変身シーン特別映像',intro:'東映映画チャンネルの特別映像です。'},
+  {yt:'dmd0IXSohlo',title:'劇場版「美少女戦士セーラームーンEternal」《後編》変身シーン特別映像',intro:'東映映画チャンネルの特別映像です。'},
+  {yt:'LzIZe_TYRho',title:'「美少女戦士セーラームーン Crystal」第3期 アニメーションPV',intro:'sailormoon-official（公式）のPVです。'},
+  {yt:'7q-rU8s9HCY',title:'アニメ「美少女戦士セーラームーンCrystal」TRAILER 第2期',intro:'sailormoon-official（公式）の予告です。'}
+ ],
+ precure:[
+  {yt:'aa9xs0hvVe8',title:'『映画名探偵プリキュア！』本予告',intro:'プリキュア公式YouTubeチャンネルの本予告です。'},
+  {yt:'I4bvd2Iihkc',title:'『映画名探偵プリキュア！』特報映像',intro:'プリキュア公式YouTubeチャンネルの特報です。'},
+  {yt:'axbbAxWU9qQ',title:'『映画キミとアイドルプリキュア♪』本予告',intro:'プリキュア公式YouTubeチャンネルの本予告です。'},
+  {yt:'p73_Lc5uUDA',title:'『映画キミとアイドルプリキュア♪』特報映像',intro:'プリキュア公式YouTubeチャンネルの特報です。'},
+  {yt:'Qj54m_RWVhE',title:'『わんだふるぷりきゅあ！ざ・むーびー！』本予告',intro:'プリキュア公式YouTubeチャンネルの本予告です。'},
+  {yt:'-tZdpaHmH0k',title:'『わんだふるぷりきゅあ！ざ・むーびー！』特報映像',intro:'プリキュア公式YouTubeチャンネルの特報です。'},
+  {yt:'zvDjn0i4U-A',title:'「ぷちきゅあ～Precure Fairies～」第1話&第2話',intro:'プリキュア公式YouTubeチャンネルの公式短編シリーズです。'},
+  {yt:'KFbh7TWarVg',title:'「ぷちきゅあ～Precure Fairies～」#86',intro:'プリキュア公式YouTubeチャンネルの公式短編シリーズです。'},
+  {yt:'4qpIPnwwUG8',title:'『映画名探偵プリキュア！』映画オープニング映像',intro:'プリキュア公式YouTubeチャンネルの特別映像です。'},
+  {yt:'pRxYa3u1Yug',title:'『わんだふるぷりきゅあ！ざ・むーびー！』本編映像クリップ',intro:'プリキュア公式YouTubeチャンネルの本編映像クリップです。'}
+ ],
+ pokemon:[
+  {yt:'z3hMX65Khtg',title:'Pokémon - I Choose You!（第1話・英語音声）',intro:'Pokémon TV（英語版公式チャンネル）の全話配信です。英語音声です。'},
+  {yt:'iaxkOJZxzQM',title:'Clefairy and the Moon Stone（Season 1 第6話・英語音声）',intro:'Pokémon TV（英語版公式チャンネル）の全話配信です。英語音声です。'},
+  {yt:'1TlOcjJodHw',title:'Here Comes the Squirtle Squad（Season 1 第12話・英語音声）',intro:'Pokémon TV（英語版公式チャンネル）の全話配信です。英語音声です。'},
+  {yt:'3l1lSNQxJA0',title:'Mystery at the Lighthouse（Season 1 第13話・英語音声）',intro:'Pokémon TV（英語版公式チャンネル）の全話配信です。英語音声です。'},
+  {yt:'yGvr0TXXPVU',title:'Princess vs. Princess（Season 2 第1話・英語音声）',intro:'Pokémon TV（英語版公式チャンネル）の全話配信です。英語音声です。'},
+  {yt:'6QyPTbqd5Xk',title:'A Crasher Course in Power!（Season 11 第31話・英語音声）',intro:'Pokémon TV（英語版公式チャンネル）の全話配信です。英語音声です。'},
+  {yt:'oZdFFcUUYzA',title:'Camping It Up!（Season 11 第36話・英語音声）',intro:'Pokémon TV（英語版公式チャンネル）の全話配信です。英語音声です。'},
+  {yt:'D53XrHaS80g',title:'POKÉTOON「幼なじみのカルボウ」',intro:'ポケモン公式YouTubeチャンネルの公式短編です。'},
+  {yt:'_Y3EwcC5ICE',title:'ポケモンジェネレーションズ エピソード1：冒険',intro:'ポケモン公式YouTubeチャンネルの公式Webアニメです。'}
+ ],
+ gundam:[
+  {yt:'NSS-dl4Wop8',title:'『機動戦士ガンダム 閃光のハサウェイ』予告1',intro:'ガンダムチャンネル（公式）の予告です。'},
+  {yt:'MJSgeewMd_E',title:'『機動戦士ガンダム 閃光のハサウェイ』予告2',intro:'ガンダムチャンネル（公式）の予告です。'},
+  {yt:'_mZod4M6nDQ',title:'『機動戦士ガンダム 閃光のハサウェイ キルケーの魔女』本予告',intro:'ガンダムチャンネル（公式）の本予告です。'},
+  {yt:'JLPZ9uzyas0',title:'『機動戦士ガンダムSEED FREEDOM』本予告',intro:'ガンダムチャンネル（公式）の本予告です。'},
+  {yt:'t517ZHKqOVY',title:'『機動戦士ガンダムSEED FREEDOM』公開記念予告',intro:'ガンダムチャンネル（公式）の予告です。'},
+  {yt:'VZaqtgVtL1M',title:'『機動戦士Gundam GQuuuuuuX（ジークアクス）』特報',intro:'ガンダムチャンネル（公式）の特報です。'},
+  {yt:'Nrrp2vXddgk',title:'『機動戦士Gundam GQuuuuuuX -Beginning-』予告',intro:'ガンダムチャンネル（公式）の予告です。'},
+  {yt:'PvWIy8ABEOs',title:'『機動戦士Gundam GQuuuuuuX -Beginning-』本予告',intro:'ガンダムチャンネル（公式）の本予告です。'},
+  {yt:'LuSG1j-gd4A',title:'『機動戦士Gundam GQuuuuuuX』TV Series Promotion Reel',intro:'ガンダムチャンネル（公式）のPVです。'}
+ ],
+ macross:[
+  {yt:'FnjuDdaJNik',title:'『超時空要塞マクロス』第1話「ブービー・トラップ」',intro:'テレビ本編の第1話です。マクロス MACROSS ch（公式）の配信です。'},
+  {yt:'_4Hngnqylo8',title:'『超時空要塞マクロス 愛・おぼえていますか 4Kリマスターセット』PV',intro:'マクロス MACROSS ch（公式）のPVです。'},
+  {yt:'Tt4vjKw2KNk',title:'『劇場版マクロスΔ 絶対LIVE!!!!!!』本予告',intro:'マクロス MACROSS ch（公式）の本予告です。'},
+  {yt:'g4_5e_nYST4',title:'『劇場版マクロスΔ 絶対LIVE!!!!!!』特報',intro:'マクロス MACROSS ch（公式）の特報です。'},
+  {yt:'4Gt5hp-sQAQ',title:'『劇場版マクロスΔ 絶対LIVE!!!!!!』予告',intro:'マクロス MACROSS ch（公式）の予告です。'},
+  {yt:'ok845OkqyVM',title:'『劇場短編マクロスF ～時の迷宮～』本予告',intro:'マクロス MACROSS ch（公式）の本予告です。'}
+ ],
+ galaxy999:[
+  {yt:'Lnd8Uld7Nx4',title:'アニメ『銀河鉄道999』OP映像「銀河鉄道999」',intro:'ささきいさお・杉並児童合唱団のTV版主題歌です。TAB Channel / タブ【Toei Animation Beyond】の公式映像です。'},
+  {yt:'sXPsg8Nyobk',title:'アニメ『銀河鉄道999』ED映像「青い地球」',intro:'ささきいさお・杉並児童合唱団のTV版エンディングです。TAB Channel / タブ【Toei Animation Beyond】の公式映像です。'},
+  {yt:'U3ySc2xWGUU',title:'銀河鉄道999ミュージックビデオ『Orbital Resonance feat.銀河鉄道999』',intro:'東映アニメーション公式YouTubeチャンネルの公式MVプロジェクトです。'},
+  {yt:'SRhgyunrZZI',title:'銀河鉄道999ミュージックビデオ制作プロジェクト 作品No.2「Flight Canvas」',intro:'東映アニメーション公式YouTubeチャンネルの公式MVプロジェクトです。'},
+  {yt:'eG-F0ZycWUU',title:'銀河鉄道999ミュージックビデオ制作プロジェクト 作品No.6 安永香織',intro:'東映アニメーション公式YouTubeチャンネルの公式MVプロジェクトです。'},
+  {yt:'QVKNzKrTQBo',title:'銀河鉄道999ミュージックビデオ制作プロジェクト 作品No.9',intro:'東映アニメーション公式YouTubeチャンネルの公式MVプロジェクトです。'},
+  {yt:'HxrKZLRNEzc',title:'「銀河鉄道999」ドルビーシネマ版公開記念 テイキング・オフ！イベント',intro:'東映アニメーション公式YouTubeチャンネルのイベント映像です。'}
+ ],
+ railways:[
+  {yt:'LFSqLxO-F2w',title:'銀河鉄道物語：緊迫のビッグワン発進シーン',intro:'OVA『銀河鉄道物語 〜忘れられた時の惑星〜』の本編シーン映像です。松本零士公式ファンクラブの公式映像です。'},
+  {yt:'ZEgKNQ_WHE8',title:'銀河鉄道物語〜忘れられた時の惑星〜 イベント編',intro:'松本零士公式ファンクラブの公式映像です。'},
+  {yt:'V0vnzQZTGZY',title:'銀河鉄道物語〜忘れられた時の惑星〜（劇場版）告知「車掌さん編」',intro:'松本零士公式ファンクラブの公式映像です。'},
+  {yt:'zBjc63vZgm8',title:'銀河鉄道物語〜忘れられた時の惑星〜（劇場版）告知「メーテル×鉄郎編」',intro:'松本零士公式ファンクラブの公式映像です。'},
+  {yt:'xuo0wh09wso',title:'銀河鉄道物語〜忘れられた時の惑星〜 GALAXY RAILWAYS TRAINS',intro:'松本零士公式ファンクラブの公式PVです。'},
+  {yt:'p6gwTk1f4Dw',title:'銀河鉄道物語〜忘れられた時の惑星〜 劇場版BD発売告知',intro:'松本零士公式ファンクラブの公式映像です。'}
+ ],
  classics:[
   {aid:'the-gold-rush-1925-tmdb962',title:'黄金狂時代 The Gold Rush（1925）',intro:'チャップリン監督・主演の代表作。パブリックドメインの古典映画です。'},
   {aid:'the-circus-charlie-chaplin',title:'サーカス The Circus（1928）',intro:'チャップリン監督・主演。パブリックドメインの古典映画です。'},
@@ -1303,13 +1412,38 @@ function bwPlayClassic(el,aid){
   el.innerHTML=`<iframe src="https://archive.org/embed/${aid}" title="Internet Archive" allowfullscreen allow="autoplay; fullscreen"></iframe>`;
   el.style.cursor='default'; el.onclick=null;
 }
+function bwMovieGroup(head,items,open){
+  if(!items||!items.length) return '';
+  const cards=items.map(bwMovieCard).join('');
+  if(!head) return cards;
+  return `<details${open?' open':''}><summary style="cursor:pointer;font-weight:700;font-size:1rem;padding:10px 0 2px">${esc(head)}</summary>${cards}</details>`;
+}
 function renderMovies(){
-  const t1=lang==='ja'?'特撮・公式配信':'Tokusatsu (Official Streaming)';
-  const t2=lang==='ja'?'古典映画':'Classic Films';
-  const t3=lang==='ja'?'ドラマの案内':'Drama Guide';
-  let h=`<article class="card"><h3 class="title" style="font-size:1.1rem">${t1}</h3><p class="desc">${lang==='ja'?'円谷プロダクション公式チャンネルの無料配信です。サムネイルをタップすると再生します。配信ラインナップは入れ替わることがあります。':'Free episodes from the official Tsuburaya channel. Tap a thumbnail to play. The lineup may change.'}</p>`+movieItems.tokusatsu.map(bwMovieCard).join('')+'</article>';
-  h+=`<article class="card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">${t2}</h3><p class="desc">${lang==='ja'?'著作権の保護期間を終えたパブリックドメイン作品を、archive.org（インターネットアーカイブ）の公式プレイヤーで上映します。':'Public-domain classics, shown with the official Internet Archive player.'}</p>`+movieItems.classics.map(bwClassicCard).join('')+'</article>';
-  h+=`<article class="card article-card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">${t3}：TVer</h3><p class="desc">${lang==='ja'?'日本のテレビドラマの見逃し配信は、公式サービス「TVer（ティーバー）」で無料で見られます。このアプリの中では再生できないため、TVerのサイトへ案内します。':'Japanese TV dramas are available free on the official service TVer. Playback is not possible inside this app, so we link to the TVer site.'}</p><div class="actions"><a class="btn btn-blue" href="https://tver.jp/" target="_blank" rel="noopener">${lang==='ja'?'TVerを開く':'Open TVer'}</a></div></article>`;
+  const L=lang==='ja';
+  const sec=(title,note,inner)=>`<article class="card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">${title}</h3><p class="desc">${note}</p>${inner}</article>`;
+  let h=`<article class="card"><h3 class="title" style="font-size:1.1rem">${L?'特撮・公式配信':'Tokusatsu (Official Streaming)'}</h3><p class="desc">${L?'円谷プロダクションと東映の公式チャンネルの無料配信です。サムネイルをタップすると再生します。配信ラインナップは入れ替わることがあります。':'Free episodes from the official Tsuburaya and Toei channels. Tap a thumbnail to play. The lineup may change.'}</p>`
+    +bwMovieGroup(L?'ウルトラマン':'Ultraman',movieItems.tokusatsu,true)
+    +bwMovieGroup(L?'仮面ライダー':'Kamen Rider',movieItems.rider,true)
+    +'</article>';
+  h+=sec(L?'アニメの名作':'Anime Classics',
+    L?'手塚治虫、藤子・F・不二雄、セーラームーン、プリキュア、ポケモンの公式配信です。作品名をタップすると一覧が開きます。':'Official episodes and trailers from Tezuka, Fujiko F. Fujio, Sailor Moon, Precure and Pokémon. Tap a title to expand.',
+    bwMovieGroup(L?'手塚治虫アニメ':'Osamu Tezuka Anime',movieItems.tezuka,true)
+    +bwMovieGroup(L?'ドラえもんと藤子・F・不二雄作品':'Doraemon & Fujiko F. Fujio',movieItems.doraemon,false)
+    +bwMovieGroup(L?'美少女戦士セーラームーン':'Sailor Moon',movieItems.sailormoon,false)
+    +bwMovieGroup(L?'プリキュア':'Precure',movieItems.precure,false)
+    +bwMovieGroup(L?'ポケモン':'Pokémon',movieItems.pokemon,false));
+  h+=sec(L?'映画・PV':'Movies & PV',
+    L?'ガンダムとマクロスの公式予告・PVです。マクロスはテレビ第1話の本編も見られます。':'Official trailers and PVs for Gundam and Macross. Episode 1 of Macross is also available in full.',
+    bwMovieGroup(L?'ガンダム':'Gundam',movieItems.gundam,true)
+    +bwMovieGroup(L?'マクロス':'Macross',movieItems.macross,true));
+  h+=sec(L?'銀河鉄道':'Galaxy Express',
+    L?'銀河鉄道999と銀河鉄道物語の公式映像です。':'Official videos for Galaxy Express 999 and The Galaxy Railways.',
+    bwMovieGroup(L?'銀河鉄道999':'Galaxy Express 999',movieItems.galaxy999,true)
+    +bwMovieGroup(L?'銀河鉄道物語':'The Galaxy Railways',movieItems.railways,true));
+  h+=sec(L?'古典映画':'Classic Films',
+    L?'著作権の保護期間を終えたパブリックドメイン作品を、archive.org（インターネットアーカイブ）の公式プレイヤーで上映します。':'Public-domain classics, shown with the official Internet Archive player.',
+    movieItems.classics.map(bwClassicCard).join(''));
+  h+=`<article class="card article-card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">${L?'ドラマの案内':'Drama Guide'}：TVer</h3><p class="desc">${L?'日本のテレビドラマの見逃し配信は、公式サービス「TVer（ティーバー）」で無料で見られます。このアプリの中では再生できないため、TVerのサイトへ案内します。':'Japanese TV dramas are available free on the official service TVer. Playback is not possible inside this app, so we link to the TVer site.'}</p><div class="actions"><a class="btn btn-blue" href="https://tver.jp/" target="_blank" rel="noopener">${L?'TVerを開く':'Open TVer'}</a></div></article>`;
   return h;
 }
 /* 機関・マスコミコーナー（公式発信：埋め込み＋紹介リンクのみ） */
@@ -1362,8 +1496,8 @@ const officialSections=[
    {url:'https://www.seikyoonline.com/',labelJa:'聖教新聞電子版',labelEn:'Seikyo Shimbun Online'}
   ]},
  {titleJa:'大学',titleEn:'Universities',
-  noteJa:'東京大学・京都大学・松山大学・愛媛大学の公式チャンネルの動画です。',
-  noteEn:'Videos from the official channels of the University of Tokyo, Kyoto University, Matsuyama University and Ehime University.',
+  noteJa:'東京大学・京都大学・早稲田大学・慶應義塾大学・松山大学・愛媛大学の公式チャンネルの動画です。',
+  noteEn:'Videos from the official channels of the University of Tokyo, Kyoto University, Waseda University, Keio University, Matsuyama University and Ehime University.',
   videos:[
    {yt:'sS1xVQ10JaI',title:'東京大学：辻 大和（第24回東京大学東洋文化研究所公開講座）',intro:'UTokyo Channel（東京大学公式）の公開講座の映像です。'},
    {yt:'eS-JXjdOkuM',title:'東京大学：池田 紘士（第71回農学部公開セミナー）',intro:'UTokyo Channel（東京大学公式）の公開セミナーの映像です。'},
@@ -1372,13 +1506,47 @@ const officialSections=[
    {yt:'czNNYw3TJLU',title:'松山大学：創立100周年・ブランディングムービー「実れ、ミライ。」本編',intro:'松山大学公式チャンネル「チャンネル松山大学」の動画です。'},
    {yt:'f88vO9hnHaY',title:'松山大学：創立100周年・ブランディングムービー「実れ、ミライ。」はじまる篇',intro:'松山大学公式チャンネル「チャンネル松山大学」の動画です。'},
    {yt:'6V4ZLaBcr9M',title:'愛媛大学：令和7年度愛媛大学学位記授与式',intro:'愛媛大学公式チャンネルの動画です。'},
-   {yt:'lraVW3JCjto',title:'愛媛大学：沿岸環境科学研究センター（CMES）紹介',intro:'愛媛大学公式チャンネルの動画です。'}
+   {yt:'lraVW3JCjto',title:'愛媛大学：沿岸環境科学研究センター（CMES）紹介',intro:'愛媛大学公式チャンネルの動画です。'},
+   {yt:'mwzOxcLGh88',title:'早稲田大学：大学の「研究」をのぞいてみよう｜2026年度 W-SPRING・W-SPRING-AI博士フォーラム',intro:'早稲田大学公式チャンネルの、博士課程の研究を紹介するフォーラムの動画です。'},
+   {yt:'96pcBImyyg8',title:'早稲田大学：Can Doing Good Make Good Business? (Prof. Naoko Nemoto)',intro:'早稲田大学公式チャンネルのポッドキャスト動画です（英語）。'},
+   {yt:'21-AWCvwT6I',title:'慶應義塾大学：宇宙をめぐる政策課題に向き合う　総合政策学部 准教授 福島康仁',intro:'慶應義塾公式チャンネルの、教員インタビューの動画です。'},
+   {yt:'GLKn_nxSpHs',title:'慶應義塾大学：慶應義塾大学文学部／Faculty of Letters',intro:'慶應義塾公式チャンネルの、文学部を紹介する動画です。'}
   ],
   links:[
    {url:'https://www.u-tokyo.ac.jp/',labelJa:'東京大学 公式サイト',labelEn:'University of Tokyo Official Site'},
    {url:'https://www.kyoto-u.ac.jp/',labelJa:'京都大学 公式サイト',labelEn:'Kyoto University Official Site'},
    {url:'https://www.matsuyama-u.ac.jp/',labelJa:'松山大学 公式サイト',labelEn:'Matsuyama University Official Site'},
-   {url:'https://www.ehime-u.ac.jp/',labelJa:'愛媛大学 公式サイト',labelEn:'Ehime University Official Site'}
+   {url:'https://www.ehime-u.ac.jp/',labelJa:'愛媛大学 公式サイト',labelEn:'Ehime University Official Site'},
+   {url:'https://www.waseda.jp/',labelJa:'早稲田大学 公式サイト',labelEn:'Waseda University Official Site'},
+   {url:'https://www.keio.ac.jp/',labelJa:'慶應義塾大学 公式サイト',labelEn:'Keio University Official Site'}
+  ]},
+ {titleJa:'世界の大学',titleEn:'World Universities',
+  noteJa:'ハーバード大学・ケンブリッジ大学・オックスフォード大学・MIT・スタンフォード大学・清華大学・北京大学の公式チャンネルの動画です（英語）。',
+  noteEn:'Videos from the official channels of Harvard, Cambridge, Oxford, MIT, Stanford, Tsinghua and Peking University (in English).',
+  videos:[
+   {yt:'A7Zq68rG-Tw',title:'ハーバード大学：Harvard Thinking: Disagreement doesn’t have to be toxic',intro:'ハーバード大学公式チャンネルの対談シリーズ「Harvard Thinking」の動画です（英語）。'},
+   {yt:'S4Zdt0ERiLQ',title:'ハーバード大学：Researching Climate in the Arctic',intro:'ハーバード大学公式チャンネルの、北極での気候研究を紹介する動画です（英語）。'},
+   {yt:'bZJ-WcPZrz8',title:'ケンブリッジ大学：Can a heart heal itself?',intro:'ケンブリッジ大学公式チャンネルの、心臓の再生医療研究を紹介する動画です（英語）。'},
+   {yt:'WMtexOPLWeE',title:'ケンブリッジ大学：The breakthrough reversing heart attack damage',intro:'ケンブリッジ大学公式チャンネルの、心筋梗塞のダメージを回復させる研究の動画です（英語）。'},
+   {yt:'cwXvK8mXMLI',title:'オックスフォード大学：Oxford professor: Four tips to avoid screen time tantrums',intro:'オックスフォード大学公式チャンネルの、子どものスクリーンタイムについての解説動画です（英語）。'},
+   {yt:'XSy8ufpexn4',title:'オックスフォード大学：What if you jumped through the Earth?',intro:'オックスフォード大学公式チャンネルの、科学の疑問に答える動画です（英語）。'},
+   {yt:'ZjshZHcJp30',title:'MIT：A Flying Microrobot With a Built-In Brain',intro:'MIT（マサチューセッツ工科大学）公式チャンネルの、小型飛行ロボットの研究を紹介する動画です（英語）。'},
+   {yt:'wwYwD-IsIPQ',title:'MIT：Ultrasound Without the Goop',intro:'MIT公式チャンネルの、新しい超音波技術を紹介する動画です（英語）。'},
+   {yt:'wU9e9Mq9JIs',title:'スタンフォード大学：Lifelong Learning at Stanford',intro:'スタンフォード大学公式チャンネルの、生涯学習を紹介する動画です（英語）。'},
+   {yt:'XBEDxbEj6aQ',title:'スタンフォード大学：Building predictive models of the human brain',intro:'スタンフォード大学公式チャンネルの、脳の予測モデルの研究を紹介する動画です（英語）。'},
+   {yt:'ZqfmYPqNdVY',title:'清華大学：Next Stop: Tsinghua!',intro:'清華大学公式チャンネルの、大学を紹介する動画です（英語）。'},
+   {yt:'u9YaW9FsBzQ',title:'清華大学：Discovering Traditional Chinese Medicine at Tsinghua',intro:'清華大学公式チャンネルの、伝統中医学を紹介する動画です（英語）。'},
+   {yt:'DpNyIMuGbzA',title:'北京大学：Letter hunting in PKU! | PKU Campus',intro:'北京大学公式チャンネルの、キャンパスを紹介する動画です（英語）。'},
+   {yt:'yiFrG3BLJZ0',title:'北京大学：Rethinking Climate Solutions at UN COP31 with Dr. Wang Binbin | PKU Nexus',intro:'北京大学公式チャンネルの、国連気候会議での研究者の対談動画です（英語）。'}
+  ],
+  links:[
+   {url:'https://www.harvard.edu/',labelJa:'ハーバード大学 公式サイト',labelEn:'Harvard University Official Site'},
+   {url:'https://www.cam.ac.uk/',labelJa:'ケンブリッジ大学 公式サイト',labelEn:'University of Cambridge Official Site'},
+   {url:'https://www.ox.ac.uk/',labelJa:'オックスフォード大学 公式サイト',labelEn:'University of Oxford Official Site'},
+   {url:'https://www.mit.edu/',labelJa:'MIT 公式サイト',labelEn:'MIT Official Site'},
+   {url:'https://www.stanford.edu/',labelJa:'スタンフォード大学 公式サイト',labelEn:'Stanford University Official Site'},
+   {url:'https://www.tsinghua.edu.cn/',labelJa:'清華大学 公式サイト',labelEn:'Tsinghua University Official Site'},
+   {url:'https://www.pku.edu.cn/',labelJa:'北京大学 公式サイト',labelEn:'Peking University Official Site'}
   ]},
  {titleJa:'マスコミ',titleEn:'Media',
   noteJa:'テレビ朝日（ANN）・日本テレビ・TBS・朝日新聞の公式チャンネルの動画です。',
@@ -1396,20 +1564,26 @@ const officialSections=[
    {url:'https://www.asahi.com/',labelJa:'朝日新聞 公式サイト',labelEn:'Asahi Shimbun Official Site'}
   ]},
  {titleJa:'世界の機関と賞',titleEn:'World Institutions & Prizes',
-  noteJa:'CERN（欧州原子核研究機構）・ノーベル賞・アーベル賞の公式チャンネルの動画です。',
-  noteEn:'Videos from the official channels of CERN, the Nobel Prize and the Abel Prize.',
+  noteJa:'CERN（欧州原子核研究機構）・NASA（米国航空宇宙局）・ノーベル賞・アーベル賞の公式チャンネルの動画です。',
+  noteEn:'Videos from the official channels of CERN, NASA, the Nobel Prize and the Abel Prize.',
   videos:[
    {yt:'u6nfe7VMpqk',title:'CERN：360° video - Inside the tunnel, with the team who upgrades the LHC',intro:'CERN公式チャンネルの、LHCトンネルの中を案内する360度動画です（英語）。'},
    {yt:'rsmBMuTFdkA',title:'CERN：LHCb - The Beauty Experiment',intro:'CERN公式チャンネルの、LHCb実験を紹介する映画です（英語）。'},
    {yt:'6-A4dUowT4Q',title:'ノーベル賞：2024 Nobel Prize award ceremony',intro:'ノーベル賞公式チャンネルの、2024年の授賞式の映像です（英語）。'},
    {yt:'qqNEpXAPP7Q',title:'ノーベル賞：2023 Nobel Prize award ceremony',intro:'ノーベル賞公式チャンネルの、2023年の授賞式の映像です（英語）。'},
    {yt:'VGG4O5OOmi0',title:'アーベル賞：Abel Prize award ceremony 2023: Luis A. Caffarelli',intro:'アーベル賞公式チャンネルの、2023年の授賞式の映像です（英語）。'},
-   {yt:'GUxV0usbGLE',title:'アーベル賞：Masaki Kashiwara\u2019s reaction to being awarded the 2025 Abel Prize',intro:'アーベル賞公式チャンネルの、2025年受賞者・柏原正樹氏へ受賞を知らせる映像です（英語）。'}
+   {yt:'GUxV0usbGLE',title:'アーベル賞：Masaki Kashiwara\u2019s reaction to being awarded the 2025 Abel Prize',intro:'アーベル賞公式チャンネルの、2025年受賞者・柏原正樹氏へ受賞を知らせる映像です（英語）。'},
+   {yt:'CMLD0Lp0JBg',title:'NASA：Artemis I Launch to the Moon (Official NASA Broadcast)',intro:'NASA公式チャンネルの、アルテミス1号の月への打ち上げの公式放送です（英語）。'},
+   {yt:'GUqsH5y1j1M',title:'NASA：Perseverance Rover Land | Video from Mars!',intro:'NASA公式チャンネルの、火星探査車パーサヴィアランスの着陸の映像です（英語）。'},
+   {yt:'1C_zuHf6lP4',title:'NASA：Highlights: First Images from the James Webb Space Telescope',intro:'NASA公式チャンネルの、ジェイムズ・ウェッブ宇宙望遠鏡の最初の画像のハイライトです（英語）。'},
+   {yt:'S9HdPi9Ikhk',title:'NASA：Restored Apollo 11 Moonwalk',intro:'NASA公式チャンネルの、修復されたアポロ11号の月面歩行の映像です（英語）。'},
+   {yt:'iTHUUjTA-LI',title:'NASA：Seeing Earth as Only NASA Can',intro:'NASA公式チャンネルの、宇宙から見た地球の映像です（英語）。'}
   ],
   links:[
    {url:'https://home.cern/',labelJa:'CERN 公式サイト',labelEn:'CERN Official Site'},
    {url:'https://www.nobelprize.org/',labelJa:'ノーベル賞 公式サイト',labelEn:'Nobel Prize Official Site'},
-   {url:'https://abelprize.no/',labelJa:'アーベル賞 公式サイト',labelEn:'The Abel Prize Official Site'}
+   {url:'https://abelprize.no/',labelJa:'アーベル賞 公式サイト',labelEn:'The Abel Prize Official Site'},
+   {url:'https://www.nasa.gov/',labelJa:'NASA 公式サイト',labelEn:'NASA Official Site'}
   ]}
 ];
 function bwOfficialCard(m){
