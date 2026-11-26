@@ -424,6 +424,9 @@
     <article class="card">
       <h2 style="margin:0 0 4px;font-size:1.2rem" data-ja="動画を見る" data-en="Watch videos">動画を見る</h2>
       <p style="color:var(--muted);font-size:.9rem;margin:0 0 12px" data-ja="押すと、再生中の表示になります" data-en="Tap to show playing">押すと、再生中の表示になります</p>
+      <h3 style="margin:0 0 4px;font-size:1.05rem" data-ja="作品CM" data-en="Work trailers">作品CM</h3>
+      <p style="color:var(--muted);font-size:.9rem;margin:0 0 12px" data-ja="岡崎幸雄の作品の紹介動画です" data-en="Trailers of Yukio Okazaki's works">岡崎幸雄の作品の紹介動画です</p>
+      <div id="cm-list"></div>
       <div id="video-list"></div>
     </article>
   </section>
@@ -1015,6 +1018,17 @@ function renderVideos(){
     renderVideos();
   }));
 }
+const bwCms=[
+ {yt:'NsECaMXrM4w',titleJa:'CM『星海鉄道カプセル便』第8話 手紙の届かない星の少女',titleEn:'Trailer: Star-Sea Railway Capsule Delivery Ep.8',descJa:'手紙の届かない星へ、ホシカたちが届けます。',descEn:'Hoshika delivers a letter to a star it could not reach.'},
+ {yt:'eDWQh7VZGnc',titleJa:'CM『星海鉄道カプセル便』第7話 古い駅のロボット駅長',titleEn:'Trailer: Ep.7 The Robot Stationmaster',descJa:'古い駅で待つ、ロボット駅長との出会い。',descEn:'Meeting the robot stationmaster at an old station.'},
+ {yt:'Z19jaKQGFaE',titleJa:'CM『光の巨人ルクス』第1話 泣いている怪獣',titleEn:'Trailer: Lux, Giant of Light Ep.1',descJa:'泣いている怪獣を、光の巨人が救います。',descEn:'The giant of light saves a crying monster.'},
+ {yt:'eZus2kFaWwk',titleJa:'CM『星海鉄道カプセル便』第1話（フルアニメ版）',titleEn:'Trailer: Ep.1 Full Animation',descJa:'星の海をゆく列車の、はじまりの物語。',descEn:'The beginning of the star-sea train story.'}
+];
+function renderCms(){
+  const el=document.getElementById('cm-list'); if(!el) return;
+  el.innerHTML=bwCms.map(v=>`<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${v.yt}" title="YouTube" allowfullscreen loading="lazy"></iframe></div><div class="ptitle" style="font-size:1.05rem">${esc(lang==='ja'?v.titleJa:v.titleEn)}</div><p style="margin:4px 0 8px">${esc(lang==='ja'?v.descJa:v.descEn)}</p></div>`).join('');
+}
+renderCms();
 renderVideos();
 renderList(); renderTimeline(); renderProfilePosts(); doSearch(); if(typeof renderNotifications==='function') renderNotifications(); if(typeof renderBwPages==='function') renderBwPages(); if(typeof renderCorners==='function') renderCorners();
 if(typeof openBwPage==='function')window.openBwPage=openBwPage;
