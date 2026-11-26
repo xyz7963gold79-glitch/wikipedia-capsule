@@ -200,6 +200,10 @@
         <button class="btn btn-blue" id="btn-search" data-ja="検索" data-en="Search">検索</button>
         <button class="btn btn-ghost" id="btn-clear" data-ja="消す" data-en="Clear">消す</button>
       </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-blue" id="btn-wiki" data-ja="ウィキペディアで探す" data-en="Search on Wikipedia">ウィキペディアで探す</button>
+        <span style="font-size:.82rem;color:var(--muted)" data-ja="選んだ言語のウィキペディアにつながります（新しい画面で開きます）" data-en="Opens Wikipedia in your selected language (new tab)">選んだ言語のウィキペディアにつながります（新しい画面で開きます）</span>
+      </div>
       <div style="font-size:.82rem;color:var(--muted)" data-ja="見本4件：水・雨・歌・鉄道 などの言葉で探せます" data-en="4 sample articles: try water, rain, song, railway">見本4件：水・雨・歌・鉄道 などの言葉で探せます</div>
     </div>
     <p style="margin:16px 4px 10px;font-size:.9rem;color:var(--muted)"><span id="count">4件</span></p>
@@ -582,6 +586,11 @@ function doSearch(){
   document.getElementById('count').textContent=lang==='ja'?list.length+'件':list.length+' articles';
 }
 document.getElementById('btn-search').addEventListener('click',doSearch);
+document.getElementById('btn-wiki').addEventListener('click',()=>{
+  const qv=$q.value.trim();
+  const base='https://'+newsLang+'.wikipedia.org';
+  window.open(qv?base+'/wiki/Special:Search?search='+encodeURIComponent(qv):base,'_blank','noopener');
+});
 document.getElementById('btn-clear').addEventListener('click',()=>{$q.value='';doSearch();$q.focus();});
 $q.addEventListener('input',doSearch);
 /* サーバー接続（第2期：Cloudflare Workers + D1） */
@@ -991,6 +1000,15 @@ function renderVideos(){
 }
 renderVideos();
 renderList(); renderTimeline(); renderProfilePosts(); doSearch(); if(typeof renderNotifications==='function') renderNotifications(); if(typeof renderBwPages==='function') renderBwPages(); if(typeof renderCorners==='function') renderCorners();
+if(typeof openBwPage==='function')window.openBwPage=openBwPage;
+if(typeof openCorner==='function')window.openCorner=openCorner;
+if(typeof toggleBwLike==='function')window.toggleBwLike=toggleBwLike;
+if(typeof openComments==='function')window.openComments=openComments;
+if(typeof likeComment==='function')window.likeComment=likeComment;
+if(typeof reportPost==='function')window.reportPost=reportPost;
+if(typeof toggleLike==='function')window.toggleLike=toggleLike;
+if(typeof openArticle==='function')window.openArticle=openArticle;
+if(typeof shareArticle==='function')window.shareArticle=shareArticle;
 }
 document.getElementById('btn-ja').addEventListener('click',()=>setLang('ja'));
 document.getElementById('btn-en').addEventListener('click',()=>setLang('en'));
