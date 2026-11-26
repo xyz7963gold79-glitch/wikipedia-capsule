@@ -495,8 +495,16 @@ function renderTimeline(){
   document.getElementById('timeline').innerHTML=posts.map(postHTML).join('');
   document.getElementById('tl-count').textContent=lang==='ja'?posts.length+'件':posts.length+' posts';
 }
-function toggleLike(id){
+async function toggleLike(id){
   const p=posts.find(x=>x.id===id)||profilePosts.find(x=>x.id===id); if(!p) return;
+  if(p.srv){
+    if(!bwToken()){ alert(lang==='ja'?'いいねには、ログインが必要です。':'Please log in to like.'); return; }
+    try{
+      const r=await bwApi('/api/posts/'+bwSrvIds[id]+'/like',{method:'POST',body:{}});
+      p.liked=r.liked; p.likes=r.like_count; renderTimeline(); renderProfilePosts();
+    }catch(e){ alert(e.message); }
+    return;
+  }
   p.liked=!p.liked; p.likes+=p.liked?1:-1; renderTimeline(); renderProfilePosts();
 }
 /* 保護機能（Wick型）：言葉の見守り・連投の防止・通報と非表示 */
@@ -516,15 +524,35 @@ function guardPost(text){
   if(now-lastPostAt<10000){ alert('保護機能が働きました（連投の防止）。少し待ってから投稿してください。'); return false; }
   lastPostAt=now; return true;
 }
-function reportPost(id){
+async function reportPost(id){
+  const p=posts.find(x=>x.id===id);
+  if(p&&p.srv){
+    if(!bwToken()){ alert(lang==='ja'?'通報には、ログインが必要です。':'Please log in to report.'); return; }
+    try{ await bwApi('/api/posts/'+bwSrvIds[id]+'/report',{method:'POST',body:{}}); }catch(e){ alert(e.message); return; }
+  }
   const rm=arr=>{ const i=arr.findIndex(x=>x.id===id); if(i>=0) arr.splice(i,1); };
   rm(posts); rm(profilePosts);
   renderTimeline(); renderProfilePosts();
   alert('通報を受け付けました。保護機能により、この投稿を非表示にしました。運営者が確認します。');
 }
-function addPost(){
+async function addPost(){
   const bodyVal=$body.value.trim(); if(!bodyVal){$body.focus();return;}
   if(!guardPost(bodyVal)) return;
+  if(bwToken()){
+    try{
+      const r=await bwApi('/api/posts',{method:'POST',body:{content:bodyVal}});
+      $body.value='';
+      if(r.status==='pending'){
+        alert(lang==='ja'?'受け付けました。最初の投稿は、運営の確認のあとに公開されます。':'Received. Your first post will appear after a quick review.');
+      }else{
+        alert(lang==='ja'?'投稿しました。':'Posted!');
+      }
+      loadServerPosts();
+    }catch(e){
+      alert((lang==='ja'?'投稿できませんでした。':'Could not post. ')+e.message);
+    }
+    return;
+  }
   const nameVal=$name.value.trim()||(lang==='ja'?'あなた':'You');
   posts.unshift({id:Date.now(),name:nameVal,body:bodyVal,date:lang==='ja'?'たった今':'Just now',likes:0,liked:false});
   $body.value=''; renderTimeline();
@@ -556,6 +584,60 @@ function doSearch(){
 document.getElementById('btn-search').addEventListener('click',doSearch);
 document.getElementById('btn-clear').addEventListener('click',()=>{$q.value='';doSearch();$q.focus();});
 $q.addEventListener('input',doSearch);
+/* サーバー接続（第2期：Cloudflare Workers + D1） */
+const BW_API='https://bluewing8-api.xyz7963gold79.workers.dev';
+let bwSrvSeq=900000000;
+let bwBusy=false;
+const bwSrvIds={};
+function bwToken(){try{return localStorage.getItem('bw8_token')||'';}catch(e){return '';}}
+function bwSetSession(token,name){try{if(token){localStorage.setItem('bw8_token',token);localStorage.setItem('bw8_name',name||'');}else{localStorage.removeItem('bw8_token');localStorage.removeItem('bw8_name');}}catch(e){}}
+async function bwApi(path,opts){
+  opts=opts||{};
+  const headers={'Content-Type':'application/json'};
+  const t=bwToken(); if(t) headers['Authorization']='Bearer '+t;
+  const res=await fetch(BW_API+path,{method:opts.method||'GET',headers:headers,body:opts.body?JSON.stringify(opts.body):undefined});
+  let data=null; try{data=await res.json();}catch(e){}
+  if(!res.ok) throw new Error((data&&data.error)||('HTTP '+res.status));
+  return data;
+}
+function bwFmtDate(sec){
+  const d=new Date(sec*1000);
+  return d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+function bwSrvPost(r){
+  const alias=++bwSrvSeq; bwSrvIds[alias]=r.id;
+  return {id:alias,srv:true,name:r.display_name||'',body:r.content,date:bwFmtDate(r.created_at),likes:r.like_count||0,liked:false,status:r.status};
+}
+async function loadServerPosts(){
+  try{
+    const list=await bwApi('/api/posts');
+    for(let i=posts.length-1;i>=0;i--){ if(posts[i].srv) posts.splice(i,1); }
+    list.map(bwSrvPost).reverse().forEach(p=>posts.unshift(p));
+    renderTimeline();
+  }catch(e){}
+}
+function bwRefreshAuthBtn(){
+  const b=document.getElementById('authBtn'); if(!b) return;
+  if(bwToken()){
+    b.setAttribute('data-ja','ログアウト'); b.setAttribute('data-en','Log out');
+    b.textContent=(lang==='ja'?'ログアウト':'Log out');
+  }else{
+    b.setAttribute('data-ja','ログイン'); b.setAttribute('data-en','Log in');
+    b.textContent=(lang==='ja'?'ログイン':'Log in');
+  }
+}
+function bwAuthClick(){
+  if(bwToken()){
+    if(confirm(lang==='ja'?'ログアウトしますか？':'Log out?')){
+      bwSetSession('',''); bwRefreshAuthBtn(); loadServerPosts();
+      alert(lang==='ja'?'ログアウトしました。':'Logged out.');
+    }
+    return;
+  }
+  show('login');
+}
+bwRefreshAuthBtn();
+loadServerPosts();
 /* 言語 */
 function setLang(l){
   lang=l;
@@ -706,23 +788,46 @@ renderCorners();
 /* ログイン */
 function bwClearNotices(){document.querySelectorAll('.notice').forEach(n=>{n.className='notice';n.textContent='';n.style.display='none';});}
 function bwNotice(id,type,ja,en){const el=document.getElementById(id);el.textContent=lang==='ja'?ja:en;el.className='notice '+type;el.style.display='block';}
-document.getElementById('authBtn').addEventListener('click',()=>show('login'));
+document.getElementById('authBtn').addEventListener('click',bwAuthClick);
 document.getElementById('toRegBtn').addEventListener('click',()=>{document.getElementById('loginCard').style.display='none';document.getElementById('regCard').style.display='block';bwClearNotices();});
 document.getElementById('toLoginBtn').addEventListener('click',()=>{document.getElementById('regCard').style.display='none';document.getElementById('loginCard').style.display='block';bwClearNotices();});
-document.getElementById('loginBtn').addEventListener('click',()=>{
+document.getElementById('loginBtn').addEventListener('click',async()=>{
   const email=document.getElementById('loginEmail').value.trim();
   const pass=document.getElementById('loginPass').value.trim();
   bwClearNotices();
+  if(bwBusy) return;
   if(!email.includes('@')||pass.length<4){bwNotice('loginNg','ng','メールアドレスかパスワードが違うようです。もう一度、ゆっくり確かめてみましょう。','It looks like the email or password is not quite right. Please check again slowly.');return;}
-  bwNotice('loginOk','ok','できました。タイムラインへようこそ！（見本）','Done! Welcome to your timeline! (demo)');
+  bwBusy=true;
+  try{
+    const r=await bwApi('/api/login',{method:'POST',body:{email:email,password:pass}});
+    bwSetSession(r.token,r.name); bwRefreshAuthBtn();
+    bwNotice('loginOk','ok','できました。タイムラインへようこそ！','Done! Welcome to your timeline!');
+    loadServerPosts();
+    setTimeout(()=>show('timeline'),600);
+  }catch(e){
+    bwNotice('loginNg','ng','ログインできませんでした。'+e.message,'Could not log in. '+e.message);
+  }
+  bwBusy=false;
 });
-document.getElementById('regBtn').addEventListener('click',()=>{
+document.getElementById('regBtn').addEventListener('click',async()=>{
   const name=document.getElementById('regName').value.trim();
   const email=document.getElementById('regEmail').value.trim();
   const pass=document.getElementById('regPass').value.trim();
   bwClearNotices();
+  if(bwBusy) return;
   if(!name||!email.includes('@')||pass.length<8){bwNotice('regNg','ng','入力にもれがあるようです。なまえ、メールアドレス、8文字以上のパスワードを、もう一度やさしく確かめてみましょう。','Something seems missing. Please check gently.');return;}
-  bwNotice('regOk','ok','できました。アカウントを作りました。さあ、世界とつながりましょう！（見本）','Done! Your account is created. (demo)');
+  bwBusy=true;
+  try{
+    await bwApi('/api/register',{method:'POST',body:{email:email,password:pass,name:name}});
+    const r=await bwApi('/api/login',{method:'POST',body:{email:email,password:pass}});
+    bwSetSession(r.token,r.name); bwRefreshAuthBtn();
+    bwNotice('regOk','ok','できました。アカウントを作りました。さあ、世界とつながりましょう！','Done! Your account is created. Let us connect with the world!');
+    loadServerPosts();
+    setTimeout(()=>show('timeline'),600);
+  }catch(e){
+    bwNotice('regNg','ng','登録できませんでした。'+e.message,'Could not register. '+e.message);
+  }
+  bwBusy=false;
 });
 /* メッセージ */
 const bwMessages=[
