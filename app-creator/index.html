@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>総合アプリ作成ソフト（第55号）ブルーウィング8方式</title>
+<style>
+  :root{--bg:#f6f8ff;--card:#fff;--ink:#1e293b;--sub:#64748b;--line:#dbe4ff;--acc:#2563eb;--acc2:#eff6ff;--warn:#fff7ed;--warnline:#fdba74}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+  .wrap{max-width:860px;margin:0 auto;padding:20px 14px 48px}
+  h1{font-size:1.45rem;margin:6px 0 2px}
+  h2{font-size:1.15rem;margin:0 0 8px}
+  h3{font-size:1rem;margin:14px 0 4px;color:var(--acc)}
+  .lead{color:var(--sub);margin:0 0 10px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+  .warnbox{background:var(--warn);border:2px solid var(--warnline);border-radius:14px;padding:14px 16px;margin-top:14px}
+  .warnbox h2{color:#9a3412}
+  .bar{height:14px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--acc);width:0%}
+  .nav{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .nav a{background:var(--acc2);color:var(--acc);text-decoration:none;border-radius:999px;padding:4px 12px;font-size:.88rem;font-weight:700}
+  label.ck{display:flex;gap:8px;align-items:flex-start;padding:5px 0;cursor:pointer}
+  label.ck input{margin-top:5px;width:18px;height:18px;flex:none}
+  textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:.9rem}
+  button{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:9px 16px;font:inherit;cursor:pointer;margin:4px 4px 4px 0}
+  button.sub{background:var(--acc2);color:var(--acc)}
+  button.on{background:#1e40af}
+  .flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
+  .flow .step{background:var(--acc2);border-radius:10px;padding:8px 12px;font-weight:700}
+  .flow .arr{color:var(--sub)}
+  pre{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px;white-space:pre-wrap;font-size:.88rem}
+  .foot{color:var(--sub);font-size:.85rem;text-align:center;margin-top:22px}
+  .big{font-size:1.05rem;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>総合アプリ作成ソフト（第55号）</h1>
+  <p class="lead">ブルーウィング8方式 ― ブルーウィング8 × アプリ作成ナビ（第49号）統合版。単一HTML / オフライン動作 / 進捗は端末内に自動保存。</p>
+  <div class="card">
+    <div class="big"><span id="prog-text">0 / 0 (0%)</span></div>
+    <div class="bar" style="margin-top:8px"><i id="prog-bar"></i></div>
+    <div class="nav">
+      <a href="#s1">1 段階チェック</a><a href="#s2">2 注文書の雛形</a><a href="#s3">3 検証チェック</a><a href="#s4">4 編集デスク</a><a href="#s5">5 法的義務</a><a href="#s6">6 ポリシー雛形</a><a href="#s7">7 子供基準</a>
+    </div>
+  </div>
+
+  <div class="warnbox">
+    <h2>■ 遵守の明記（必ずお読みください）</h2>
+    <p>この道具の内容は一般的な情報で、法律の助言ではありません。アプリを公開する人は、その国と地域の法的な義務を、自分で確かめて、必ず遵守してください。通常の無料アプリに、当局の認証や許可は要りません。義務は、決まりを守る形で果たすものです。ただし、分野によっては届出や登録が要る場合があります。</p>
+  </div>
+
+  <div class="card" id="s1">
+    <h2>1. 段階チェック（進捗表示つき）</h2>
+    <p class="lead">各項目をチェックすると、上部のバーと保存が動きます。</p>
+    <h3>第1期 画面（見た目と流れ）</h3>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p1-1">要件を紙に書いた（誰が何をするか）</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p1-2">画面の流れ図を作った（どの画面からどこへ）</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p1-3">スマホで読める大きさにした（文字16px以上、余白あり）</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p1-4">色と文字を決めた（外部フォントや画像を使わない）</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p1-5">単一HTMLで動く形にした</label>
+    <h3>第2期 サーバー（データと保存）</h3>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p2-1">データの置き場を決めた（localStorage / 端末内）</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p2-2">保存と読み込みが動くことを確かめた</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p2-3">間違いの時の動きを決めた（入力ミス、空の時）</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p2-4">個人情報は集めない、または最小限にした</label>
+    <h3>第3期 連携（外部とつなぐ場合）</h3>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p3-1">外部へのつなぎが必要か決めた（不要なら使わない）</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p3-2">鍵や秘密情報の置き場を決めた（公開しない）</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p3-3">連携が切れた時の動きを決めた</label>
+    <h3>第4期 仕上げと多言語</h3>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p4-1">日本語と英語の文を用意した</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p4-2">検証チェックリスト（3章）を通した</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p4-3">法的義務チェック（5章、5地域）を通した</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p4-4">ポリシーの雛形を自分のアプリ用に直した</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="p4-5">子供基準「世界中の子供達が利用出来るか」を確かめた</label>
+  </div>
+
+  <div class="card" id="s2">
+    <h2>2. 注文書の雛形（仕事を頼む時の書き方）</h2>
+    <p class="lead">そのままコピーして使えます。［ ］の中を埋めてください。</p>
+    <textarea id="tpl-order" rows="26">注文書・第__号
+件名：［アプリの名前と何を作るか一言で］
+
+背景と目的：
+［誰のために、何のために作るか。無料で世界中の人が使う道具として］
+
+作る物：
+・［単一HTML / オフライン / localStorage保存 など］
+・［画面数、機能、言語］
+
+中身（入れる項目）：
+1. ［段階チェック］
+2. ［注文書の雛形］
+3. ［検証チェックリスト］
+4. ［編集デスクの型］
+5. ［法的義務チェック］
+6. ［ポリシーの雛形］
+7. ［遵守の明記］
+
+決まり（技術）：
+・外部の画像・フォント・ライブラリを使わない
+・JavaScriptではバッククォートと、ドル記号と波括弧の組み合わせを使わない（引用符と + で結合）
+・スマホでも読める大きさにする
+・端末内で動く、ネット接続なしでも動く
+
+確かめ方（こちらで行います）：
+・構文と動作を機械で確かめます
+・地域の切り替えとチェックの保存が動くことを確かめます
+・外部接続なしで開くことを確かめます
+
+納期・その他：
+［希望日、公開方法、備考］</textarea>
+    <div><button data-copy="tpl-order">この雛形をコピー</button></div>
+    <p class="lead">企画・監修 岡崎幸雄 / 監督・検証・公開 Muse / 部品製作 メタAI の役割分担も、必要なら追記してください。</p>
+  </div>
+
+  <div class="card" id="s3">
+    <h2>3. 検証チェックリスト（公開前に確かめる事）</h2>
+    <h3>表示</h3>
+    <label class="ck"><input type="checkbox" class="ckbox" id="v1-1">スマホとパソコンで文字が読める</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="v1-2">リンクが正しく飛ぶ、戻るボタンで迷子にならない</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="v1-3">外部の画像・フォント・ライブラリを読み込んでいない</label>
+    <h3>動作</h3>
+    <label class="ck"><input type="checkbox" class="ckbox" id="v2-1">チェックの保存（localStorage）が動く、再読み込みで消えない</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="v2-2">地域の切り替えが動く</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="v2-3">JavaScriptに構文エラーがない（バッククォート等を使っていない）</label>
+    <h3>権利</h3>
+    <label class="ck"><input type="checkbox" class="ckbox" id="v3-1">他人の作品はコピーせず、埋め込みとリンクだけにしている</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="v3-2">埋め込みは公式の埋め込み機能を使っている</label>
+    <h3>安全</h3>
+    <label class="ck"><input type="checkbox" class="ckbox" id="v4-1">個人情報を集める場合は目的を表示し、削除の求めに応じる窓口がある</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="v4-2">未成年が使う場合の配慮がある</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="v4-3">お金や広告が動く場合は先に規約を確認している</label>
+    <h3>公開後の照合</h3>
+    <label class="ck"><input type="checkbox" class="ckbox" id="v5-1">公開後にオフラインで開けるか確かめた</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="v5-2">連絡先や通報窓口を載せた</label>
+  </div>
+
+  <div class="card" id="s4">
+    <h2>4. 編集デスクの型（ブルーウィング方式）</h2>
+    <p class="big">原則：編集しない。確かめて、置く。</p>
+    <p class="lead">文章を書き換えず、確かめたものをそのまま置きます。</p>
+    <div class="flow">
+      <span class="step">① 申し込みを受ける（誰から、何を）</span><span class="arr">→</span>
+      <span class="step">② 下ごしらえ（機械で種類分け・題名の取り出し）</span><span class="arr">→</span>
+      <span class="step">③ 確かめる（4つだけ）</span><span class="arr">→</span>
+      <span class="step">④ 置く（形は3つ）</span>
+    </div>
+    <h3>③ 確かめる（4つだけ）</h3>
+    <p>1. <b>権利</b>：他人の作品をそのまま載せていないか。公式の埋め込みとリンクだけか。<br>
+    2. <b>安全</b>：個人情報や子供を傷つけないか。未成年は保護者の同意があるか。<br>
+    3. <b>法</b>：違法行為を誘導していないか。分野により届出が要るものではないか。<br>
+    4. <b>誤解</b>：嘘や誤った効能、誤解を広げないか。出典はあるか。</p>
+    <h3>④ 置く（形は3つ）</h3>
+    <p><b>動画は埋め込み</b>：YouTubeなどの公式埋め込みだけを使う。本文をコピーしない。<br>
+    <b>リールは案内カード</b>：題名、短い説明、元へのリンク。アプリ内では再生しない。<br>
+    <b>記事は案内カード</b>：題名、短い説明（自分で書くか、機械で取り出した題名）、元へのリンク。画像や本文のコピーはしない。</p>
+    <p class="lead">除外：題名の末尾に「- Topic」が付く自動生成の音楽動画は、テレビのブラウザで再生できない事が確かめられているため、入れません。</p>
+    <label class="ck"><input type="checkbox" class="ckbox" id="e-1">編集デスクの原則「編集しない。確かめて、置く」を守る仕組みにした</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="e-2">下ごしらえ（種類分けと題名取り出し）は機械に任せる部分を分けた</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="e-3">置く形を3つ（動画埋め込み、リール案内、記事案内）に統一した</label>
+  </div>
+
+  <div class="card" id="s5">
+    <h2>5. 法的な義務チェック（地域を選ぶ）</h2>
+    <p class="lead">地域を選ぶと、その地域の気をつける点が出ます。やさしい言葉で書いていますが、法律の助言ではありません。必ず原文も自分で確かめてください。チェック状態は端末内に保存されます。</p>
+    <div id="region-btns"></div>
+    <div id="region-box"></div>
+  </div>
+
+  <div class="card" id="s6">
+    <h2>6. ポリシーの雛形（骨組み）</h2>
+    <p class="lead">そのまま使うのではなく、自分のアプリに合わせて直す前提の骨組みです。</p>
+    <h3>利用規約の骨組み</h3>
+    <textarea id="tpl-terms" rows="10">利用規約（雛形：自分のアプリに合わせて必ず直してください）
+
+1. はじめに：このアプリは何をするものか、無料か、有料部分があるか
+2. 禁止事項：他人の権利を侵害しない、違法行為をしない、他人を傷つけない
+3. 投稿やリンクの扱い：他人の作品は埋め込みとリンクだけにする、公式の埋め込みを使う
+4. 免責：アプリの内容は一般的な情報で、正確さを保証しない
+5. 変更と終了：規約やアプリの内容を変更する場合がある
+6. 連絡先：問い合わせ窓口、権利侵害の連絡先、削除依頼の連絡先
+7. 準拠法：どの国や地域の法に従うか
+
+注意：この雛形は骨組みです。必ず自分のアプリの内容に合わせて直してください。</textarea>
+    <div><button data-copy="tpl-terms">利用規約の骨組みをコピー</button></div>
+    <h3>プライバシーポリシーの骨組み</h3>
+    <textarea id="tpl-privacy" rows="11">プライバシーポリシー（雛形：自分のアプリに合わせて必ず直してください）
+
+1. 集める情報：何を集めるか、集めないか（例：個人情報は集めない、または端末内のみに保存）
+2. 利用目的：何のために使うか
+3. 保存場所：端末内（localStorage）か、サーバーか
+4. 第三者提供：第三者に渡すかどうか
+5. 削除と訂正：本人からの求めにどう応じるか、連絡先
+6. 未成年：未成年の利用と保護者の同意について
+7. 問い合わせ窓口：メールアドレスなど
+8. 変更：ポリシーを変更する時の知らせ方
+
+注意：この雛形は骨組みです。必ず自分のアプリの内容に合わせて直してください。集める情報が増えたら、その都度書き直してください。</textarea>
+    <div><button data-copy="tpl-privacy">プライバシーポリシーの骨組みをコピー</button></div>
+    <h3>掲載ポリシー（編集デスク用）の骨組み</h3>
+    <textarea id="tpl-listing" rows="10">掲載ポリシー（雛形：自分のアプリに合わせて必ず直してください）
+
+1. 原則：編集しない。確かめて、置く。
+2. 受け付け：どのような申し込みを受けるか
+3. 下ごしらえ：機械が行うこと（種類分け、題名の取り出し）と人が行うことの区別
+4. 確かめる4つ：①権利 ②安全 ③法 ④誤解
+5. 置く形3つ：動画は公式埋め込み、リールと記事は案内カード（題名＋短い説明＋リンク）
+6. 削除依頼への対応：権利侵害や削除の求めが来た時の窓口と手順
+7. 未成年と個人情報への配慮
+
+注意：この雛形は骨組みです。必ず自分のアプリの内容に合わせて直してください。</textarea>
+    <div><button data-copy="tpl-listing">掲載ポリシーの骨組みをコピー</button></div>
+  </div>
+
+  <div class="card" id="s7">
+    <h2>7. 基準「世界中の子供達が利用出来るか」</h2>
+    <p class="lead">最後の基準。このアプリを、世界中の子供達が利用できるか、で確かめます。子供が読んで傷つかないか、個人情報を取られすぎないか、安心して使えるかを基準に置きます。広告なし、個人情報を集めない、外部へ送らない、やさしい言葉、大きな文字を基本にします。</p>
+    <label class="ck"><input type="checkbox" class="ckbox" id="k-1">子供が読んでも分かるやさしい言葉になっている</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="k-2">個人情報は集めない、または最小限で目的を明示している</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="k-3">広告やお金が動く場合は、子供でも分かるように明示している</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="k-4">暴力や性的な表現、他人を傷つける内容がない</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="k-5">他人の作品は埋め込みとリンクだけにして、権利を守っている</label>
+    <label class="ck"><input type="checkbox" class="ckbox" id="k-6">削除の求めや困った時の連絡先がある</label>
+    <div style="margin-top:14px"><button class="sub" id="reset-all">全てのチェックをリセット（端末内保存を消す）</button></div>
+  </div>
+
+  <div class="warnbox">
+    <h2>再掲：遵守の明記</h2>
+    <p>この道具の内容は一般的な情報で、法律の助言ではありません。アプリを公開する人は、その国と地域の法的な義務を、自分で確かめて、必ず遵守してください。通常の無料アプリに、当局の認証や許可は要りません。義務は、決まりを守る形で果たすものです。ただし、分野によっては届出や登録が要る場合があります。</p>
+  </div>
+
+  <p class="foot">ブルーウィング8方式 総合アプリ作成ソフト（第55号）/ 単一HTML / localStorage保存 / 外部接続なし<br>企画・監修 岡崎幸雄 / 監督・検証・公開 Muse / 部品製作 メタAI</p>
+</div>
+
+<script>
+var KEY = 'sougou55-v1';
+var REGIONS = {
+  jp: { name: '日本', items: [
+    '個人情報を集める時は、何のために集めるかを書く（利用目的の明示）',
+    '本人から削除や訂正の求めが来たら、応じる仕組みを用意する',
+    '他人の作品の権利侵害の連絡（削除依頼）が来たら、すぐに確認し対応する窓口を用意する',
+    '他人の作品はコピーせず、公式の埋め込みとリンクだけにする',
+    '未成年が使う場合は、保護者の同意を得るようにする',
+    'お金や広告、投げ銭が動き出す時は、表示や規約を先に確かめる。個別メッセージの仲介など分野によっては届出が要る場合がある'
+  ]},
+  eu: { name: 'EU', items: [
+    '個人情報は、目的を示して、最小限だけ集める（GDPRの考え方）',
+    '集める時は同意を取り、同意をやめる（撤回する）方法も示す',
+    '本人から削除の求め（忘れられる権利）が来たら、応じる仕組みを用意する',
+    '子供の同意の年齢は国ごとに違う（13歳から16歳）ので、その国の年齢を確かめる',
+    'データを他の国へ移す時は、その国の決まりも確かめる',
+    '情報が漏れた時は、72時間以内に監督機関へ知らせる決まりがある'
+  ]},
+  us: { name: 'アメリカ', items: [
+    '13歳未満の子供の個人情報は、保護者の同意なしに集めない（COPPA）',
+    '州ごとの決まりがある（カリフォルニア州など）。削除の求めに応じる仕組みを用意する',
+    '他人の作品はコピーせず、公式の埋め込みとリンクだけにする',
+    '権利侵害の削除依頼（DMCA）を受ける窓口を用意する',
+    '広告は、広告だと分かるように表示する',
+    '子供向けの表示や集め方には、特に気をつける'
+  ]},
+  uk: { name: 'イギリス', items: [
+    '個人情報の決まり（UK GDPR）は、EUとほぼ同じ考え方である',
+    '子供が自分の情報に同意できる年齢は13歳である',
+    '本人から削除や訂正の求めが来たら、応じる仕組みを用意する',
+    '情報が漏れた時は、72時間以内に監督機関（ICO）へ知らせる決まりがある',
+    '他人の作品はコピーせず、公式の埋め込みとリンクだけにする',
+    'クッキー等を使う時は、同意を取る表示を用意する'
+  ]},
+  world: { name: '世界共通', items: [
+    '個人情報を集める時は、目的を示す',
+    '集める情報は最小限にし、要らなくなったら消す',
+    '本人から削除の求めが来たら、応じる窓口を用意する',
+    '他人の作品はコピーせず、公式の埋め込みとリンクだけにする',
+    '未成年が使う場合は、保護者の同意を得るようにする',
+    'その国と地域の決まりは、国ごとに違う。公開する前に、自分で確かめる'
+  ]}
+};
+var REGION_ORDER = ['jp', 'eu', 'us', 'uk', 'world'];
+var curRegion = 'jp';
+var state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { state = {}; }
+
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+}
+function updateProgress() {
+  var total = 69, done = Object.keys(state).length;
+  var pct = total ? Math.round(done * 100 / total) : 0;
+  document.getElementById('prog-text').textContent = done + ' / ' + total + ' (' + pct + '%)';
+  document.getElementById('prog-bar').style.width = pct + '%';
+}
+function wire(box) {
+  if (state[box.id]) box.checked = true;
+  box.addEventListener('change', function () {
+    if (box.checked) state[box.id] = true; else delete state[box.id];
+    save(); updateProgress();
+  });
+}
+function renderRegion() {
+  var btns = document.getElementById('region-btns');
+  var html = '';
+  REGION_ORDER.forEach(function (k) {
+    html += '<button class="' + (k === curRegion ? '' : 'sub') + '" data-region="' + k + '">' + REGIONS[k].name + '</button>';
+  });
+  btns.innerHTML = html;
+  btns.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () { curRegion = b.getAttribute('data-region'); renderRegion(); });
+  });
+  var box = document.getElementById('region-box');
+  var r = REGIONS[curRegion];
+  var h = '<h3>' + r.name + '</h3>';
+  r.items.forEach(function (t, i) {
+    h += '<label class="ck"><input type="checkbox" class="ckbox" id="law-' + curRegion + '-' + i + '">' + t + '</label>';
+  });
+  box.innerHTML = h;
+  box.querySelectorAll('.ckbox').forEach(wire);
+  updateProgress();
+}
+document.querySelectorAll('.ckbox').forEach(wire);
+renderRegion();
+document.querySelectorAll('button[data-copy]').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var ta = document.getElementById(b.getAttribute('data-copy'));
+    if (!ta) return;
+    ta.select();
+    if (navigator.clipboard) { navigator.clipboard.writeText(ta.value); }
+    else { document.execCommand('copy'); }
+    b.textContent = 'コピーしました';
+    setTimeout(function () { b.textContent = 'コピー'; }, 1500);
+  });
+});
+document.getElementById('reset-all').addEventListener('click', function () {
+  state = {}; save();
+  document.querySelectorAll('.ckbox').forEach(function (b) { b.checked = false; });
+  updateProgress();
+});
+updateProgress();
+</script>
+</body>
+</html>
