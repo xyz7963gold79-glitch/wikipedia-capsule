@@ -548,7 +548,7 @@ function shareArticle(id){
 const $name=document.getElementById('nameInput'),$body=document.getElementById('bodyInput');
 function postHTML(p){
   const initial=esc(p.name.trim().charAt(0)||'？').toUpperCase();
-  return `<article class="card post"><div class="who"><div class="avatar">${initial}</div><div><div class="pname">${esc(p.name)}</div><div class="pdate">${esc(p.date)}</div></div></div><div class="pbody">${esc(p.body)}</div>${bwPostVideoHTML(p)}<div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'通報':'Report'}</button></div></article>`;
+  return `<article class="card post"><div class="who"><div class="avatar">${initial}</div><div><div class="pname">${esc(p.name)}</div><div class="pdate">${esc(p.date)}</div></div></div><div class="pbody">${esc(p.body)}</div>${bwPostVideoHTML(p)}<div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'非表示':'Hide'}</button></div></article>`;
 }
 /* 投稿内YouTubeリンクの動画化：本文から動画IDを厳密に検証して取り出し、ファサードを出す */
 function bwYtId(text){
@@ -587,7 +587,7 @@ async function toggleLike(id){
   }
   p.liked=!p.liked; p.likes+=p.liked?1:-1; renderTimeline(); renderProfilePosts();
 }
-/* 保護機能（Wick型）：言葉の見守り・連投の防止・通報と非表示 */
+/* 保護機能（Wick型）：言葉の見守り・連投の防止・非表示 */
 const NG_WORDS=['死ね','殺す','ばかやろう','アホ','ボケ','カス','うざい','きもい','無料で稼','副業で月','出会い系'];
 let lastPostAt=0;
 function guardText(text){
@@ -607,13 +607,13 @@ function guardPost(text){
 async function reportPost(id){
   const p=posts.find(x=>x.id===id);
   if(p&&p.srv){
-    if(!bwToken()){ alert(lang==='ja'?'通報には、ログインが必要です。':'Please log in to report.'); return; }
+    if(!bwToken()){ alert(lang==='ja'?'非表示にするには、ログインが必要です。':'Please log in to hide a post.'); return; }
     try{ await bwApi('/api/posts/'+bwSrvIds[id]+'/report',{method:'POST',body:{}}); }catch(e){ alert(e.message); return; }
   }
   const rm=arr=>{ const i=arr.findIndex(x=>x.id===id); if(i>=0) arr.splice(i,1); };
   rm(posts); rm(profilePosts);
   renderTimeline(); renderProfilePosts();
-  alert('通報を受け付けました。保護機能により、この投稿を非表示にしました。運営者が確認します。');
+  alert('この投稿を非表示にしました。運営者が確認します。');
 }
 async function addPost(){
   const bodyVal=$body.value.trim(); if(!bodyVal){$body.focus();return;}
@@ -653,7 +653,7 @@ function renderProfilePosts(){
   const el=document.getElementById('profile-posts'); if(!el) return;
   if(!logged){ el.innerHTML='<article class="card post"><p style="line-height:1.8">'+(lang==='ja'?'ログインすると、あなたの投稿がここに表示されます。':'Log in to see your posts here.')+'</p></article>'; return; }
   if(!mine.length){ el.innerHTML='<article class="card post"><p style="line-height:1.8">'+(lang==='ja'?'まだ投稿がありません。':'No posts yet.')+'</p></article>'; return; }
-  el.innerHTML=mine.map(p=>'<article class="card post"><div class="pdate">'+esc(p.date)+'</div><div class="pbody">'+esc(p.body)+'</div><div class="post-actions"><button class="like '+(p.liked?'active':'')+'" onclick="toggleLike('+p.id+')">'+(lang==='ja'?'いいね':'Like')+' <span>'+p.likes+'</span></button><button class="like" onclick="openComments('+p.id+')">'+(lang==='ja'?'コメント':'Comments')+'</button><button class="like" onclick="reportPost('+p.id+')">'+(lang==='ja'?'通報':'Report')+'</button></div></article>').join('');
+  el.innerHTML=mine.map(p=>'<article class="card post"><div class="pdate">'+esc(p.date)+'</div><div class="pbody">'+esc(p.body)+'</div><div class="post-actions"><button class="like '+(p.liked?'active':'')+'" onclick="toggleLike('+p.id+')">'+(lang==='ja'?'いいね':'Like')+' <span>'+p.likes+'</span></button><button class="like" onclick="openComments('+p.id+')">'+(lang==='ja'?'コメント':'Comments')+'</button><button class="like" onclick="reportPost('+p.id+')">'+(lang==='ja'?'非表示':'Hide')+'</button></div></article>').join('');
 }
 
 const $profLogin=document.getElementById('prof-login-btn'); if($profLogin) $profLogin.addEventListener('click',()=>show('login'));
