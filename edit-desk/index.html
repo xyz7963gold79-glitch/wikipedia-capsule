@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>編集デスク ― 申し込みから掲載まで</title>
+<style>
+  :root{--bg:#f6f8ff;--card:#fff;--ink:#1e293b;--sub:#64748b;--line:#dbe4ff;--acc:#2563eb;--acc2:#eff6ff}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+  .wrap{max-width:860px;margin:0 auto;padding:20px 14px 48px}
+  h1{font-size:1.5rem;margin:8px 0 2px}
+  .lead{color:var(--sub);margin:0 0 16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+  .card h2{font-size:1.1rem;margin:0 0 8px}
+  textarea,input[type=text]{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit}
+  button{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:10px 18px;font:inherit;cursor:pointer}
+  button.sub{background:var(--acc2);color:var(--acc)}
+  .row{display:flex;gap:12px;border-top:1px solid #eef2ff;padding:12px 0;align-items:flex-start}
+  .row img{width:120px;height:90px;object-fit:cover;border-radius:8px;background:#e2e8f0}
+  .row .grow{flex:1;min-width:0}
+  .kind{display:inline-block;background:var(--acc2);color:var(--acc);border-radius:999px;padding:1px 10px;font-size:.8rem;font-weight:700}
+  .url{color:var(--sub);font-size:.82rem;word-break:break-all}
+  pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:12px;overflow:auto;font-size:.82rem;max-height:300px}
+  .check li{margin:6px 0}
+  .foot{color:var(--sub);font-size:.85rem;text-align:center;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>編集デスク ― 申し込みから掲載まで</h1>
+  <p class="lead">編集はしません。「確かめて、置く」ための下ごしらえをする道具です。リンクを貼ると、種類分けと掲載カードの下書きを自動で作ります。基準は「世界中の子供達が利用出来るか」。</p>
+
+  <div class="card">
+    <h2>1. リンクを貼る</h2>
+    <p>1行に1つずつ、配信のアドレスを貼ってください。YouTubeは題名と作者を自動で取り出します。その他は、種類分けだけ自動で、題名は次の欄で直せます。</p>
+    <input type="text" id="ed-org" placeholder="投稿者の名前（機関名・お名前。空でも可）" style="margin-bottom:8px">
+    <textarea id="ed-urls" rows="6" placeholder="https://www.youtube.com/watch?v=...&#10;https://www.instagram.com/reel/...&#10;https://example.com/article"></textarea>
+    <div style="margin-top:10px"><button id="ed-go">仕分けて、下書きを作る</button></div>
+    <p class="url" id="ed-status"></p>
+  </div>
+
+  <div class="card">
+    <h2>2. 下書きを確かめる</h2>
+    <p>確かめる事は4つだけ：①公式の発信か ②リンクが開くか ③権利の形は埋め込み・リンクの範囲か ④不適切な内容でないか。載せる物だけに印を付けてください。</p>
+    <div id="ed-rows"><p class="url">まだ下書きはありません。</p></div>
+  </div>
+
+  <div class="card">
+    <h2>3. 掲載データを取り出す</h2>
+    <p>印の付いた物を、ブルーウィング8の「皆さまからの配信」の形（JSON）で取り出します。</p>
+    <button id="ed-out">掲載データを作る</button>
+    <button id="ed-copy" class="sub">コピーする</button>
+    <pre id="ed-json">（ここに出ます）</pre>
+  </div>
+
+  <div class="card">
+    <h2>進め方の型</h2>
+    <ul class="check">
+      <li>受け付け：名前・メール・配信のアドレス。連絡先は外に出さない。</li>
+      <li>下ごしらえ：種類分けと題名の取り出しは機械に任せる。</li>
+      <li>確かめる：上の4つだけ。書き直しはしない。</li>
+      <li>置く：動画はその場で見られる形、リールと記事は案内カード。</li>
+      <li>報告：1件ごとではなく、件数をまとめて。</li>
+    </ul>
+  </div>
+
+  <p class="foot">制作：女子会（企画・監修：岡崎幸雄／監督：Muse）</p>
+</div>
+<script>
+var edItems = [];
+function edClassify(u) {
+  var l = String(u || '').toLowerCase();
+  if (l.indexOf('youtube.com') >= 0 || l.indexOf('youtu.be') >= 0) return 'youtube';
+  if (l.indexOf('instagram.com/reel') >= 0 || l.indexOf('facebook.com/reel') >= 0 || l.indexOf('/reels/') >= 0) return 'reel';
+  if (l.indexOf('instagram.com') >= 0 || l.indexOf('facebook.com') >= 0 || l.indexOf('tiktok.com') >= 0) return 'sns';
+  return 'article';
+}
+function edYtId(u) {
+  var m = String(u || '').match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+function edKindLabel(k) {
+  return { youtube: '動画', reel: 'リール動画', sns: 'SNS', article: '記事' }[k] || '記事';
+}
+function edEsc(t) {
+  return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+async function edBuild() {
+  var org = document.getElementById('ed-org').value.trim();
+  var lines = document.getElementById('ed-urls').value.split('\n').map(function (x) { return x.trim(); }).filter(function (x) { return x.length > 0; });
+  var st = document.getElementById('ed-status');
+  edItems = [];
+  st.textContent = '調べています…（' + lines.length + '件）';
+  for (var i = 0; i < lines.length; i++) {
+    var url = lines[i];
+    var kind = edClassify(url);
+    var item = { org_name: org, url: url, meta_kind: kind, meta_title: '', meta_author: '', meta_image: null, meta_desc: null, use: true };
+    if (kind === 'youtube') {
+      var id = edYtId(url);
+      if (id) item.meta_image = 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg';
+      try {
+        var r = await fetch('https://noembed.com/embed?url=' + encodeURIComponent(url));
+        if (r.ok) {
+          var j = await r.json();
+          item.meta_title = j.title || '';
+          item.meta_author = j.author_name || '';
+          if (!item.org_name) item.org_name = item.meta_author;
+        }
+      } catch (e) { /* 取れなければ手で入れる */ }
+    }
+    edItems.push(item);
+  }
+  st.textContent = '下書きが ' + edItems.length + ' 件出来ました。';
+  edRender();
+}
+function edRender() {
+  var box = document.getElementById('ed-rows');
+  if (!edItems.length) { box.innerHTML = '<p class="url">まだ下書きはありません。</p>'; return; }
+  box.innerHTML = edItems.map(function (it, i) {
+    var img = it.meta_image ? '<img src="' + edEsc(it.meta_image) + '" alt="" loading="lazy">' : '';
+    return '<div class="row">' + img + '<div class="grow">'
+      + '<span class="kind">' + edKindLabel(it.meta_kind) + '</span>'
+      + '<input type="text" data-i="' + i + '" data-f="meta_title" value="' + edEsc(it.meta_title) + '" placeholder="題名" style="margin:6px 0">'
+      + '<input type="text" data-i="' + i + '" data-f="org_name" value="' + edEsc(it.org_name) + '" placeholder="投稿者の名前">'
+      + '<div class="url">' + edEsc(it.url) + '</div>'
+      + '<label><input type="checkbox" data-i="' + i + '" data-f="use" ' + (it.use ? 'checked' : '') + '> 掲載する</label>'
+      + '</div></div>';
+  }).join('');
+  box.querySelectorAll('input').forEach(function (el) {
+    el.addEventListener('change', function () {
+      var it = edItems[Number(el.getAttribute('data-i'))];
+      var f = el.getAttribute('data-f');
+      if (f === 'use') it.use = el.checked; else it[f] = el.value;
+    });
+    el.addEventListener('input', function () {
+      var it = edItems[Number(el.getAttribute('data-i'))];
+      var f = el.getAttribute('data-f');
+      if (f !== 'use') it[f] = el.value;
+    });
+  });
+}
+function edOutput() {
+  var out = edItems.filter(function (it) { return it.use; }).map(function (it) {
+    return { org_name: it.org_name, url: it.url, meta_kind: it.meta_kind, meta_title: it.meta_title, meta_author: it.meta_author, meta_image: it.meta_image, meta_desc: it.meta_desc };
+  });
+  document.getElementById('ed-json').textContent = JSON.stringify(out, null, 2);
+  return out;
+}
+document.getElementById('ed-go').addEventListener('click', edBuild);
+document.getElementById('ed-out').addEventListener('click', edOutput);
+document.getElementById('ed-copy').addEventListener('click', function () {
+  var t = document.getElementById('ed-json').textContent;
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+});
+</script>
+</body>
+</html>
