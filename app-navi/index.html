@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アプリ作成ナビ - ブルーウィング8の経験から</title>
+<style>
+:root{--blue:#1A8CFF;--blue-light:#EAF4FF;--blue-mid:#D6E9FF;--blue-deep:#0F5FCC;--blue-soft:#F2F8FF;--card:#ffffff;--text:#1E2A3A;--muted:#5B6B85}
+*{box-sizing:border-box}
+html{font-size:20px}
+body{margin:0;font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;background:linear-gradient(180deg,var(--blue-light),var(--blue-mid));color:var(--text);min-height:100vh;line-height:1.85}
+header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,0.94);backdrop-filter:blur(8px);border-bottom:3px solid var(--blue-mid)}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+.head{padding:18px 0 14px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:1.5rem;color:var(--blue-deep)}
+.logo-mark{width:46px;height:46px;border-radius:50%;background:radial-gradient(120% at 30% 30%,#6EC2FF,#1A8CFF 55%,#0F5FCC);display:grid;place-items:center;color:#fff;font-size:1.4rem}
+.progress{background:var(--blue-soft);border:2px solid var(--blue-mid);border-radius:999px;padding:8px 18px;font-weight:800;color:var(--blue-deep);font-size:1.1rem}
+main{padding:18px 0 40px}
+.card{background:var(--card);border-radius:28px;padding:20px 18px;border:2.5px solid #E3EFFE;box-shadow:0 8px 24px rgba(15,95,204,0.08);margin:18px 0}
+.h2{font-size:1.4rem;color:var(--blue-deep);margin:0 0 12px;font-weight:800}
+.h3{font-size:1.2rem;color:var(--blue-deep);margin:18px 0 8px;font-weight:800}
+.step{display:flex;gap:14px;padding:14px 10px;border-radius:18px;border:2px solid transparent}
+.step.checked{background:var(--blue-soft);border-color:var(--blue-mid)}
+.cb{width:28px;height:28px;flex:0 0 28px;margin-top:3px;accent-color:var(--blue)}
+.step-title{font-weight:800;font-size:1.15rem;margin:0}
+.step-desc{margin:6px 0 0;color:var(--muted);font-size:1.02rem}
+.divider{height:2px;background:var(--blue-mid);margin:10px 0;border:0;opacity:0.6}
+textarea{width:100%;min-height:320px;border-radius:18px;border:2.5px solid var(--blue-mid);padding:14px;font-size:1.05rem;line-height:1.7;font-family:inherit;background:var(--blue-soft);color:var(--text)}
+.btn{border:0;border-radius:999px;padding:12px 22px;font-size:1.1rem;font-weight:800;cursor:pointer}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 6px 16px rgba(26,140,255,0.35)}
+.btn-ghost{background:#fff;color:var(--blue-deep);border:2.5px solid var(--blue-mid)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.check-list{display:flex;flex-direction:column;gap:10px}
+.check-item{display:flex;gap:12px;align-items:flex-start;background:var(--blue-soft);border-radius:16px;padding:12px 14px;border:2px solid #E3EFFE}
+.check-item.checked{background:#fff;border-color:var(--blue-mid)}
+.final{background:linear-gradient(135deg,#1A8CFF,#0F5FCC);color:#fff;border-radius:28px;padding:22px 20px;text-align:center}
+.final p{margin:8px 0;font-size:1.25rem;font-weight:800;line-height:1.6}
+.small{font-size:0.95rem;color:var(--muted)}
+.kbd{background:#fff;border:2px solid var(--blue-mid);border-radius:8px;padding:2px 8px;font-size:0.9rem}
+</style>
+</head>
+<body>
+<header>
+<div class="wrap head">
+<div class="logo"><div class="logo-mark">W</div>アプリ作成ナビ</div>
+<div class="progress" id="progressText">0／7 完了</div>
+</div>
+</header>
+<main>
+<div class="wrap">
+
+<div class="card">
+<h2 class="h2">全体の流れ — 7つの段階</h2>
+<p class="small">チェックすると端末の中に保存されます。次に開いても残ります。</p>
+<div id="flowList"></div>
+<div class="btn-row">
+<button class="btn btn-ghost" onclick="resetFlow()">チェックを全部消す</button>
+</div>
+</div>
+
+<div class="card">
+<h2 class="h2">注文書の雛形</h2>
+<p class="small">作る物、守る条件、出来上がりの形をはっきり書きます。貼り付けて使えます。</p>
+<textarea id="templateText"># 注文書・第○号 ○○の部品
+
+岡崎幸雄の依頼です。
+
+作る物
+（例）ブルーウィング8の動画画面、横長の色枠、再生印つき
+題名、長さ、短い説明、いいねボタンを付ける
+
+守る条件
+単一のHTMLファイルで動く。外部ライブラリや外部ファイルは使わない
+青色基調、丸いカード、大きめの文字、やさしい日本語
+スマホ、タブレット、テレビのブラウザで開ける
+JavaScriptはバッククォートと ${} を使わず、文字列の結合で書く
+個人情報の入力欄を作らない。外部へ送信しない。広告を入れない
+
+出来上がりの形
+HTMLファイルの全文を、一つのコードブロックで返す
+説明文は最小限
+</textarea>
+<div class="btn-row">
+<button class="btn btn-primary" onclick="copyTemplate()">全文をコピー</button>
+<span id="copyMsg" class="small"></span>
+</div>
+</div>
+
+<div class="card">
+<h2 class="h2">検証チェックリスト</h2>
+<div class="check-list" id="verifyList"></div>
+<p class="small" style="margin-top:12px">決まり：動画と音楽は YouTube の oEmbed で存在と埋め込み可否と著者を確かめる。著者が「- Topic」で終わる音源動画は、テレビのブラウザで再生出来ないので入れない（2026年11月27日実証）。</p>
+</div>
+
+<div class="final">
+<p>最後の基準</p>
+<p>世界中の子供達が利用出来るか</p>
+<p style="font-weight:400;font-size:1.05rem;margin-top:14px">住所は短く、ページは軽く、言葉は増やし、特定のサービスに頼らない土台を太くする。</p>
+</div>
+
+<div class="card">
+<h3 class="h3">記録の付け方（方法書より）</h3>
+<p class="small">・公開のたびに同期記録（いつの公開が今の物か）を残す<br>・候補の検証結果は候補ファイルに残す（採用・不採用と理由）<br>・その日の出来事は日次ログに残す</p>
+<p class="small" style="margin-top:10px">体制：企画・監修 岡崎幸雄／監督・検証・公開 Claude／部品製作 メタAI（下請け）</p>
+</div>
+
+</div>
+</main>
+<script>
+var FLOW_KEY = 'bw8_app_method_flow_v1';
+var VERIFY_KEY = 'bw8_app_method_verify_v1';
+
+var flows = [
+{ id: 'f1', title: '(1) 構想を文書にする', desc: '目的、誰のためか、段階の分け方（第1期は画面、第2期は動く仕組み、第3期は連携、第4期は仕上げと多言語）を書く。' },
+{ id: 'f2', title: '(2) 部品ごとに注文書を書く', desc: '作る物、守る条件、出来上がりの形をはっきり書く。貼り付けで落ちる記号に注意。' },
+{ id: 'f3', title: '(3) 下請けが部品を作る', desc: '注文書を貼って渡し、成果物を持ち帰る。メタAIが部品製作。' },
+{ id: 'f4', title: '(4) 検証する', desc: '動画は oEmbed で確かめる。著者が - Topic で終わる音源動画はテレビで再生出来ないので入れない。コードは jsdom で動かして確かめる。外部読み込みは切る。制限時間を付ける。貼り付けで落ちた記号は復元してから取り込む。' },
+{ id: 'f5', title: '(5) 本体へ集成する', desc: '検証を通った部品だけを本体へ入れる。' },
+{ id: 'f6', title: '(6) 公開する（小さい直しはまとめてから）', desc: '小さい直しはまとめて公開し、承認の手間を増やさない。公開後は少し待ってから確認する。' },
+{ id: 'f7', title: '(7) 実機で確かめる（スマホ、タブレット、テレビ）', desc: '本人が実機で確かめる。動かない所は名前を聞いて一つずつ直す。テレビは直接開くと重い。タブレットで開いてミラーリングで映す形が確実（2026年11月27日実証）。' }
+];
+
+var verifies = [
+{ id: 'v1', title: '動画と音楽の事前確認', desc: 'YouTube oEmbedで存在・埋め込み可否・著者を確認。- Topic の音源動画は不採用。公式埋め込みのみ。ダウンロード再配置はしない。' },
+{ id: 'v2', title: 'コードの動作確認', desc: 'jsdomで実際に動かして確かめる。外部読み込みOFF、タイムアウト付き。バッククォートと ${} は使わない（貼り付け事故防止）。' },
+{ id: 'v3', title: '公開後の照合', desc: '公開ページを取り直し、バイト数と目印の文字列が新しい物と一致するか照合する。反映に数分かかるので待ってから確かめる。' },
+{ id: 'v4', title: '実機での確認', desc: 'スマホ、タブレット、テレビで開けるか。動画・音楽はタブレット→テレビのミラーリングで確認が確実。' }
+];
+
+function loadData(key) {
+  try {
+    var s = localStorage.getItem(key);
+    if (s) { return JSON.parse(s); }
+  } catch (e) {}
+  return {};
+}
+function saveData(key, obj) {
+  try { localStorage.setItem(key, JSON.stringify(obj)); } catch (e) {}
+}
+
+function renderFlow() {
+  var data = loadData(FLOW_KEY);
+  var container = document.getElementById('flowList');
+  var html = '';
+  for (var i = 0; i < flows.length; i++) {
+    var f = flows[i];
+    var checked = data[f.id] ? true : false;
+    var cls = checked ? 'step checked' : 'step';
+    html = html + '<div class="' + cls + '" id="row_' + f.id + '">'
+      + '<input class="cb" type="checkbox" id="' + f.id + '" ' + (checked ? 'checked' : '') + ' onchange="onFlowChange()">'
+      + '<div><p class="step-title">' + f.title + '</p><p class="step-desc">' + f.desc + '</p></div>'
+      + '</div>';
+    if (i < flows.length - 1) { html = html + '<hr class="divider">'; }
+  }
+  container.innerHTML = html;
+  updateProgress();
+}
+function onFlowChange() {
+  var obj = {};
+  for (var i = 0; i < flows.length; i++) {
+    var id = flows[i].id;
+    var el = document.getElementById(id);
+    if (el) { obj[id] = el.checked ? true : false; }
+  }
+  saveData(FLOW_KEY, obj);
+  renderFlow();
+}
+function updateProgress() {
+  var data = loadData(FLOW_KEY);
+  var count = 0;
+  for (var i = 0; i < flows.length; i++) { if (data[flows[i].id]) { count++; } }
+  var t = document.getElementById('progressText');
+  if (t) { t.textContent = count + '／7 完了'; }
+}
+function resetFlow() {
+  try { localStorage.removeItem(FLOW_KEY); } catch (e) {}
+  renderFlow();
+}
+
+function renderVerify() {
+  var data = loadData(VERIFY_KEY);
+  var container = document.getElementById('verifyList');
+  var html = '';
+  for (var i = 0; i < verifies.length; i++) {
+    var v = verifies[i];
+    var checked = data[v.id] ? true : false;
+    var cls = checked ? 'check-item checked' : 'check-item';
+    html = html + '<div class="' + cls + '" id="row_' + v.id + '">'
+      + '<input class="cb" type="checkbox" id="' + v.id + '" ' + (checked ? 'checked' : '') + ' onchange="onVerifyChange()">'
+      + '<div><p class="step-title" style="font-size:1.05rem">' + v.title + '</p><p class="step-desc">' + v.desc + '</p></div>'
+      + '</div>';
+  }
+  container.innerHTML = html;
+}
+function onVerifyChange() {
+  var obj = {};
+  for (var i = 0; i < verifies.length; i++) {
+    var id = verifies[i].id;
+    var el = document.getElementById(id);
+    if (el) { obj[id] = el.checked ? true : false; }
+  }
+  saveData(VERIFY_KEY, obj);
+  renderVerify();
+}
+
+function copyTemplate() {
+  var el = document.getElementById('templateText');
+  var text = el.value;
+  var msg = document.getElementById('copyMsg');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() {
+      if (msg) { msg.textContent = 'コピーしました'; setTimeout(function(){ msg.textContent = ''; }, 2000); }
+    }, function() { fallbackCopy(text); });
+  } else {
+    fallbackCopy(text);
+  }
+}
+function fallbackCopy(text) {
+  var el = document.getElementById('templateText');
+  var msg = document.getElementById('copyMsg');
+  try {
+    el.focus(); el.select();
+    var ok = document.execCommand('copy');
+    if (msg) { msg.textContent = ok ? 'コピーしました' : 'コピー出来ませんでした。手で選択してコピーしてください'; }
+  } catch (e) {
+    if (msg) { msg.textContent = 'コピー出来ませんでした。手で選択してコピーしてください'; }
+  }
+  setTimeout(function(){ if (msg) { msg.textContent = ''; } }, 2500);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderFlow();
+  renderVerify();
+});
+</script>
+</body>
+</html>
