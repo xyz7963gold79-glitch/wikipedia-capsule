@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>All-in-One App Builder - Bluewing8 Method - English</title>
+<style>
+  :root{--blue:#1976d2;--light:#e3f2fd;--card:#ffffff;--text:#1a1a1a;--muted:#5f6f81}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--light);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.7;font-size:17px}
+  header{background:var(--blue);color:#fff;padding:22px 16px;text-align:center}
+  header h1{margin:0;font-size:20px}
+  header p{margin:6px 0 0;font-size:14px;opacity:0.95}
+  .wrap{max-width:900px;margin:0 auto;padding:16px}
+  .banner{background:#fff3cd;border:2px solid #ffcc02;border-radius:20px;padding:16px 18px;margin:16px 0}
+  .banner strong{display:block;font-size:17px;margin-bottom:6px}
+  .card{background:var(--card);border-radius:24px;padding:18px 16px;margin:14px 0;box-shadow:0 2px 10px rgba(0,0,0,0.06)}
+  .card h2{margin:0 0 8px;font-size:18px;color:var(--blue)}
+  .card h3{margin:14px 0 6px;font-size:16px;color:#0d47a1}
+  .pill{display:inline-block;background:var(--light);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--blue);margin:2px 4px 2px 0}
+  .progress{background:#e0e0e0;border-radius:999px;height:14px;overflow:hidden;margin:8px 0}
+  .bar{height:14px;background:var(--blue);width:0%;transition:width 0.3s}
+  .check{display:flex;align-items:flex-start;gap:10px;padding:8px 4px;border-bottom:1px dashed #e0e0e0}
+  .check:last-child{border-bottom:none}
+  .check input{margin-top:5px;width:20px;height:20px}
+  .check label{flex:1}
+  .btn{appearance:none;border:none;background:var(--blue);color:#fff;border-radius:999px;padding:10px 18px;font-size:15px;cursor:pointer;margin:6px 4px}
+  .btn.secondary{background:#e8f0fe;color:var(--blue);border:1px solid var(--blue)}
+  .btn.small{font-size:13px;padding:8px 14px}
+  textarea,input[type=text],select{width:100%;border:1px solid #c5d6e8;border-radius:16px;padding:11px 13px;font-size:15px;font-family:inherit;background:#fbfdff}
+  textarea{min-height:110px}
+  .grid{display:grid;grid-template-columns:1fr;gap:12px}
+  @media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
+  .legal-item{background:#f7fbff;border:1px solid #d6e8ff;border-radius:16px;padding:10px 12px;margin:6px 0}
+  .mono{font-family:monospace;white-space:pre-wrap;background:#f5f7fa;border-radius:12px;padding:10px;font-size:13px}
+  .footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 0 40px}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+  .flow div{background:#e3f2fd;border-radius:12px;padding:6px 10px;font-size:13px}
+  .small{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <h1>All-in-One App Builder<br>Bluewing8 Method - English Edition</h1>
+  <p>Phase Check / Order Template / Verification / Editorial Desk / Legal Duties / Policy Templates</p>
+  <p class="small">Planning and supervision: Yukio Okazaki / Direction, checking and publishing: Claude / Parts: Meta AI</p>
+</header>
+<div class="wrap">
+
+  <div class="banner" id="complianceTop">
+    <strong>Compliance Notice - Please Read</strong>
+    This tool provides general information only. It is not legal advice. If you publish an app, check the laws of your country and region yourself, and always follow them. An ordinary free app does not need permission or certification from the authorities. You meet your duties by following the rules. Some fields, however, may require a filing or registration.
+  </div>
+
+  <div class="card" id="sec1">
+    <h2>1. Phase Check <span class="pill" id="phaseProgress">0 / 0</span></h2>
+    <p class="small">Phase 1 Screen, Phase 2 Server, Phase 3 Connections, Phase 4 Finishing and Languages. Saved in this device.</p>
+    <div class="progress"><div class="bar" id="phaseBar"></div></div>
+    <div id="phaseList"></div>
+    <button class="btn small secondary" onclick="resetPhases()">Clear all checks</button>
+  </div>
+
+  <div class="card" id="sec2">
+    <h2>2. Order Template</h2>
+    <p class="small">A simple template to ask for work. Write subject, what to build, rules, and how to check.</p>
+    <div class="grid">
+      <div><label>Subject</label><input type="text" id="orderTitle" placeholder="Ex: Order No.56 App Builder English Version"></div>
+      <div><label>What to build</label><textarea id="orderWhat" placeholder="Ex: Single HTML file, no external parts, blue, round cards, large text"></textarea></div>
+      <div><label>Rules</label><textarea id="orderRule" placeholder="Ex: No backticks, use quotes and + for strings, no external images, readable on phone"></textarea></div>
+      <div><label>How to check</label><textarea id="orderCheck" placeholder="Ex: Syntax check, region switch and save works, real device test"></textarea></div>
+    </div>
+    <button class="btn" onclick="buildOrder()">Build template</button>
+    <button class="btn secondary" onclick="copyOrder()">Copy template</button>
+    <textarea id="orderResult" class="mono" style="min-height:190px;margin-top:10px" placeholder="Template will appear here"></textarea>
+  </div>
+
+  <div class="card" id="sec3">
+    <h2>3. Verification Checklist <span class="pill" id="verifyProgress">0 / 0</span></h2>
+    <div class="progress"><div class="bar" id="verifyBar"></div></div>
+    <div id="verifyList"></div>
+    <button class="btn small secondary" onclick="resetVerify()">Clear verification checks</button>
+  </div>
+
+  <div class="card" id="sec4">
+    <h2>4. Editorial Desk Type</h2>
+    <p><strong>Principle: Do not edit. Check, then place.</strong></p>
+    <div class="flow">
+      <div>1 Receive request</div><span>-&gt;</span>
+      <div>2 Prepare<br><span class="small">Machine sorts type and gets title</span></div><span>-&gt;</span>
+      <div>3 Check<br><span class="small">Only 4 checks</span></div><span>-&gt;</span>
+      <div>4 Place<br><span class="small">3 forms</span></div>
+    </div>
+    <h3>Check only 4 things</h3>
+    <div id="editCheckList"></div>
+    <h3>Place in 3 forms</h3>
+    <ul>
+      <li><strong>Video = Embed</strong> - Only if oEmbed returns. Show as embedded player. Source is shown automatically.</li>
+      <li><strong>Reel = Guide Card</strong> - Do not embed. Show title, short summary, and link card. User opens outside.</li>
+      <li><strong>Article = Guide Card</strong> - Same as reel. Summary only, no copy of original text.</li>
+    </ul>
+    <p class="small">Exclude: Auto-made music videos whose title ends with - Topic often fail on TV browsers. Verified 2026-11-27. Use guide card instead.</p>
+  </div>
+
+  <div class="card" id="sec5">
+    <h2>5. Legal Duties Check</h2>
+    <p class="small">Choose a region. You will see easy points to care about. Always check the real law yourself.</p>
+    <label>Choose region</label>
+    <select id="regionSelect" onchange="renderLegal()"></select>
+    <div id="legalList"></div>
+  </div>
+
+  <div class="card" id="sec6">
+    <h2>6. Policy Templates</h2>
+    <p class="small">These are skeletons only. Do not use as is. Change them to fit your own app.</p>
+    <div class="grid">
+      <div>
+        <h3>Terms</h3>
+        <div class="mono" id="tosTemplate"></div>
+        <button class="btn small" onclick="copyText('tosTemplate')">Copy</button>
+      </div>
+      <div>
+        <h3>Privacy Policy</h3>
+        <div class="mono" id="privacyTemplate"></div>
+        <button class="btn small" onclick="copyText('privacyTemplate')">Copy</button>
+      </div>
+      <div>
+        <h3>Listing Policy</h3>
+        <div class="mono" id="publishTemplate"></div>
+        <button class="btn small" onclick="copyText('publishTemplate')">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="sec7">
+    <h2>7. Standard</h2>
+    <p style="font-size:22px;text-align:center;margin:10px 0"><strong>Can children all over the world use it?</strong></p>
+    <p class="small">Check display, words, behavior, rights, and safety with this question. No ads, no personal data collection, no sending data outside, easy words, large text, round cards, blue base.</p>
+    <div class="banner" style="margin-top:10px">
+      <strong>Compliance Notice - Again</strong>
+      This tool provides general information only. It is not legal advice. If you publish an app, check the laws of your country and region yourself, and always follow them. An ordinary free app does not need permission or certification from the authorities. You meet your duties by following the rules. Some fields, however, may require a filing or registration.
+    </div>
+    <p class="small">Planning and supervision: Yukio Okazaki / Direction, checking and publishing: Claude / Parts: Meta AI</p>
+  </div>
+
+</div>
+
+<div class="footer">
+  Bluewing8 Method All-in-One App Builder / Single HTML / localStorage / No external connection<br>
+  Planning and supervision: Yukio Okazaki / Direction, checking and publishing: Claude / Parts: Meta AI
+</div>
+
+<script>
+var LS_PHASE = "bw8_sougou_phase_en_v1";
+var LS_VERIFY = "bw8_sougou_verify_en_v1";
+var LS_LEGAL = "bw8_sougou_legal_en_v1";
+var LS_ORDER = "bw8_sougou_order_en_v1";
+
+var phaseData = [
+  {phase:"Phase 1 Screen", items:["Decide purpose and users - who and what for","Decide headings and round cards layout","Use blue base and large text for easy reading","Test on phone and TV browser"]},
+  {phase:"Phase 2 Server", items:["Decide where data lives - inside device","Do not send data outside - no personal data","Save progress with localStorage","Use no external images, fonts, or libraries"]},
+  {phase:"Phase 3 Connections", items:["Choose place style - video is embed, reel and article are guide cards","Use only oEmbed that returns official data","Exclude - Topic auto music videos","If embed fails, switch to guide card"]},
+  {phase:"Phase 4 Finishing and Languages", items:["Use easy words and prepare translations","Show progress as done / total","Check with verification list - display, behavior, rights, safety","Check byte size and marker after publish and test on real device"]}
+];
+
+var verifyData = [
+  {cat:"Display", items:["Large text readable on phone","Round cards and blue easy to see","Not broken on TV browser","Progress shows correctly"]},
+  {cat:"Behavior", items:["Checks saved in localStorage","Region switch works","Works with no internet","No syntax error"]},
+  {cat:"Rights", items:["Others works only as embed and link, not copy","Summary only, no full copy","Source is clear","- Topic music videos excluded"]},
+  {cat:"Safety", items:["No personal data collected","No sending data outside","Care for children","No scary or violent words"]},
+  {cat:"After Publish Check", items:["Check file byte size after publish","Check marker text remains","Test by mirroring tablet to TV","Check with question Can children all over the world use it"]}
+];
+
+var editChecks = [
+  "Rights check - Is it within embed and link? Not a copy?",
+  "Safety check - Is it safe for children? No ads or trick?",
+  "Law check - Is purpose clear? Can you delete if asked?",
+  "Misunderstanding check - Will readers misunderstand? Easy words?"
+];
+
+var legalData = {
+  "Japan": [
+    "Show purpose - Tell user why you use personal data, in easy words",
+    "Respond to deletion - If user says delete my data, have a way to respond",
+    "Respond to rights report - If someone says my rights are harmed, check quickly and act",
+    "Others work only as embed and link - Do not copy without permission",
+    "Children need parent consent - Check parent agreement for child users",
+    "If money or ads start, check contract and display first"
+  ],
+  "EU": [
+    "GDPR: Tell purpose and legal basis, and get consent in easy words",
+    "Right to withdraw and right to be forgotten - User can say no anytime and ask to delete",
+    "Children need stronger protection - Be extra careful with child data",
+    "Cookies and tracking - Tell before and let user choose",
+    "If data goes outside EU, need protection - Use safe way",
+    "Breach notice - If data leaks, inform authority within 72 hours and inform users if high risk"
+  ],
+  "United States": [
+    "COPPA: Under 13 needs parent consent and stronger protection",
+    "Show Privacy Policy in easy words where user can find it",
+    "DMCA: Have contact for copyright complaints and follow remove and notice steps",
+    "Ads and money - Show clearly that it is ad or paid, follow FTC rules",
+    "Care for minors - Do not show harmful content to children"
+  ],
+  "United Kingdom": [
+    "UK GDPR: Show purpose, use only minimum data needed",
+    "Age Appropriate Design Code - Put child best interests first",
+    "Online Safety - Prepare how to handle harmful content",
+    "ICO is the authority - Know ICO guidance and have contact for complaints and deletion",
+    "Others work only as embed and link as principle",
+    "Have easy contact for deletion and complaints"
+  ],
+  "Worldwide": [
+    "Collect minimum or collect nothing - Less is better",
+    "Use only for purpose you told - No other use",
+    "Keep safe - Store safely and do not leak",
+    "Do not copy others text or work - Use embed and link or write yourself",
+    "Care for children always - Think Can children all over the world use it",
+    "Have contact for deletion - If user says delete or my rights, you can respond quickly",
+    "Some fields like direct messages or money may need filing or registration - Check yourself"
+  ]
+};
+
+function loadJSON(key, fallback){
+  try{
+    var s = localStorage.getItem(key);
+    if(!s){ return fallback; }
+    return JSON.parse(s);
+  }catch(e){
+    return fallback;
+  }
+}
+function saveJSON(key, obj){
+  localStorage.setItem(key, JSON.stringify(obj));
+}
+
+function renderPhases(){
+  var saved = loadJSON(LS_PHASE, {});
+  var container = document.getElementById("phaseList");
+  var html = "";
+  var total = 0;
+  var done = 0;
+  for(var pi=0; pi<phaseData.length; pi++){
+    var ph = phaseData[pi];
+    html += "<h3>" + ph.phase + "</h3>";
+    for(var ii=0; ii<ph.items.length; ii++){
+      var id = "ph_" + pi + "_" + ii;
+      total += 1;
+      var checked = saved[id] ? true : false;
+      if(checked){ done += 1; }
+      html += "<div class='check'><input type='checkbox' id='" + id + "' " + (checked ? "checked" : "") + " onchange='togglePhase(\"" + id + "\")'><label for='" + id + "'>" + ph.items[ii] + "</label></div>";
+    }
+  }
+  container.innerHTML = html;
+  document.getElementById("phaseProgress").innerHTML = done + " / " + total;
+  var bar = document.getElementById("phaseBar");
+  bar.style.width = (total===0 ? 0 : Math.round(done/total*100)) + "%";
+}
+function togglePhase(id){
+  var saved = loadJSON(LS_PHASE, {});
+  var el = document.getElementById(id);
+  saved[id] = el.checked;
+  saveJSON(LS_PHASE, saved);
+  renderPhases();
+}
+function resetPhases(){
+  if(confirm("Clear all phase checks?")){
+    localStorage.removeItem(LS_PHASE);
+    renderPhases();
+  }
+}
+
+function renderVerify(){
+  var saved = loadJSON(LS_VERIFY, {});
+  var container = document.getElementById("verifyList");
+  var html = "";
+  var total = 0;
+  var done = 0;
+  for(var ci=0; ci<verifyData.length; ci++){
+    var cat = verifyData[ci];
+    html += "<h3>" + cat.cat + "</h3>";
+    for(var ii=0; ii<cat.items.length; ii++){
+      var id = "vf_" + ci + "_" + ii;
+      total += 1;
+      var checked = saved[id] ? true : false;
+      if(checked){ done += 1; }
+      html += "<div class='check'><input type='checkbox' id='" + id + "' " + (checked ? "checked" : "") + " onchange='toggleVerify(\"" + id + "\")'><label for='" + id + "'>" + cat.items[ii] + "</label></div>";
+    }
+  }
+  container.innerHTML = html;
+  document.getElementById("verifyProgress").innerHTML = done + " / " + total;
+  document.getElementById("verifyBar").style.width = (total===0 ? 0 : Math.round(done/total*100)) + "%";
+}
+function toggleVerify(id){
+  var saved = loadJSON(LS_VERIFY, {});
+  var el = document.getElementById(id);
+  saved[id] = el.checked;
+  saveJSON(LS_VERIFY, saved);
+  renderVerify();
+}
+function resetVerify(){
+  if(confirm("Clear all verification checks?")){
+    localStorage.removeItem(LS_VERIFY);
+    renderVerify();
+  }
+}
+
+function renderEditChecks(){
+  var container = document.getElementById("editCheckList");
+  var html = "";
+  for(var i=0;i<editChecks.length;i++){
+    html += "<div class='legal-item'>" + (i+1) + ". " + editChecks[i] + "</div>";
+  }
+  container.innerHTML = html;
+}
+
+function initRegionSelect(){
+  var sel = document.getElementById("regionSelect");
+  var regions = Object.keys(legalData);
+  var html = "";
+  for(var i=0;i<regions.length;i++){
+    html += "<option value='" + regions[i] + "'>" + regions[i] + "</option>";
+  }
+  sel.innerHTML = html;
+  var saved = loadJSON(LS_LEGAL, {});
+  if(saved._region){
+    sel.value = saved._region;
+  }
+  renderLegal();
+}
+function renderLegal(){
+  var sel = document.getElementById("regionSelect");
+  var region = sel.value;
+  var items = legalData[region] || [];
+  var saved = loadJSON(LS_LEGAL, {});
+  saved._region = region;
+  saveJSON(LS_LEGAL, saved);
+  var container = document.getElementById("legalList");
+  var html = "";
+  for(var i=0;i<items.length;i++){
+    var id = "lg_" + region + "_" + i;
+    var checked = saved[id] ? true : false;
+    html += "<div class='check'><input type='checkbox' id='" + id + "' " + (checked ? "checked" : "") + " onchange='toggleLegal(\"" + id + "\")'><label for='" + id + "'>" + items[i] + "</label></div>";
+  }
+  container.innerHTML = html;
+}
+function toggleLegal(id){
+  var saved = loadJSON(LS_LEGAL, {});
+  var el = document.getElementById(id);
+  saved[id] = el.checked;
+  saveJSON(LS_LEGAL, saved);
+}
+
+function buildOrder(){
+  var title = document.getElementById("orderTitle").value || "Order No.XX Building XX";
+  var what = document.getElementById("orderWhat").value || "What to build in detail";
+  var rule = document.getElementById("orderRule").value || "Rules: single HTML, no external parts, blue, round cards, large text, no backticks, use quotes and +";
+  var check = document.getElementById("orderCheck").value || "How to check: syntax, region switch and save, real device test";
+  var text = "Subject: " + title + "\n" +
+    "What to build: " + what + "\n" +
+    "Rules: " + rule + "\n" +
+    "How to check: " + check + "\n" +
+    "Standard: Can children all over the world use it?\n" +
+    "Roles: Planning and supervision: Yukio Okazaki / Direction, checking and publishing: Claude / Parts: Meta AI";
+  document.getElementById("orderResult").value = text;
+  saveJSON(LS_ORDER, {title:title, what:what, rule:rule, check:check});
+}
+function loadOrder(){
+  var saved = loadJSON(LS_ORDER, null);
+  if(saved){
+    document.getElementById("orderTitle").value = saved.title || "";
+    document.getElementById("orderWhat").value = saved.what || "";
+    document.getElementById("orderRule").value = saved.rule || "";
+    document.getElementById("orderCheck").value = saved.check || "";
+  }
+}
+function copyOrder(){
+  var el = document.getElementById("orderResult");
+  if(!el.value){ buildOrder(); }
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(el.value);
+    alert("Copied template");
+  }else{
+    el.select();
+    document.execCommand("copy");
+    alert("Copied template");
+  }
+}
+function copyText(id){
+  var el = document.getElementById(id);
+  var text = el.innerText || el.textContent;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text);
+    alert("Copied");
+  }else{
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    alert("Copied");
+  }
+}
+
+function initPolicies(){
+  var tos = "Terms - Skeleton\n" +
+    "1. Intro: This app is a tool for learning.\n" +
+    "2. Do not: Harm rights, spread lie, do harmful act.\n" +
+    "3. No guarantee: Content is general info, not perfect.\n" +
+    "4. Change: We may change terms when needed.\n" +
+    "Note: Change to fit your own app. This is not legal advice.";
+  var privacy = "Privacy Policy - Skeleton\n" +
+    "1. What we collect: In this skeleton, we collect no personal data. If you collect, write what and why.\n" +
+    "2. How we use: Use only for purpose you told.\n" +
+    "3. Keep: Keep safely, delete when not needed.\n" +
+    "4. Contact: Write contact. Respond to deletion request.\n" +
+    "EU: If you have EU users, add GDPR points - consent, right to delete, breach notice within 72 hours.\n" +
+    "US: If under 13 users, add COPPA - need parent consent.\n" +
+    "Note: Change to fit your own app and region law.";
+  var publish = "Listing Policy - Skeleton\n" +
+    "1. Standard: Can children all over the world use it?\n" +
+    "2. Edit rule: Do not edit. Check, then place.\n" +
+    "3. Place: Video is embed, reel and article are guide cards.\n" +
+    "4. Deletion: If rights report comes, check quickly and act.\n" +
+    "5. Contact: Write contact for reports.\n" +
+    "Note: Change to fit your own app.";
+  document.getElementById("tosTemplate").textContent = tos;
+  document.getElementById("privacyTemplate").textContent = privacy;
+  document.getElementById("publishTemplate").textContent = publish;
+}
+
+function init(){
+  renderPhases();
+  renderVerify();
+  renderEditChecks();
+  initRegionSelect();
+  loadOrder();
+  initPolicies();
+}
+init();
+</script>
+</body>
+</html>
