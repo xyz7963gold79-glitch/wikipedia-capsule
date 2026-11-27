@@ -298,8 +298,17 @@
   <!-- ページ欄 -->
   <section id="view-pages" class="view">
     <div id="bw-list">
+      <div class="section-head"><h2 data-ja="公式リンク" data-en="Official Links">公式リンク</h2><span class="hint" data-ja="岡崎幸雄の各サービスの窓口です" data-en="Yukio Okazaki on each service">岡崎幸雄の各サービスの窓口です</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px">
+        <a href="https://www.facebook.com/61553170577996" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:9px;text-decoration:none;color:#1e293b;background:#fff;border:1px solid #dbe4ff;border-radius:999px;padding:7px 16px 7px 8px"><span style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#1877F2;color:#fff;font-weight:700;font-size:1.05rem">f</span><span>Facebook</span></a>
+        <a href="https://www.youtube.com/channel/UCybUT6_BNx-l5IJc5lbqi7A" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:9px;text-decoration:none;color:#1e293b;background:#fff;border:1px solid #dbe4ff;border-radius:999px;padding:7px 16px 7px 8px"><span style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;background:#FF0000;color:#fff;font-size:.8rem">▶</span><span>YouTube</span></a>
+        <a href="https://x.com/Hapinez7963" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:9px;text-decoration:none;color:#1e293b;background:#fff;border:1px solid #dbe4ff;border-radius:999px;padding:7px 16px 7px 8px"><span style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#000;color:#fff;font-weight:700;font-size:.95rem">X</span><span>X</span></a>
+        <a href="https://www.instagram.com/origis99/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:9px;text-decoration:none;color:#1e293b;background:#fff;border:1px solid #dbe4ff;border-radius:999px;padding:7px 16px 7px 8px"><span style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf);color:#fff;position:relative"><span style="width:14px;height:14px;border:2px solid #fff;border-radius:50%;display:block"></span><span style="position:absolute;width:4px;height:4px;background:#fff;border-radius:50%;top:5px;right:5px"></span></span><span>Instagram</span></a>
+      </div>
       <div class="section-head"><h2 data-ja="ページ" data-en="Pages">ページ</h2><span class="hint" data-ja="岡崎幸雄のFacebookページ一覧（全74件）" data-en="Yukio Okazaki's Facebook Pages (74)">岡崎幸雄のFacebookページ一覧（全74件）</span></div>
       <div class="grid" id="bw-grid"></div>
+      <div class="section-head" style="margin-top:26px"><h2 data-ja="Quoraスペース" data-en="Quora Spaces">Quoraスペース</h2><span class="hint" data-ja="岡崎幸雄が管理するQuoraスペース（全23件）" data-en="Quora Spaces administered by Yukio Okazaki (23)">岡崎幸雄が管理するQuoraスペース（全23件）</span></div>
+      <div class="grid" id="bw-quora-grid"></div>
     </div>
     <div id="bw-detail" style="display:none">
       <div class="actions" style="margin-bottom:12px"><button class="btn btn-ghost" id="bw-back" data-ja="← 一覧に戻る" data-en="← Back to list">← 一覧に戻る</button></div>
@@ -880,6 +889,36 @@ const bwPages=[
  {id:'1154617821074586',nameJa:"ニュー·スペース·dao8",nameEn:"ニュー·スペース·dao8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/1154617821074586',members:0,posts:[]}
 ];
 let bwCurrent=null;
+const bwQuoraSpaces=[
+ {name:'スペース·モデル',intro:'平和・文化・教育と、ボランティアの情報。',url:'https://nyuutaipu.quora.com/'},
+ {name:'プロト·タイプ',intro:'人類の進化と文明、平和・文化・教育の対話。',url:'https://puroto-taipu.quora.com/'},
+ {name:'サンガリア8',intro:'民間主導の宇宙開発ニュースの紹介。',url:'https://sanga-ria-8.quora.com/'},
+ {name:'エコグラス7',intro:'草の根の経済と、豊かさと貧しさの差について。',url:'https://yukio-san-no-supeesu-1.quora.com/'},
+ {name:'ホーリー・レリジョン8',intro:'幸福と愛と生命で、分かれた心を結ぶ。',url:'https://hoo-rii-re-ri-jon-8.quora.com/'},
+ {name:'ニューテクノロジー7',intro:'新しい時代の技術の紹介と議論。',url:'https://yukio-san-no-supee.quora.com/'},
+ {name:'ニューサイエンス9',intro:'新しい科学と数学の発表の場。',url:'https://yukio-san-no-supeesu-2.quora.com/'},
+ {name:'宇宙連邦Ω',intro:'国連に代わる新しい価値の機関と、世界秩序の構想。',url:'https://yukio-san-no-supeesu.quora.com/'},
+ {name:'ア二メ一カ一8',intro:'AI時代のオリジナルアニメーション。',url:'https://a-ni-me-ichi-ka-ichi.quora.com/'},
+ {name:'スペースフロントΩ',intro:'本格的な宇宙進出と、宇宙コロニーの可能性。',url:'https://supeesu-furonto-o.quora.com/'},
+ {name:'ブルーノア',intro:'地球の環境問題の解決と再生。',url:'https://yukio-san-no-supeesu-3.quora.com/'},
+ {name:'エンジェルモデル',intro:'人類の生存と尊厳を信じる連帯、宗教と哲学。',url:'https://hapinesu-7.quora.com/'},
+ {name:'ブレイン9',intro:'危機を避ける知恵と、平和と新しい明日への道。',url:'https://burein-9.quora.com/'},
+ {name:'ジーニアス',intro:'危機の時代を抜けるための、学問的な知識と情報。',url:'https://jiiniasu.quora.com/'},
+ {name:'LOVE &PEACE 8',intro:'芸術・写真・アニメ・歌で表す、人類の統一と永遠の愛。',url:'https://love-peace-8.quora.com/'},
+ {name:'サンダーボルト',intro:'人類の安全保障を進める。',url:'https://sandaaboruto.quora.com/'},
+ {name:'エゥーゴ8',intro:'地球の統合への試みの提案。',url:'https://euugo-8.quora.com/'},
+ {name:'ウインド・ベル8',intro:'歴史的な災いの時代を抜ける、総合的な探究。',url:'https://uindo-beru-8.quora.com/'},
+ {name:'ギャラクシア8',intro:'宇宙船と宇宙コロニーの開発。',url:'https://giyara-ku-shia-8.quora.com/'},
+ {name:'ワールドスクール7',intro:'SNSによる、世界市民の情報教育システム。',url:'https://waarudo-sukuuru-7.quora.com/'},
+ {name:'サンクチュアリ8',intro:'科学で読み直す思想・哲学・宗教哲学、平和への道。',url:'https://sankuchuari-8.quora.com/'},
+ {name:'ワールドウェルフェア',intro:'世界的な生活協同組合の設立。',url:'https://waarudo-u-e-ru-fea.quora.com/'},
+ {name:'コーディネーター',intro:'新しい統一原理、宇宙開発と人類の進化。',url:'https://koodineetaa.quora.com/'}
+];
+function renderBwQuora(){
+  const el=document.getElementById('bw-quora-grid'); if(!el) return;
+  el.innerHTML=bwQuoraSpaces.map(s=>'<article class="card article-card"><h3 class="title">'+esc(s.name)+'</h3><p class="desc">'+esc(s.intro)+'</p><div class="meta"><span>Quoraスペース</span></div>'+(s.url?'<div class="actions"><a class="btn btn-blue" href="'+s.url+'" target="_blank" rel="noopener">'+(lang==='ja'?'Quoraで開く':'Open on Quora')+'</a></div>':'')+'</article>').join('');
+}
+window.renderBwQuora=renderBwQuora;
 function renderBwPages(){
   document.getElementById('bw-grid').innerHTML=bwPages.map(pg=>`<article class="card article-card"><h3 class="title">${lang==='ja'?pg.nameJa:pg.nameEn}</h3><p class="desc">${lang==='ja'?pg.descJa:pg.descEn}</p><div class="meta"><span>${lang==='ja'?'Facebookページ':'Facebook Page'}</span></div><div class="actions"><button class="btn btn-blue" onclick="openBwPage(${pg.id})">${lang==='ja'?'開く':'Open'}</button></div></article>`).join('');
   if(bwCurrent){
@@ -888,6 +927,7 @@ function renderBwPages(){
     document.getElementById('bw-dmeta').textContent=(lang==='ja'?'Facebookページ':'Facebook Page');
     renderBwPosts();
   }
+  renderBwQuora();
 }
 function renderBwPosts(){
   if(!bwCurrent) return;
