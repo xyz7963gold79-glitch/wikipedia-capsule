@@ -946,7 +946,7 @@ function renderCorners(){
   if(cnCurrent){
     document.getElementById('cn-dtitle').textContent=lang==='ja'?cnCurrent.nameJa:cnCurrent.nameEn;
     document.getElementById('cn-ddesc').textContent=lang==='ja'?cnCurrent.descJa:cnCurrent.descEn;
-    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_COLOR2_HTML+BW_GAME2_HTML+BW_CLASSIC_GAMES_HTML+'<p class="desc" style="text-align:center;margin-top:16px">制作：女子会</p>';bwQuizStart();bwRiddleStart();bwMemStart();}else if(cnCurrent.id===6){document.getElementById('cn-articles').innerHTML=renderMovies();}else if(cnCurrent.id===7){document.getElementById('cn-articles').innerHTML=renderInstitutions();bwLoadListings();}else if(cnCurrent.id===8){document.getElementById('cn-articles').innerHTML=renderAudiobooks();}else if(cnCurrent.id===9){document.getElementById('cn-articles').innerHTML=BW_CHAT_HTML;bwChatInit();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
+    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_COLOR2_HTML+BW_GAME2_HTML+BW_CLASSIC_GAMES_HTML+'<p class="desc" style="text-align:center;margin-top:16px">制作：女子会</p>';bwQuizStart();bwRiddleStart();bwMemStart();}else if(cnCurrent.id===6){document.getElementById('cn-articles').innerHTML=renderMovies();}else if(cnCurrent.id===7){document.getElementById('cn-articles').innerHTML=renderInstitutions();bwLoadListings();}else if(cnCurrent.id===8){document.getElementById('cn-articles').innerHTML=renderAudiobooks();}else if(cnCurrent.id===9){document.getElementById('cn-articles').innerHTML=BW_CHAT_HTML;bwChatInit();}else if(cnCurrent.id===3){var _arts=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');document.getElementById('cn-articles').innerHTML=_arts+'<article class="card"><h3 class="title" style="font-size:1.05rem">'+(lang==='ja'?'曲の一覧（公式の映像）':'Songs (official videos)')+'</h3><div id="bw-corner-music"></div></article>';document.getElementById('bw-corner-music').innerHTML=bwMusicHTML();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
   }
 }
 
@@ -1349,9 +1349,8 @@ const bwMusicGroups=[
 function bwMusicCard(m){
   return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayMusic(this,'${m.yt}')"><img src="https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">${esc(m.title)}</div><p style="margin:4px 0 8px">${esc(m.intro)}</p></div>`;
 }
-function renderMusic(){
-  const el=document.getElementById('music-list'); if(!el) return;
-  el.innerHTML=bwMusicGroups.map(g=>{
+function bwMusicHTML(){
+  return bwMusicGroups.map(g=>{
     const items=g.ids.map(id=>ytItems.find(x=>x.id===id)).filter(Boolean).concat(g.extra||[]);
     let h=`<h4 style="margin:16px 0 4px;font-size:1rem">${esc(lang==='ja'?g.nameJa:g.nameEn)}</h4>`+items.map(bwMusicCard).join('');
     (g.subs||[]).forEach(s=>{
@@ -1360,6 +1359,10 @@ function renderMusic(){
     });
     return h;
   }).join('');
+}
+function renderMusic(){
+  const el=document.getElementById('music-list'); if(!el) return;
+  el.innerHTML=bwMusicHTML();
 }
 function bwPlayMusic(el,yt){
   el.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=1" title="YouTube" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
