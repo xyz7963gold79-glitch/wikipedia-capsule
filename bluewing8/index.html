@@ -936,7 +936,8 @@ const bwCorners=[
  {id:5,nameJa:"ゲーム",nameEn:"Games",descJa:"クイズ、ぬりえ、なぞなぞ、神経衰弱と、パソコンの古典ゲームで遊べます。遊びながら、知識が届きます。",descEn:"Quizzes, coloring, riddles, memory games and classic PC games from the Internet Archive.",articles:[]},
  {id:6,nameJa:"映画・ドラマ",nameEn:"Movies & Drama",descJa:"円谷プロと東映の特撮、手塚治虫などのアニメの名作、ガンダムやマクロスの予告、銀河鉄道の映像と、パブリックドメインの古典映画を集めました。タップでそのまま見られます。",descEn:"Official tokusatsu, classic anime, Gundam and Macross trailers, Galaxy Express videos and public-domain classic films. Tap to watch.",articles:[]},
  {id:7,nameJa:"機関・マスコミ",nameEn:"Institutions & Media",descJa:"創価大学をはじめ、公的機関・大学・世界の大学・学会・マスコミ・世界の機関と賞の公式発信を集めました。公式の動画と、公式サイトへの案内です。",descEn:"Official videos and site links from Soka University, public institutions, universities in Japan and around the world, societies, media, and world institutions and prizes.",articles:[]},
- {id:8,nameJa:"朗読",nameEn:"Audiobooks",descJa:"日本の名作を、声で聞けるコーナーです。LibriVoxのボランティアによる朗読で、全て無料のパブリックドメイン録音です。絵をタップすると再生が始まります。",descEn:"Listen to Japanese literary classics read aloud. All recordings are free public-domain readings by LibriVox volunteers. Tap a picture to play.",articles:[]}
+ {id:8,nameJa:"朗読",nameEn:"Audiobooks",descJa:"日本の名作を、声で聞けるコーナーです。LibriVoxのボランティアによる朗読で、全て無料のパブリックドメイン録音です。絵をタップすると再生が始まります。",descEn:"Listen to Japanese literary classics read aloud. All recordings are free public-domain readings by LibriVox volunteers. Tap a picture to play.",articles:[]},
+ {id:9,nameJa:"AIと話す",nameEn:"Chat with AI",descJa:"AIのエリカと、その場でお話しできます。登録はいりません。",descEn:"Chat with Erika, the AI, right here. No sign-up needed.",articles:[]}
 ];
 let cnCurrent=null;
 function renderCorners(){
@@ -944,9 +945,56 @@ function renderCorners(){
   if(cnCurrent){
     document.getElementById('cn-dtitle').textContent=lang==='ja'?cnCurrent.nameJa:cnCurrent.nameEn;
     document.getElementById('cn-ddesc').textContent=lang==='ja'?cnCurrent.descJa:cnCurrent.descEn;
-    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_COLOR2_HTML+BW_GAME2_HTML+BW_CLASSIC_GAMES_HTML+'<p class="desc" style="text-align:center;margin-top:16px">制作：女子会</p>';bwQuizStart();bwRiddleStart();bwMemStart();}else if(cnCurrent.id===6){document.getElementById('cn-articles').innerHTML=renderMovies();}else if(cnCurrent.id===7){document.getElementById('cn-articles').innerHTML=renderInstitutions();bwLoadListings();}else if(cnCurrent.id===8){document.getElementById('cn-articles').innerHTML=renderAudiobooks();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
+    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_COLOR2_HTML+BW_GAME2_HTML+BW_CLASSIC_GAMES_HTML+'<p class="desc" style="text-align:center;margin-top:16px">制作：女子会</p>';bwQuizStart();bwRiddleStart();bwMemStart();}else if(cnCurrent.id===6){document.getElementById('cn-articles').innerHTML=renderMovies();}else if(cnCurrent.id===7){document.getElementById('cn-articles').innerHTML=renderInstitutions();bwLoadListings();}else if(cnCurrent.id===8){document.getElementById('cn-articles').innerHTML=renderAudiobooks();}else if(cnCurrent.id===9){document.getElementById('cn-articles').innerHTML=BW_CHAT_HTML;bwChatInit();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
   }
 }
+
+const BW_CHAT_HTML='<article class="card"><p class="desc">AIのエリカが答えます。AIの答えは、間違うこともあります。大事なことは、ウィキペディアなどでも確かめてください。</p><div id="bw-chat-log" style="display:flex;flex-direction:column;gap:8px;margin:12px 0"></div><div style="display:flex;gap:8px"><input id="bw-chat-input" type="text" maxlength="500" placeholder="エリカに話しかける…" style="flex:1;padding:10px;border:1px solid #cbd5e1;border-radius:8px"><button class="btn btn-blue" onclick="bwChatSend()">送る</button></div><p class="desc" id="bw-chat-note" style="margin-top:8px"></p></article>';
+let bwChatHistory=[]; let bwChatBusy=false;
+function bwChatInit(){
+  const log=document.getElementById('bw-chat-log'); if(!log) return;
+  log.innerHTML='';
+  bwChatHistory.forEach(m=>bwChatBubble(m.role,m.content));
+  if(!bwChatHistory.length) bwChatBubble('assistant','こんにちは、エリカです。ブルーウィング8のことや、岡崎幸雄の作品のこと、何でも聞いてください。');
+  const inp=document.getElementById('bw-chat-input');
+  if(inp) inp.addEventListener('keydown',e=>{ if(e.key==='Enter') bwChatSend(); });
+}
+function bwChatBubble(role,text){
+  const log=document.getElementById('bw-chat-log'); if(!log) return;
+  const d=document.createElement('div');
+  d.style.cssText=role==='user'?'align-self:flex-end;background:#dbeafe;border-radius:12px;padding:8px 12px;max-width:85%':'align-self:flex-start;background:#f1f5f9;border-radius:12px;padding:8px 12px;max-width:85%';
+  const head=document.createElement('div');
+  head.style.cssText='font-size:.75rem;color:#64748b;margin-bottom:2px';
+  head.textContent=role==='user'?'あなた':'エリカ';
+  const body=document.createElement('div');
+  body.style.cssText='line-height:1.7;white-space:pre-wrap';
+  body.textContent=text;
+  d.appendChild(head); d.appendChild(body);
+  log.appendChild(d);
+}
+async function bwChatSend(){
+  if(bwChatBusy) return;
+  const inp=document.getElementById('bw-chat-input'); const note=document.getElementById('bw-chat-note');
+  if(!inp) return;
+  const msg=(inp.value||'').trim(); if(!msg) return;
+  bwChatBusy=true; inp.value='';
+  bwChatBubble('user',msg);
+  if(note) note.textContent='エリカが考えています…';
+  try{
+    const res=await fetch(BW_API+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg,history:bwChatHistory})});
+    const j=await res.json().catch(()=>null);
+    if(res.ok&&j&&j.reply){
+      bwChatBubble('assistant',j.reply);
+      bwChatHistory.push({role:'user',content:msg},{role:'assistant',content:j.reply});
+      if(bwChatHistory.length>12) bwChatHistory=bwChatHistory.slice(-12);
+      if(note) note.textContent='';
+    }else{
+      if(note) note.textContent=(j&&j.error)?j.error:'うまく送れませんでした。少し待って、もう一度お願いします。';
+    }
+  }catch(e){ if(note) note.textContent='うまく送れませんでした。少し待って、もう一度お願いします。'; }
+  bwChatBusy=false;
+}
+window.bwChatSend=bwChatSend;
 
 const BW_COLOR_HTML='<article class="card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">ぬりえ：星海鉄道</h3><p class="desc">色を選んで、絵の場所を押すと、その色で塗れます。</p><div id="color-palette" style="margin:8px 0"><button onclick="bwColorPick(this,\'#ef5350\')" style="width:34px;height:34px;border-radius:50%;border:2px solid #888;background:#ef5350;margin:3px;cursor:pointer" aria-label="color"></button><button onclick="bwColorPick(this,\'#ffa726\')" style="width:34px;height:34px;border-radius:50%;border:2px solid #888;background:#ffa726;margin:3px;cursor:pointer" aria-label="color"></button><button onclick="bwColorPick(this,\'#ffee58\')" style="width:34px;height:34px;border-radius:50%;border:2px solid #888;background:#ffee58;margin:3px;cursor:pointer" aria-label="color"></button><button onclick="bwColorPick(this,\'#66bb6a\')" style="width:34px;height:34px;border-radius:50%;border:2px solid #888;background:#66bb6a;margin:3px;cursor:pointer" aria-label="color"></button><button onclick="bwColorPick(this,\'#42a5f5\')" style="width:34px;height:34px;border-radius:50%;border:2px solid #888;background:#42a5f5;margin:3px;cursor:pointer" aria-label="color"></button><button onclick="bwColorPick(this,\'#ab47bc\')" style="width:34px;height:34px;border-radius:50%;border:2px solid #888;background:#ab47bc;margin:3px;cursor:pointer" aria-label="color"></button><button onclick="bwColorPick(this,\'#f48fb1\')" style="width:34px;height:34px;border-radius:50%;border:2px solid #888;background:#f48fb1;margin:3px;cursor:pointer" aria-label="color"></button><button onclick="bwColorPick(this,\'#8d6e63\')" style="width:34px;height:34px;border-radius:50%;border:2px solid #888;background:#8d6e63;margin:3px;cursor:pointer" aria-label="color"></button><button onclick="bwColorPick(this,\'#bdbdbd\')" style="width:34px;height:34px;border-radius:50%;border:2px solid #888;background:#bdbdbd;margin:3px;cursor:pointer" aria-label="color"></button><button onclick="bwColorPick(this,\'#ffffff\')" style="width:34px;height:34px;border-radius:50%;border:2px solid #888;background:#ffffff;margin:3px;cursor:pointer" aria-label="color"></button></div><svg viewBox="0 0 320 210" style="width:100%;max-width:520px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="320" height="210" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><circle cx="42" cy="36" r="15" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><polygon points="272,16 278,32 295,32 281,42 286,58 272,48 258,58 263,42 249,32 266,32" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><circle cx="54" cy="118" r="26" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><ellipse cx="54" cy="118" rx="44" ry="10" fill="none" stroke="#333" stroke-width="2.5"/><circle cx="129" cy="74" r="11" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><circle cx="143" cy="62" r="8" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="121" y="86" width="15" height="26" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="204" y="80" width="37" height="32" rx="6" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="110" y="110" width="132" height="48" rx="8" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="150" y="121" width="22" height="20" rx="3" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="183" y="121" width="22" height="20" rx="3" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><ellipse cx="278" cy="110" rx="17" ry="11" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="250" y="124" width="58" height="34" rx="6" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><circle cx="136" cy="168" r="13" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><circle cx="176" cy="168" r="13" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><circle cx="218" cy="168" r="13" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><circle cx="266" cy="168" r="10" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><circle cx="294" cy="168" r="10" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/><rect x="0" y="184" width="320" height="7" fill="#ffffff" stroke="#333" stroke-width="2.5" onclick="bwPaint(this)"/></svg><div class="actions" style="margin-top:10px"><button class="btn" onclick="bwColorReset()">白紙に戻す</button></div></article>';
 
