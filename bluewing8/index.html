@@ -505,11 +505,7 @@ const specialItems=[
  {id:6009,cat:'ソフトウェア',date:'リンク',title:'ソフトウェア集成（岡崎幸雄のソフトウェア一覧）',intro:'ブルーウィング8やハルカ教育AIなど、岡崎幸雄と仲間たちが作ったソフトウェアの一覧です。すべて無料です。',body:'<p>岡崎幸雄が企画・監修し、仲間たちと作ったソフトウェアを集めたページです。ブルーウィング8、ハルカ教育AI、Zカプセル、アプリ作成の道具、編集デスク、アニメ製作の道具などがあります。すべて無料で公開しています。</p><p><a href="https://xyz7963gold79-glitch.github.io/wikipedia-capsule/software/" target="_blank" rel="noopener">ソフトウェア集成を開く</a></p>'}
 ];
 function allArticles(){return articles.concat(ytItems,specialItems);}
-let posts=[
- {id:101,name:"サラ",body:"井戸のそばに葉っぱの器を置いてみた。明日、雨が帰ってくるかも。",date:"2026/11/26 08:20",likes:5,liked:false},
- {id:102,name:"ナギ",body:"ぽつん、と一滴。ほっぺに落ちたのが初めての雨だった。",date:"2026/11/25 18:05",likes:12,liked:false},
- {id:103,name:"ホシカ",body:"La la la... la, la la la 水の歌を届けに行きます。星海鉄道、出発します。",date:"2026/11/25 09:11",likes:8,liked:false}
-];
+let posts=[];
 const profilePosts=[];
 let lang='ja';
 let isFollowing=false;
@@ -566,7 +562,7 @@ function bwPlayPostVideo(el,yt){
   el.style.cursor='default'; el.onclick=null;
 }
 function renderTimeline(){
-  document.getElementById('timeline').innerHTML=posts.map(postHTML).join('');
+  document.getElementById('timeline').innerHTML=posts.length?posts.map(postHTML).join(''):'<p class="desc" style="text-align:center;padding:18px 0">'+(lang==='ja'?'まだ投稿がありません。最初の投稿をお待ちしています。':'No posts yet. We are waiting for the first post.')+'</p>';
   document.getElementById('tl-count').textContent=lang==='ja'?posts.length+'件':posts.length+' posts';
 }
 async function toggleLike(id){
