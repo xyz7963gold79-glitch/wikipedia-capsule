@@ -178,7 +178,24 @@
 </div>
 <div class="section-head"><h2 data-ja="新着ニュース" data-en="Latest News">新着ニュース</h2><span class="tag" data-ja="見本データ" data-en="Sample data">見本データ</span></div>
     <div id="list-grid" class="grid"></div>
-    <div style="text-align:center;margin:26px 0 8px;font-size:.82rem"><a href="help.html" style="color:var(--muted)">ヘルプ</a>　・　<a href="privacy.html" style="color:var(--muted)">プライバシーポリシー</a>　・　<a href="terms.html" style="color:var(--muted)">利用規約</a>　・　<a href="listing-policy.html" style="color:var(--muted)">掲載ポリシー</a></div>
+    <div style="text-align:center;margin:26px 0 8px;font-size:.82rem"><a href="help.html" style="color:var(--muted)">ヘルプ</a>　・　<a href="privacy.html" style="color:var(--muted)">プライバシーポリシー</a>　・　<a href="terms.html" style="color:var(--muted)">利用規約</a>　・　<a href="listing-policy.html" style="color:var(--muted)">掲載ポリシー</a>　・　<a href="#" onclick="bwShowInquiry();return false;" style="color:var(--muted)">お問い合わせ・削除の依頼</a></div>
+    <div id="bw-inquiry-card" class="card" style="display:none;margin-top:14px;text-align:left">
+      <h3 class="title" style="font-size:1.1rem">お問い合わせ・削除の依頼</h3>
+      <p class="desc">この窓口は、運営の管理者が受け付けます。削除の依頼や、権利を侵害されたという連絡も、こちらからお願いします。Facebookへのご連絡は不要です。<br>Contact window: handled by the operator's administrator. For deletion requests or rights reports, please use this form.</p>
+      <div style="display:grid;gap:8px;margin-top:10px">
+        <select id="bw-inq-kind" style="padding:10px;border:1px solid var(--line,#ccc);border-radius:8px">
+          <option value="inquiry">お問い合わせ</option>
+          <option value="deletion">削除の依頼</option>
+          <option value="rights">権利侵害の連絡</option>
+          <option value="other">その他</option>
+        </select>
+        <input id="bw-inq-name" type="text" placeholder="お名前（任意）" style="padding:10px;border:1px solid var(--line,#ccc);border-radius:8px">
+        <input id="bw-inq-email" type="email" placeholder="メールアドレス（必須）" style="padding:10px;border:1px solid var(--line,#ccc);border-radius:8px">
+        <textarea id="bw-inq-body" rows="4" placeholder="内容（必須）" style="padding:10px;border:1px solid var(--line,#ccc);border-radius:8px"></textarea>
+        <button class="btn" id="bw-inq-btn" onclick="bwSendInquiry()">送信する</button>
+        <p class="desc" id="bw-inq-status" style="min-height:1em"></p>
+      </div>
+    </div>
   </section>
 
   <!-- タイムライン -->
@@ -1622,6 +1639,33 @@ async function bwApplySubmit(){
   }
   btn.disabled=false;
 }
+function bwShowInquiry(){
+  const card=document.getElementById('bw-inquiry-card');
+  if(!card) return;
+  const open=card.style.display!=='none';
+  card.style.display=open?'none':'block';
+  if(!open){ try{ card.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){} }
+}
+async function bwSendInquiry(){
+  const ja=lang==='ja';
+  const st=document.getElementById('bw-inq-status');
+  const btn=document.getElementById('bw-inq-btn');
+  const kind=document.getElementById('bw-inq-kind').value;
+  const name=document.getElementById('bw-inq-name').value.trim();
+  const email=document.getElementById('bw-inq-email').value.trim();
+  const text=document.getElementById('bw-inq-body').value.trim();
+  if(!email||!text){st.textContent=ja?'メールアドレスと内容は必須です。':'Email and message are required.';return;}
+  btn.disabled=true;
+  st.textContent=ja?'送信しています…':'Sending…';
+  try{
+    const r=await bwApi('/api/inquiries',{method:'POST',body:{kind:kind,name:name,email:email,body:text}});
+    st.textContent=r.message||(ja?'受け付けました。':'Received.');
+    document.getElementById('bw-inq-name').value='';document.getElementById('bw-inq-email').value='';document.getElementById('bw-inq-body').value='';
+  }catch(e){
+    st.textContent=(e&&e.message)||(ja?'送信できませんでした。':'Could not send.');
+  }
+  btn.disabled=false;
+}
 function bwListingsCard(){
   const ja=lang==='ja';
   return `<article class="card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">${ja?'皆さまからの配信':'From our community'}</h3><p class="desc">${ja?'お申し込みいただいて、掲載が決まった配信です。':'Listings approved from applications.'}</p><div id="bw-listings"><p class="desc">${ja?'読み込んでいます…':'Loading…'}</p></div></article>`;
@@ -1683,6 +1727,8 @@ if(typeof bwPlayClassic==='function')window.bwPlayClassic=bwPlayClassic;
 if(typeof bwPlayAudio==='function')window.bwPlayAudio=bwPlayAudio;
 if(typeof bwPlayOfficial==='function')window.bwPlayOfficial=bwPlayOfficial;
 if(typeof bwApplySubmit==='function')window.bwApplySubmit=bwApplySubmit;
+if(typeof bwShowInquiry==='function')window.bwShowInquiry=bwShowInquiry;
+if(typeof bwSendInquiry==='function')window.bwSendInquiry=bwSendInquiry;
 if(typeof openArticle==='function')window.openArticle=openArticle;
 if(typeof shareArticle==='function')window.shareArticle=shareArticle;
 }
