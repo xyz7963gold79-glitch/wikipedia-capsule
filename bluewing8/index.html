@@ -236,25 +236,22 @@
   <section id="view-profile" class="view">
     <article class="card profile">
       <div class="ptop">
-        <div class="pavatar">M</div>
+        <div class="pavatar" id="prof-avatar">?</div>
         <div>
-          <h2 class="pname2">マリア・サトウ</h2>
-          <div class="psub"><span data-ja="ブラジル・サンパウロ" data-en="São Paulo, Brazil">ブラジル・サンパウロ</span><span class="tag">PT / JA / EN</span></div>
+          <h2 class="pname2" id="prof-name">ゲスト</h2>
+          <div class="psub" id="prof-sub">ログインしていません</div>
         </div>
       </div>
-      <p class="bio" data-ja="ウィキペディアで世界の教育と平和について学んでいます。創価学会の友人と、対話と音楽で世界をつなげたいです。聖教新聞の記事もよく読みます。" data-en="Learning about education and peace on Wikipedia. I want to connect friends in the Soka Gakkai through dialogue and music. I often read Seikyo Shimbun articles.">ウィキペディアで世界の教育と平和について学んでいます。創価学会の友人と、対話と音楽で世界をつなげたいです。聖教新聞の記事もよく読みます。</p>
+      <p class="bio" id="prof-bio">ログインすると、あなたの名前と投稿がここに表示されます。</p>
       <div class="stats">
-        <div class="stat"><b>24</b><span data-ja="投稿" data-en="Posts">投稿</span></div>
-        <div class="stat"><b id="followerCount">128</b><span data-ja="フォロワー" data-en="Followers">フォロワー</span></div>
-        <div class="stat"><b>86</b><span data-ja="フォロー中" data-en="Following">フォロー中</span></div>
+        <div class="stat"><b id="prof-count">0</b><span data-ja="あなたの投稿" data-en="Your posts">あなたの投稿</span></div>
       </div>
       <div class="actions">
-        <button id="followBtn" class="btn btn-blue">フォローする</button>
-      <button id="settingsBtn" class="btn btn-ghost" style="margin-left:8px" data-ja="設定" data-en="Settings">設定</button>
-        <span class="psub" data-ja="ウィキペディアとウィキニュースを共有しています" data-en="Sharing Wikipedia & Wikinews">ウィキペディアとウィキニュースを共有しています</span>
+        <button id="prof-login-btn" class="btn btn-blue" data-ja="ログインする" data-en="Log in">ログインする</button>
+        <button id="settingsBtn" class="btn btn-ghost" style="margin-left:8px" data-ja="設定" data-en="Settings">設定</button>
       </div>
     </article>
-    <div class="section-head" style="margin-top:22px"><h2 data-ja="この人の投稿" data-en="Posts">この人の投稿</h2><span class="hint">2件</span></div>
+    <div class="section-head" style="margin-top:22px"><h2 data-ja="あなたの投稿" data-en="Your posts">あなたの投稿</h2><span class="hint" id="prof-hint"></span></div>
     <div class="timeline" id="profile-posts"></div>
   </section>
 
@@ -301,7 +298,7 @@
   <!-- ページ欄 -->
   <section id="view-pages" class="view">
     <div id="bw-list">
-      <div class="section-head"><h2 data-ja="ページ" data-en="Pages">ページ</h2><span class="hint" data-ja="テーマごとの集まる場所" data-en="Themed gathering places">テーマごとの集まる場所</span></div>
+      <div class="section-head"><h2 data-ja="ページ" data-en="Pages">ページ</h2><span class="hint" data-ja="岡崎幸雄のFacebookページ一覧（全74件）" data-en="Yukio Okazaki's Facebook Pages (74)">岡崎幸雄のFacebookページ一覧（全74件）</span></div>
       <div class="grid" id="bw-grid"></div>
     </div>
     <div id="bw-detail" style="display:none">
@@ -377,7 +374,7 @@
   <section id="view-settings" class="view set">
     <article class="card">
       <h2 style="margin:0 0 4px;font-size:1.15rem" data-ja="プロフィールを直す" data-en="Edit profile">プロフィールを直す</h2>
-      <div class="field"><div class="label" data-ja="なまえ" data-en="Name">なまえ</div><input id="setName" type="text" value="マリア・サトウ"></div>
+      <div class="field"><div class="label" data-ja="なまえ" data-en="Name">なまえ</div><input id="setName" type="text" value=""></div>
       <div class="field"><div class="label" data-ja="自己紹介" data-en="Bio">自己紹介</div><textarea id="setBio">ウィキペディアで世界の教育と平和について学んでいます。対話と音楽で世界をつなげたいです。</textarea></div>
       <div class="row2">
         <div class="field"><div class="label" data-ja="国" data-en="Country">国</div><select id="setCountry"><option>日本</option><option selected>ブラジル</option><option>アメリカ</option><option>ケニア</option></select></div>
@@ -444,7 +441,7 @@
   <section id="view-videos" class="view">
     <article class="card">
       <h2 style="margin:0 0 4px;font-size:1.2rem" data-ja="動画を見る" data-en="Watch videos">動画を見る</h2>
-      <p style="color:var(--muted);font-size:.9rem;margin:0 0 12px" data-ja="押すと、再生中の表示になります" data-en="Tap to show playing">押すと、再生中の表示になります</p>
+      <p style="color:var(--muted);font-size:.9rem;margin:0 0 12px" data-ja="絵を押すと、再生します" data-en="Tap a picture to play">絵を押すと、再生します</p>
       <h3 style="margin:0 0 4px;font-size:1.05rem" data-ja="作品CM" data-en="Work trailers">作品CM</h3>
       <p style="color:var(--muted);font-size:.9rem;margin:0 0 12px" data-ja="岡崎幸雄の作品の紹介動画です" data-en="Trailers of Yukio Okazaki's works">岡崎幸雄の作品の紹介動画です</p>
       <div id="cm-list"></div>
@@ -465,6 +462,7 @@ const articles=[
  {id:4,cat:"鉄道",date:"2026年11月26日",title:"星海鉄道の光るカプセル",intro:"海から空へ、空から雲へ、雲から雨へ。光の雫で水のめぐり方を見せる新しいカプセルの話。",body:""}
 ];
 const ytItems=[
+ {id:5006,yt:'LBXpgdvfFQg',cat:'動画',date:'YouTube',title:'星海鉄道カプセル便 第9話「昼のない星の少年」',intro:'最新作です。昼のない星で、暦が生まれる物語です。'},
  {id:5001,yt:'NsECaMXrM4w',cat:'動画',date:'YouTube',title:'星海鉄道カプセル便 第8話「手紙の届かない星の少女」',intro:'女子会の最新作です。YouTubeの動画を、このまま見られます。'},
  {id:5002,yt:'eDWQh7VZGnc',cat:'動画',date:'YouTube',title:'星海鉄道カプセル便 第7話「古い駅のロボット駅長」',intro:'車掌エリカの初登場の回です。'},
  {id:5003,yt:'_QMnMGwPP6k',cat:'動画',date:'YouTube',title:'星海鉄道カプセル便 第6話「砂の星の姉弟」',intro:'砂の星の姉と弟の物語です。'},
@@ -511,10 +509,7 @@ let posts=[
  {id:102,name:"ナギ",body:"ぽつん、と一滴。ほっぺに落ちたのが初めての雨だった。",date:"2026/11/25 18:05",likes:12,liked:false},
  {id:103,name:"ホシカ",body:"La la la... la, la la la 水の歌を届けに行きます。星海鉄道、出発します。",date:"2026/11/25 09:11",likes:8,liked:false}
 ];
-const profilePosts=[
- {id:201,date:"2026/11/25 19:10",body:"今日のウィキペディア新着「水の循環」を読みました。砂の星の話とつながっていて、子どもたちにシェアしたいです。",likes:12,liked:false},
- {id:202,date:"2026/11/24 08:30",body:"聖教新聞の「対話で広げる平和」紹介。ブラジルの座談会で話題になりました。記事リンクはニュース欄から。",likes:7,liked:false}
-];
+const profilePosts=[];
 let lang='ja';
 let isFollowing=false;
 const views={};['list','timeline','search','profile','article','comments','notifications','pages','corners','login','messages','settings','people','photos','events','videos'].forEach(n=>views[n]=document.getElementById('view-'+n));
@@ -638,15 +633,24 @@ async function addPost(){
 document.getElementById('postBtn').addEventListener('click',addPost);
 /* プロフィール */
 function renderProfilePosts(){
-  document.getElementById('profile-posts').innerHTML=profilePosts.map(p=>`<article class="card post"><div class="pdate">${p.date}</div><div class="pbody">${p.body}</div><div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'通報':'Report'}</button></div></article>`).join('');
+  let name=''; try{ name=localStorage.getItem('bw8_name')||''; }catch(e){}
+  const logged=!!bwToken()&&!!name;
+  const av=document.getElementById('prof-avatar'); if(av) av.textContent=logged?name.charAt(0):'?';
+  const nm=document.getElementById('prof-name'); if(nm) nm.textContent=logged?name:(lang==='ja'?'ゲスト':'Guest');
+  const sb=document.getElementById('prof-sub'); if(sb) sb.textContent=logged?(lang==='ja'?'ログイン中':'Logged in'):(lang==='ja'?'ログインしていません':'Not logged in');
+  const bio=document.getElementById('prof-bio'); if(bio) bio.textContent=logged?(lang==='ja'?'あなたのプロフィールです。あなたの投稿が下に並びます。':'This is your profile. Your posts are listed below.'):(lang==='ja'?'ログインすると、あなたの名前と投稿がここに表示されます。':'Log in to see your name and posts here.');
+  const lb=document.getElementById('prof-login-btn'); if(lb) lb.style.display=logged?'none':'';
+  const mine=logged?posts.filter(p=>p.srv&&p.name===name):[];
+  const ct=document.getElementById('prof-count'); if(ct) ct.textContent=mine.length;
+  const hint=document.getElementById('prof-hint'); if(hint) hint.textContent=mine.length?(mine.length+(lang==='ja'?'件':' posts')):'';
+  const el=document.getElementById('profile-posts'); if(!el) return;
+  if(!logged){ el.innerHTML='<article class="card post"><p style="line-height:1.8">'+(lang==='ja'?'ログインすると、あなたの投稿がここに表示されます。':'Log in to see your posts here.')+'</p></article>'; return; }
+  if(!mine.length){ el.innerHTML='<article class="card post"><p style="line-height:1.8">'+(lang==='ja'?'まだ投稿がありません。':'No posts yet.')+'</p></article>'; return; }
+  el.innerHTML=mine.map(p=>'<article class="card post"><div class="pdate">'+esc(p.date)+'</div><div class="pbody">'+esc(p.body)+'</div><div class="post-actions"><button class="like '+(p.liked?'active':'')+'" onclick="toggleLike('+p.id+')">'+(lang==='ja'?'いいね':'Like')+' <span>'+p.likes+'</span></button><button class="like" onclick="openComments('+p.id+')">'+(lang==='ja'?'コメント':'Comments')+'</button><button class="like" onclick="reportPost('+p.id+')">'+(lang==='ja'?'通報':'Report')+'</button></div></article>').join('');
 }
-const $followBtn=document.getElementById('followBtn');
-$followBtn.addEventListener('click',()=>{
-  isFollowing=!isFollowing;
-  $followBtn.textContent=isFollowing?(lang==='ja'?'フォロー中':'Following'):(lang==='ja'?'フォローする':'Follow');
-  $followBtn.className=isFollowing?'btn btn-white':'btn btn-blue';
-  document.getElementById('followerCount').textContent=128+(isFollowing?1:0);
-});
+
+const $profLogin=document.getElementById('prof-login-btn'); if($profLogin) $profLogin.addEventListener('click',()=>show('login'));
+
 /* 検索 */
 const $q=document.getElementById('q');
 function normalize(s){return (s||'').toLowerCase().trim();}
@@ -696,7 +700,7 @@ async function loadServerPosts(){
     const list=await bwApi('/api/posts');
     for(let i=posts.length-1;i>=0;i--){ if(posts[i].srv) posts.splice(i,1); }
     list.map(bwSrvPost).reverse().forEach(p=>posts.unshift(p));
-    renderTimeline();
+    renderTimeline(); renderProfilePosts();
   }catch(e){}
 }
 function bwRefreshAuthBtn(){
@@ -731,7 +735,6 @@ function setLang(l){
   $q.placeholder=l==='ja'?'題名や紹介文の言葉で探す 例: 水 雨 歌':'Search by title or intro, e.g. water rain song';
   $name.placeholder=l==='ja'?'なまえ（例: サラ）':'Name (e.g. Sara)';
   $body.placeholder=l==='ja'?'いま何してる？ 水のことを書いてみよう':"What's happening? Write about water...";
-  $followBtn.textContent=isFollowing?(l==='ja'?'フォロー中':'Following'):(l==='ja'?'フォローする':'Follow');
   /* コメント */
 const commentsByPost={201:[
  {id:1,name:"ケンジ",date:"2026/11/25 20:02",body:"私も読みました。海から空へ、空から雨へ、の図が分かりやすかったです。",likes:3,liked:false},
@@ -751,7 +754,7 @@ async function openComments(id){
   const p=findPost(id); if(!p) return;
   currentPostId=id;
   document.getElementById('cm-avatar').textContent=(p.name||'M').charAt(0);
-  document.getElementById('cm-name').textContent=p.name||'マリア・サトウ';
+  document.getElementById('cm-name').textContent=p.name||'ゲスト';
   document.getElementById('cm-date').textContent=p.date;
   document.getElementById('cm-body').textContent=p.body;
   if(isServerPost(id)){ try{ await loadServerComments(id); }catch(e){ serverComments[id]=[]; } }
@@ -789,10 +792,7 @@ document.getElementById('cm-addBtn').addEventListener('click',async ()=>{
 document.getElementById('cm-back').addEventListener('click',()=>show('timeline'));
 /* 通知 */
 const notifications=[
- {id:1,tagJa:"いいね",tagEn:"Like",name:"サラ",text:"あなたの投稿「水はめぐる、消えない」にいいねしました。",date:"2026/11/26 08:25",unread:true},
- {id:2,tagJa:"コメント",tagEn:"Comment",name:"ケンジ",text:"「ウィキペディア新着『水の循環』を読む」にコメントしました。「図が分かりやすいですね」",date:"2026/11/26 07:50",unread:true},
- {id:3,tagJa:"フォロー",tagEn:"Follow",name:"マリア・サトウ",text:"あなたをフォローしました。ブラジルから対話を広げたいです。",date:"2026/11/25 21:10",unread:true},
- {id:4,tagJa:"ニュース",tagEn:"News",name:"ブルーウィング8編集部",text:"新しいニュース配信：ウィキニュース「世界の座談会レポート」と聖教新聞紹介を公開しました。",date:"2026/11/25 09:00",unread:false}
+ {id:1,tagJa:"お知らせ",tagEn:"Notice",name:"ブルーウィング8運営",text:"お問い合わせと削除の依頼は、画面の一番下にある「お問い合わせ・削除の依頼」の窓口から送れます。掲載のお申し込みは、機関・マスコミのコーナーにあります。",date:"2026/11/28",unread:true}
 ];
 function renderNotifications(){
   document.getElementById('ntf-list').innerHTML=notifications.map(n=>`<article class="card post" style="flex-direction:row;gap:12px;align-items:flex-start;${n.unread?'border-color:#c9d8ff':''}"><span style="width:12px;height:12px;flex:0 0 12px;border-radius:50%;background:var(--blue);margin-top:8px;box-shadow:0 0 0 4px #e8efff;${n.unread?'':'visibility:hidden'}"></span><div style="flex:1"><div class="meta"><span class="tag">${lang==='ja'?n.tagJa:n.tagEn}</span><span class="pname">${esc(n.name)}</span></div><div class="pbody" style="line-height:1.8">${esc(n.text)}</div><div class="pdate">${n.date}</div></div></article>`).join('');
@@ -807,30 +807,101 @@ document.getElementById('ntf-back').addEventListener('click',()=>show('list'));
 renderNotifications();
 /* ページ欄 */
 const bwPages=[
- {id:1,nameJa:"平和と文化",nameEn:"Peace & Culture",descJa:"対話と音楽、教育で平和を広げる。ウィキペディアの平和・人権の記事や、聖教新聞の文化の記事をシェアします。",descEn:"Spreading peace through dialogue, music and education.",members:1240,posts:[
-  {id:11,name:"マリア・サトウ",date:"2026/11/26 08:10",body:"座談会で『平和の文化』を読み合いました。ブラジルから日本へ、歌でつなぎたい。",likes:9,liked:false},
-  {id:12,name:"ケンジ",date:"2026/11/25 19:40",body:"ウィキペディア『平和教育』を要約して投稿しました。子ども向けに分かりやすく。",likes:5,liked:false}]},
- {id:2,nameJa:"宇宙と科学",nameEn:"Space & Science",descJa:"宇宙、科学、星海鉄道のような夢を語る。ウィキペディアの新着科学記事や、NASAの話題も。",descEn:"Talking about space, science and dreams.",members:980,posts:[
-  {id:21,name:"ルーカス",date:"2026/11/26 06:30",body:"国際宇宙ステーションの水循環実験、面白いです。砂の星の話と同じですね。",likes:11,liked:false},
-  {id:22,name:"アヤ",date:"2026/11/25 18:20",body:"星の色と元素のウィキ記事をシェア。子どもたちが図鑑を作っています。",likes:6,liked:false}]},
- {id:3,nameJa:"環境を守る",nameEn:"Protect Environment",descJa:"水、気候、ごみを減らす知恵を集める。ウィキニュース環境欄と、地域の活動をシェア。",descEn:"Collecting wisdom on water, climate and reducing waste.",members:1560,posts:[
-  {id:31,name:"サラ",date:"2026/11/26 07:55",body:"葉っぱの器で雨水を集めました。0.5リットルたまった！節水の工夫を共有します。",likes:14,liked:false},
-  {id:32,name:"ナギ",date:"2026/11/25 17:10",body:"学校でペットボトルの再利用工作。みんなの作品、写真で見てね。",likes:8,liked:false}]}
+ {id:'324827630723734',nameJa:"スペース·モデル",nameEn:"スペース·モデル",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/324827630723734',members:0,posts:[]},
+ {id:'348008965071478',nameJa:"カルチュリア",nameEn:"カルチュリア",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/348008965071478',members:0,posts:[]},
+ {id:'357523924118749',nameJa:"プログレス8",nameEn:"プログレス8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/357523924118749',members:0,posts:[]},
+ {id:'358177420720669',nameJa:"ワールドウェルフェア",nameEn:"ワールドウェルフェア",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/358177420720669',members:0,posts:[]},
+ {id:'362256133645560',nameJa:"ジーニアス",nameEn:"ジーニアス",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/362256133645560',members:0,posts:[]},
+ {id:'390144384177226',nameJa:"ANJEL MODEL ",nameEn:"ANJEL MODEL ",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/390144384177226',members:0,posts:[]},
+ {id:'390477377485266',nameJa:"サンクチュアリ8",nameEn:"サンクチュアリ8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/390477377485266',members:0,posts:[]},
+ {id:'401556889705412',nameJa:"ワールドスクール7",nameEn:"ワールドスクール7",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/401556889705412',members:0,posts:[]},
+ {id:'405506545978138',nameJa:"エコグラス7",nameEn:"エコグラス7",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/405506545978138',members:0,posts:[]},
+ {id:'406470789213834',nameJa:"宇宙連邦Ω",nameEn:"宇宙連邦Ω",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/406470789213834',members:0,posts:[]},
+ {id:'409036332290215',nameJa:"ブレイン9",nameEn:"ブレイン9",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/409036332290215',members:0,posts:[]},
+ {id:'424691770717606',nameJa:"サンダーボルト",nameEn:"サンダーボルト",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/424691770717606',members:0,posts:[]},
+ {id:'429560760231860',nameJa:"ブルーアース7",nameEn:"ブルーアース7",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/429560760231860',members:0,posts:[]},
+ {id:'434485259738316',nameJa:"ブルーノア",nameEn:"ブルーノア",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/434485259738316',members:0,posts:[]},
+ {id:'443067332232991',nameJa:"サンダーバード8",nameEn:"サンダーバード8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/443067332232991',members:0,posts:[]},
+ {id:'446866598517126',nameJa:"ニュー·厶ーン8",nameEn:"ニュー·厶ーン8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/446866598517126',members:0,posts:[]},
+ {id:'447506718452432',nameJa:"スペース・コロニーラウム8",nameEn:"スペース・コロニーラウム8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/447506718452432',members:0,posts:[]},
+ {id:'452239441313076',nameJa:"Love&PEACE 8",nameEn:"Love&PEACE 8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/452239441313076',members:0,posts:[]},
+ {id:'456348227550411',nameJa:"スペースフロント8",nameEn:"スペースフロント8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/456348227550411',members:0,posts:[]},
+ {id:'457867490754187',nameJa:"サン・アフリカーナ8",nameEn:"サン・アフリカーナ8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/457867490754187',members:0,posts:[]},
+ {id:'486276461232804',nameJa:"サンガリア8",nameEn:"サンガリア8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/486276461232804',members:0,posts:[]},
+ {id:'486557897879983',nameJa:"START 7",nameEn:"START 7",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/486557897879983',members:0,posts:[]},
+ {id:'492814223918695',nameJa:"SSRT8 ",nameEn:"SSRT8 ",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/492814223918695',members:0,posts:[]},
+ {id:'494973967033737',nameJa:"プロトタイプ",nameEn:"プロトタイプ",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/494973967033737',members:0,posts:[]},
+ {id:'495222300341234',nameJa:"ロータス・サンガ8",nameEn:"ロータス・サンガ8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/495222300341234',members:0,posts:[]},
+ {id:'503929959472171',nameJa:"アルカディア8",nameEn:"アルカディア8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/503929959472171',members:0,posts:[]},
+ {id:'505054419367436',nameJa:"デステニー・レボリューション",nameEn:"デステニー・レボリューション",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/505054419367436',members:0,posts:[]},
+ {id:'512768375255745',nameJa:"ミラクル・アジア8",nameEn:"ミラクル・アジア8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/512768375255745',members:0,posts:[]},
+ {id:'526852417188304',nameJa:"ワールド·ピース·ユニバーシティ8",nameEn:"ワールド·ピース·ユニバーシティ8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/526852417188304',members:0,posts:[]},
+ {id:'527126203825541',nameJa:"スペース·ルネサンス8",nameEn:"スペース·ルネサンス8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/527126203825541',members:0,posts:[]},
+ {id:'531584713380926',nameJa:"ニュー·スペース·エデュケーション8",nameEn:"ニュー·スペース·エデュケーション8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/531584713380926',members:0,posts:[]},
+ {id:'533375186520392',nameJa:"ウィンド・ベル8",nameEn:"ウィンド・ベル8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/533375186520392',members:0,posts:[]},
+ {id:'543035502220606',nameJa:"パン・ユーロパ8",nameEn:"パン・ユーロパ8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/543035502220606',members:0,posts:[]},
+ {id:'543532298853174',nameJa:"リーパー·キャッスル·グループ8",nameEn:"リーパー·キャッスル·グループ8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/543532298853174',members:0,posts:[]},
+ {id:'548976151642976',nameJa:"ザ·スペース·オデッセイ8",nameEn:"ザ·スペース·オデッセイ8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/548976151642976',members:0,posts:[]},
+ {id:'550772001446156',nameJa:"ディーバ・タイプ8",nameEn:"ディーバ・タイプ8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/550772001446156',members:0,posts:[]},
+ {id:'579077968628099',nameJa:"富士生活協同組合8",nameEn:"富士生活協同組合8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/579077968628099',members:0,posts:[]},
+ {id:'586307824570056',nameJa:"新思潮研究会8",nameEn:"新思潮研究会8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/586307824570056',members:0,posts:[]},
+ {id:'587982121067260',nameJa:"ニュー·ヒューマン·レボリューション8",nameEn:"ニュー·ヒューマン·レボリューション8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/587982121067260',members:0,posts:[]},
+ {id:'595050480362443',nameJa:"ワールド·ピース·パーティー8",nameEn:"ワールド·ピース·パーティー8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/595050480362443',members:0,posts:[]},
+ {id:'599616753237918',nameJa:"ニュー·バリュー·クリエイター8",nameEn:"ニュー·バリュー·クリエイター8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/599616753237918',members:0,posts:[]},
+ {id:'614007728463169',nameJa:"Min-On8",nameEn:"Min-On8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/614007728463169',members:0,posts:[]},
+ {id:'617831294744353',nameJa:"SGI7",nameEn:"SGI7",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/617831294744353',members:0,posts:[]},
+ {id:'618106574730691',nameJa:"匕ューマン-ルネサンス8",nameEn:"匕ューマン-ルネサンス8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/618106574730691',members:0,posts:[]},
+ {id:'632377439960765',nameJa:"ザ·サード·シビリゼーション8",nameEn:"ザ·サード·シビリゼーション8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/632377439960765',members:0,posts:[]},
+ {id:'635085256363408',nameJa:"SOKA University8",nameEn:"SOKA University8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/635085256363408',members:0,posts:[]},
+ {id:'664612603412835',nameJa:"SOKA BOOD 8",nameEn:"SOKA BOOD 8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/664612603412835',members:0,posts:[]},
+ {id:'684033821451536',nameJa:"ザ·フューチャー·ウイング8",nameEn:"ザ·フューチャー·ウイング8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/684033821451536',members:0,posts:[]},
+ {id:'690716704121711',nameJa:"ワールド·トリビューン8",nameEn:"ワールド·トリビューン8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/690716704121711',members:0,posts:[]},
+ {id:'722465180948629',nameJa:"ニュー·ライフ·シビリゼーション8",nameEn:"ニュー·ライフ·シビリゼーション8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/722465180948629',members:0,posts:[]},
+ {id:'726725337191496',nameJa:"ワールド·スポーツ8",nameEn:"ワールド·スポーツ8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/726725337191496',members:0,posts:[]},
+ {id:'733184916540705',nameJa:"ニュー·ロボティクス8",nameEn:"ニュー·ロボティクス8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/733184916540705',members:0,posts:[]},
+ {id:'741184009074772',nameJa:"ニュー·プログレス8",nameEn:"ニュー·プログレス8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/741184009074772',members:0,posts:[]},
+ {id:'747186745142139',nameJa:"べーシック·インカム8",nameEn:"べーシック·インカム8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/747186745142139',members:0,posts:[]},
+ {id:'753269941198784',nameJa:"ミュージック8",nameEn:"ミュージック8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/753269941198784',members:0,posts:[]},
+ {id:'759852727206321',nameJa:"ホーリー·レリジョン8",nameEn:"ホーリー·レリジョン8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/759852727206321',members:0,posts:[]},
+ {id:'802284316290928',nameJa:"ワールド·アニメーション8",nameEn:"ワールド·アニメーション8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/802284316290928',members:0,posts:[]},
+ {id:'895924860274044',nameJa:"フェアリー·ハーブ8",nameEn:"フェアリー·ハーブ8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/895924860274044',members:0,posts:[]},
+ {id:'921318827733486',nameJa:"ワールド·トラスト·シップ8",nameEn:"ワールド·トラスト·シップ8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/921318827733486',members:0,posts:[]},
+ {id:'934700606394705',nameJa:"スペース·レボリューション8",nameEn:"スペース·レボリューション8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/934700606394705',members:0,posts:[]},
+ {id:'944388772091182',nameJa:"ワールド·ボランティア8",nameEn:"ワールド·ボランティア8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/944388772091182',members:0,posts:[]},
+ {id:'951828021342892',nameJa:"ニュー·オリジン8",nameEn:"ニュー·オリジン8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/951828021342892',members:0,posts:[]},
+ {id:'974034409130941',nameJa:"マイ·スター·ジンガー8",nameEn:"マイ·スター·ジンガー8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/974034409130941',members:0,posts:[]},
+ {id:'979123505281109',nameJa:"ニュー·テクノロジー8",nameEn:"ニュー·テクノロジー8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/979123505281109',members:0,posts:[]},
+ {id:'979283798597456',nameJa:"ワールド·ピース·ラボラトリー8",nameEn:"ワールド·ピース·ラボラトリー8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/979283798597456',members:0,posts:[]},
+ {id:'987422007784758',nameJa:"グローバル·パーティー8",nameEn:"グローバル·パーティー8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/987422007784758',members:0,posts:[]},
+ {id:'990528457469102',nameJa:"スペース·シビリゼーション8",nameEn:"スペース·シビリゼーション8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/990528457469102',members:0,posts:[]},
+ {id:'1004623292725697',nameJa:"ワールド·ジャーナル8",nameEn:"ワールド·ジャーナル8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/1004623292725697',members:0,posts:[]},
+ {id:'1005749755945050',nameJa:"ヒーリング·ボイス8",nameEn:"ヒーリング·ボイス8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/1005749755945050',members:0,posts:[]},
+ {id:'1008460949012680',nameJa:"コスモス·ライフ8",nameEn:"コスモス·ライフ8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/1008460949012680',members:0,posts:[]},
+ {id:'1019304364596407',nameJa:"デイリー·グラフ8",nameEn:"デイリー·グラフ8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/1019304364596407',members:0,posts:[]},
+ {id:'1031465496706316',nameJa:"スペース·エデュケーション8",nameEn:"スペース·エデュケーション8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/1031465496706316',members:0,posts:[]},
+ {id:'1145597825299752',nameJa:"ニュー·スタイル·ヒストリー8",nameEn:"ニュー·スタイル·ヒストリー8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/1145597825299752',members:0,posts:[]},
+ {id:'1154617821074586',nameJa:"ニュー·スペース·dao8",nameEn:"ニュー·スペース·dao8",descJa:"岡崎幸雄のFacebookページです。テーマに沿った投稿を配信しています。",descEn:"A Facebook Page by Yukio Okazaki.",fb:'https://www.facebook.com/1154617821074586',members:0,posts:[]}
 ];
 let bwCurrent=null;
 function renderBwPages(){
-  document.getElementById('bw-grid').innerHTML=bwPages.map(pg=>`<article class="card article-card"><h3 class="title">${lang==='ja'?pg.nameJa:pg.nameEn}</h3><p class="desc">${lang==='ja'?pg.descJa:pg.descEn}</p><div class="meta"><span>${pg.members}${lang==='ja'?'人が参加':' members'}</span></div><div class="actions"><button class="btn btn-blue" onclick="openBwPage(${pg.id})">${lang==='ja'?'開く':'Open'}</button></div></article>`).join('');
+  document.getElementById('bw-grid').innerHTML=bwPages.map(pg=>`<article class="card article-card"><h3 class="title">${lang==='ja'?pg.nameJa:pg.nameEn}</h3><p class="desc">${lang==='ja'?pg.descJa:pg.descEn}</p><div class="meta"><span>${lang==='ja'?'Facebookページ':'Facebook Page'}</span></div><div class="actions"><button class="btn btn-blue" onclick="openBwPage(${pg.id})">${lang==='ja'?'開く':'Open'}</button></div></article>`).join('');
   if(bwCurrent){
     document.getElementById('bw-dtitle').textContent=lang==='ja'?bwCurrent.nameJa:bwCurrent.nameEn;
     document.getElementById('bw-ddesc').textContent=lang==='ja'?bwCurrent.descJa:bwCurrent.descEn;
-    document.getElementById('bw-dmeta').textContent=bwCurrent.members+(lang==='ja'?'人が参加':' members');
+    document.getElementById('bw-dmeta').textContent=(lang==='ja'?'Facebookページ':'Facebook Page');
     renderBwPosts();
   }
 }
 function renderBwPosts(){
   if(!bwCurrent) return;
-  document.getElementById('bw-posts').innerHTML=bwCurrent.posts.map(post=>`<article class="card post"><div class="who"><div class="avatar">${esc(post.name.charAt(0))}</div><div><div class="pname">${esc(post.name)}</div><div class="pdate">${post.date}</div></div></div><div class="pbody">${esc(post.body)}</div><div class="post-actions"><button class="like ${post.liked?'active':''}" onclick="toggleBwLike(${post.id})">${lang==='ja'?'いいね':'Like'} <span>${post.likes}</span></button></div></article>`).join('');
+  const el=document.getElementById('bw-posts'); if(!el) return;
+  if(bwCurrent.fb){
+    el.innerHTML='<article class="card post"><p style="line-height:1.8">'+(lang==='ja'?'このページの投稿は、Facebookページでご覧いただけます。':'Posts are on the Facebook Page.')+'</p><div class="actions"><a class="btn btn-blue" href="'+bwCurrent.fb+'" target="_blank" rel="noopener">'+(lang==='ja'?'Facebookで開く':'Open on Facebook')+'</a></div></article>';
+    return;
+  }
+  el.innerHTML='';
 }
+
 function openBwPage(id){
   bwCurrent=bwPages.find(x=>x.id===id); if(!bwCurrent) return;
   document.getElementById('bw-list').style.display='none';
@@ -1190,36 +1261,25 @@ function renderEvents(){
 renderEvents();
 /* 動画 */
 const bwVideos=[
- {id:1,title:"空のゆっくり動画",time:"2分30秒",desc:"空がゆっくり動きます。心が落ち着きます。",color:"linear-gradient(135deg,#6EC2FF,#1A8CFF)",likes:34},
- {id:2,title:"海の波の動画",time:"3分10秒",desc:"波の音がやさしいです。目を閉じて聞こう。",color:"linear-gradient(135deg,#3DD598,#0F8A9A)",likes:51},
- {id:3,title:"鳥が飛ぶ動画",time:"1分45秒",desc:"小さな鳥が空を飛びます。自由です。",color:"linear-gradient(135deg,#8AA8FF,#4E7CFF)",likes:28}
+ {yt:'LBXpgdvfFQg',title:'星海鉄道カプセル便 第9話「昼のない星の少年」',desc:'最新作です。昼のない星で、暦が生まれる物語です。'},
+ {yt:'_QMnMGwPP6k',title:'星海鉄道カプセル便 第6話「砂の星の姉弟」',desc:'砂の星の姉と弟の物語です。'},
+ {yt:'O0Hmhe3k3ZA',title:'星海鉄道カプセル便 第5話「氷の星の少年」',desc:'氷の星の少年の物語です。'},
+ {yt:'uBCTMV8k6Ck',title:'星海鉄道カプセル便 第4話（フルアニメ版）「歌のない星の少女」',desc:'歌のない星の少女の物語です。'},
+ {yt:'RxWJJs2ftcM',title:'星海鉄道カプセル便 第3話（フルアニメ版）「雨の星の少女」',desc:'雨の星の少女の物語です。'},
+ {yt:'pW6dO0X-ci8',title:'星海鉄道カプセル便 第2話（フルアニメ版）「暗い星の少年」',desc:'暗い星の少年の物語です。'},
+ {yt:'eEf75DgnNbA',title:'光の巨人ルクス 第2話「暴れる星獣」',desc:'CG特撮の第2話です。ヒーリングビッグバンが初登場します。'},
+ {yt:'Heg1foKDU8I',title:'短編「翼の少女たち」',desc:'フルアニメーションの短編です。'},
+ {yt:'PCLfP3jkHn8',title:'短編「星降る丘の少女たち」',desc:'フルアニメーションの短編です。'}
 ];
 const bwVideoLiked=new Set();
 let bwPlaying=null;
 function renderVideos(){
-  document.getElementById('video-list').innerHTML=bwVideos.map(v=>{
-    const isL=bwVideoLiked.has(v.id);
-    return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px">
-      <div class="video-frame" style="background:${v.color}" data-play="${v.id}">
-        <div class="play">▶</div><div class="vlen">${v.time}</div>
-        <div class="voverlay ${bwPlaying===v.id?'show':''}">${lang==='ja'?'再生中です（見本）':'Playing (sample)'} ▶</div>
-      </div>
-      <div class="ptitle" style="font-size:1.05rem">${esc(v.title)}</div>
-      <p style="margin:4px 0 8px">${esc(v.desc)}</p>
-      <button class="btn ${isL?'btn-ghost':'btn-blue'}" data-vlike="${v.id}">${lang==='ja'?'いいね ':'Like '}${v.likes+(isL?1:0)}${isL?' ✓':''}</button>
-    </div>`;
-  }).join('');
-  document.querySelectorAll('[data-play]').forEach(f=>f.addEventListener('click',()=>{
-    const id=Number(f.getAttribute('data-play'));
-    bwPlaying=(bwPlaying===id?null:id); renderVideos();
-  }));
-  document.querySelectorAll('[data-vlike]').forEach(b=>b.addEventListener('click',()=>{
-    const id=Number(b.getAttribute('data-vlike'));
-    if(bwVideoLiked.has(id)) bwVideoLiked.delete(id); else bwVideoLiked.add(id);
-    renderVideos();
-  }));
+  const el=document.getElementById('video-list'); if(!el) return;
+  el.innerHTML='<h3 style="margin:18px 0 4px;font-size:1.05rem">'+(lang==='ja'?'作品を見る':'Watch the works')+'</h3><p style="color:var(--muted);font-size:.9rem;margin:0 0 12px">'+(lang==='ja'?'岡崎幸雄の作品です。絵を押すと再生します。':'Works by Yukio Okazaki. Tap a picture to play.')+'</p>'+bwVideos.map(v=>'<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayMusic(this,\''+v.yt+'\')"><img src="https://i.ytimg.com/vi/'+v.yt+'/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">'+esc(v.title)+'</div><p style="margin:4px 0 8px">'+esc(v.desc)+'</p></div>').join('');
 }
+
 const bwCms=[
+ {yt:'LBXpgdvfFQg',titleJa:'CM『星海鉄道カプセル便』第9話 昼のない星の少年',titleEn:'Trailer: Ep.9 The Boy on the Star Without Daytime',descJa:'昼のない星で、星の光をたよりに暦を作る物語。',descEn:'On a star without daytime, a calendar is born from starlight.'},
  {yt:'NsECaMXrM4w',titleJa:'CM『星海鉄道カプセル便』第8話 手紙の届かない星の少女',titleEn:'Trailer: Star-Sea Railway Capsule Delivery Ep.8',descJa:'手紙の届かない星へ、ホシカたちが届けます。',descEn:'Hoshika delivers a letter to a star it could not reach.'},
  {yt:'eDWQh7VZGnc',titleJa:'CM『星海鉄道カプセル便』第7話 古い駅のロボット駅長',titleEn:'Trailer: Ep.7 The Robot Stationmaster',descJa:'古い駅で待つ、ロボット駅長との出会い。',descEn:'Meeting the robot stationmaster at an old station.'},
  {yt:'Z19jaKQGFaE',titleJa:'CM『光の巨人ルクス』第1話 泣いている怪獣',titleEn:'Trailer: Lux, Giant of Light Ep.1',descJa:'泣いている怪獣を、光の巨人が救います。',descEn:'The giant of light saves a crying monster.'},
@@ -1787,40 +1847,45 @@ async function loadRealNews(){
     if(j&&j.tfa){ const t=j.tfa; items.push({id:1100,cat:'特集記事',date:'今日',title:strip(t.titles.display),intro:(t.extract||'').slice(0,120),thumb:(t.thumbnail&&t.thumbnail.source)||'',body:'<p>'+(t.extract||'')+'</p><p><a href="https://'+newsLang+'.wikipedia.org/wiki/'+encodeURIComponent(t.titles.canonical)+'" target="_blank" rel="noopener">ウィキペディアで続きを読む</a></p>'}); }
     if(j.image&&j.image.thumbnail){ const im=j.image; const ttl=(im.title||'今日の写真').replace(/^File:/,'').replace(/\.[A-Za-z]+$/,''); const big=(im.image&&im.image.source)||im.thumbnail.source; items.push({id:1150,cat:'今日の写真',date:'今日',title:ttl,intro:'ウィキメディア・コモンズの「今日の写真」です。',thumb:im.thumbnail.source,body:'<p><img class="card-img" loading="lazy" src="'+big+'" alt=""></p><p>ウィキメディア・コモンズの「今日の写真」です。</p>'+(im.file_page?'<p><a href="'+im.file_page+'" target="_blank" rel="noopener">写真のページを見る</a></p>':'')}); }
     if(j.mostread&&j.mostread.articles){ j.mostread.articles.slice(0,5).forEach((a,i)=>{ items.push({id:1200+i,cat:'よく読まれている記事',date:'今日',title:strip(a.titles.display),intro:(a.extract||'').slice(0,120),body:'<p>'+(a.extract||'')+'</p><p><a href="https://'+newsLang+'.wikipedia.org/wiki/'+encodeURIComponent(a.titles.canonical)+'" target="_blank" rel="noopener">ウィキペディアで続きを読む</a></p>'}); }); }
-    const wnCats=[['芸能・文化','Culture and entertainment'],['スポーツ','Sports'],['科学・技術','Science and technology'],['経済','Economy and business'],['世界・政治','Politics and conflicts']];
-    for(let ci=0; ci<wnCats.length; ci++){
-      try{
-        const cr=await fetch('https://en.wikinews.org/w/api.php?action=query&format=json&origin=*&generator=categorymembers&gcmtitle=Category:'+encodeURIComponent(wnCats[ci][1])+'&gcmtype=page&gcmsort=timestamp&gcmdir=desc&gcmlimit=8&prop=extracts%7Cinfo%7Cpageimages&piprop=thumbnail&pithumbsize=640&exintro=1&explaintext=1&exsentences=6&inprop=url');
-        if(!cr.ok) continue;
-        const cj=await cr.json();
-        const pages=Object.values((cj.query&&cj.query.pages)||{}).sort((a,b)=>(a.index||0)-(b.index||0));
-        let added=0;
-        for(const pg of pages){
-          if(added>=4) break;
-          if(/^(Category|Wikinews|Template|Help|File|MediaWiki):/.test(pg.title||'')) continue;
-          const ex=(pg.extract||'').trim();
-          items.push({id:2000+ci*100+added,cat:wnCats[ci][0],date:'ウィキニュース（英語）',thumb:(pg.thumbnail&&pg.thumbnail.source)||'',title:pg.title,intro:ex.slice(0,120),body:'<p>'+ex+'</p><p><a href="'+(pg.fullurl||'')+'" target="_blank" rel="noopener">Wikinewsで続きを読む</a></p>'+(newsLang!=='en'?'<p><a href="'+gtUrl(pg.fullurl||'',newsLang)+'" target="_blank" rel="noopener">Google翻訳で読む</a></p>':'')});
-          added++;
-        }
-      }catch(e){}
-    }
-    if(newsLang!=='ja'&&newsLang!=='en'){
-      try{
-        const lr=await fetch('https://'+newsLang+'.wikinews.org/w/api.php?action=query&format=json&origin=*&generator=recentchanges&grcnamespace=0&grclimit=24&grctype=new&prop=extracts%7Cinfo%7Cpageimages&piprop=thumbnail&pithumbsize=640&exintro=1&explaintext=1&exsentences=6&inprop=url');
-        if(lr.ok){
-          const lj=await lr.json();
-          const pages=Object.values((lj.query&&lj.query.pages)||{});
-          let added=0;
-          for(const pg of pages){
-            if(added>=5) break;
-            if(!pg.title||pg.title.includes(':')) continue;
-            const ex=(pg.extract||'').trim();
-            items.push({id:2500+added,cat:'ウィキニュース',date:'Wikinews',thumb:(pg.thumbnail&&pg.thumbnail.source)||'',title:pg.title,intro:ex.slice(0,120),body:'<p>'+ex+'</p><p><a href=\"'+(pg.fullurl||'')+'\" target=\"_blank\" rel=\"noopener\">Wikinews</a></p>'});
-            added++;
-          }
-        }
-      }catch(e){}
-    }
+    /* 世界のニュース（英語版ウィキペディア「最近の出来事」から。ウィキニュース閉鎖に伴う切り替え） */
+    try{
+      const ceCats={'Armed conflicts and attacks':'世界・政治','Arts and culture':'芸能・文化','Business and economy':'経済','Disasters and accidents':'災害・事故','Health and environment':'健康・環境','International relations':'世界・政治','Law and crime':'社会','Politics and elections':'世界・政治','Science and technology':'科学・技術','Sports':'スポーツ'};
+      const ceMonths=['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const stripCe=function(s){return s.replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g,'$2').replace(/\[\[([^\]]+)\]\]/g,'$1').replace(/\[[^\s\]]+\s+([^\]]+)\]/g,'$1').replace(/'{2,3}/g,'').replace(/<[^>]+>/g,'').trim();};
+      const ceItems=[];
+      for(let back=0; back<2 && ceItems.length<10; back++){
+        const dt=new Date(Date.now()-back*86400000);
+        const page='Portal:Current events/'+dt.getFullYear()+' '+ceMonths[dt.getMonth()]+' '+dt.getDate();
+        try{
+          const cr=await fetch('https://en.wikipedia.org/w/api.php?action=parse&page='+encodeURIComponent(page)+'&prop=wikitext&format=json&origin=*');
+          if(!cr.ok) continue;
+          const cj=await cr.json();
+          const wt=(cj.parse&&cj.parse.wikitext&&cj.parse.wikitext['*'])||'';
+          let cat='世界のニュース'; let topic='';
+          wt.split('\n').forEach(function(line){
+            const h=line.match(/^'''(.+)'''\s*$/); if(h){ cat=ceCats[h[1].trim()]||'世界のニュース'; topic=''; return; }
+            if(/^\*\*/.test(line)){
+              const m=line.match(/\[\[([^\]|]+)/);
+              const link=m?m[1]:(topic||'');
+              const text=stripCe(line.replace(/^\*+\s*/,''));
+              if(text.length<20) return;
+              ceItems.push({cat:cat,link:link,text:text});
+            } else if(/^\*[^*]/.test(line)){
+              const m=line.match(/\[\[([^\]|]+)/); if(m) topic=m[1];
+            }
+          });
+        }catch(e){}
+      }
+      const seen={}; let added=0;
+      for(const ci of ceItems){
+        if(added>=10) break;
+        if(seen[ci.text]) continue; seen[ci.text]=1;
+        const u=ci.link?('https://en.wikipedia.org/wiki/'+encodeURIComponent(ci.link.replace(/ /g,'_'))):'';
+        const safe=ci.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        items.push({id:2000+added,cat:ci.cat,date:'ウィキペディア（英語）',title:ci.text.slice(0,80),intro:ci.text.slice(0,120),body:'<p>'+safe+'</p>'+(u?'<p><a href="'+u+'" target="_blank" rel="noopener">ウィキペディアで関連記事を読む</a></p>':'')+(newsLang!=='en'&&u?'<p><a href="'+gtUrl(u,newsLang)+'" target="_blank" rel="noopener">Google翻訳で読む</a></p>':'')});
+        added++;
+      }
+    }catch(e){}
     try{
       const ar=await fetch('https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrsearch='+encodeURIComponent('filetype:audio (Beethoven OR Mozart OR Chopin OR Bach OR Debussy)')+'&gsrnamespace=6&gsrlimit=14&prop=imageinfo&iiprop=url');
       if(ar.ok){
