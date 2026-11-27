@@ -856,7 +856,7 @@ function renderCorners(){
   if(cnCurrent){
     document.getElementById('cn-dtitle').textContent=lang==='ja'?cnCurrent.nameJa:cnCurrent.nameEn;
     document.getElementById('cn-ddesc').textContent=lang==='ja'?cnCurrent.descJa:cnCurrent.descEn;
-    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_COLOR2_HTML+BW_GAME2_HTML+BW_CLASSIC_GAMES_HTML+'<p class="desc" style="text-align:center;margin-top:16px">制作：女子会</p>';bwQuizStart();bwRiddleStart();bwMemStart();}else if(cnCurrent.id===6){document.getElementById('cn-articles').innerHTML=renderMovies();}else if(cnCurrent.id===7){document.getElementById('cn-articles').innerHTML=renderInstitutions();}else if(cnCurrent.id===8){document.getElementById('cn-articles').innerHTML=renderAudiobooks();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
+    if(cnCurrent.id===5){document.getElementById('cn-articles').innerHTML='<article class="card"><div id="quiz-box"></div></article>'+BW_COLOR_HTML+BW_COLOR2_HTML+BW_GAME2_HTML+BW_CLASSIC_GAMES_HTML+'<p class="desc" style="text-align:center;margin-top:16px">制作：女子会</p>';bwQuizStart();bwRiddleStart();bwMemStart();}else if(cnCurrent.id===6){document.getElementById('cn-articles').innerHTML=renderMovies();}else if(cnCurrent.id===7){document.getElementById('cn-articles').innerHTML=renderInstitutions();bwLoadListings();}else if(cnCurrent.id===8){document.getElementById('cn-articles').innerHTML=renderAudiobooks();}else{document.getElementById('cn-articles').innerHTML=cnCurrent.articles.map(a=>`<article class="card article-card"><h3 class="title" style="font-size:1.05rem">${lang==='ja'?a.titleJa:a.titleEn}</h3><p class="desc">${lang==='ja'?a.introJa:a.introEn}</p><div class="meta"><span>${a.date}</span></div></article>`).join('');}
   }
 }
 
@@ -1622,8 +1622,40 @@ async function bwApplySubmit(){
   }
   btn.disabled=false;
 }
+function bwListingsCard(){
+  const ja=lang==='ja';
+  return `<article class="card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">${ja?'皆さまからの配信':'From our community'}</h3><p class="desc">${ja?'お申し込みいただいて、掲載が決まった配信です。':'Listings approved from applications.'}</p><div id="bw-listings"><p class="desc">${ja?'読み込んでいます…':'Loading…'}</p></div></article>`;
+}
+function bwYtIdFromUrl(u){
+  const m=String(u||'').match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m?m[1]:null;
+}
+function bwListingCard(r){
+  const ja=lang==='ja';
+  const kindLabel={youtube:ja?'動画':'Video',reel:ja?'リール動画':'Reel',sns:'SNS',article:ja?'記事':'Article'}[r.meta_kind]||(ja?'記事':'Article');
+  const title=r.meta_title||r.org_name||'';
+  const yt=(r.meta_kind==='youtube')?bwYtIdFromUrl(r.url):null;
+  if(yt){
+    return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayOfficial(this,'${yt}')"><img src="https://i.ytimg.com/vi/${yt}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">${esc(title)}</div><p style="margin:4px 0 8px">${esc(r.org_name||'')}（${kindLabel}）</p></div>`;
+  }
+  const img=r.meta_image?`<img src="${esc(r.meta_image)}" alt="" loading="lazy" style="width:100%;border-radius:10px;margin-bottom:8px">`:'';
+  const desc=r.meta_desc?`<p style="margin:4px 0 8px">${esc(String(r.meta_desc).slice(0,140))}</p>`:'';
+  return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px">${img}<div class="ptitle" style="font-size:1.05rem">${esc(title)}</div><p style="margin:4px 0 8px">${esc(r.org_name||'')}（${kindLabel}）</p>${desc}<div class="actions"><a class="btn" href="${esc(r.url||'')}" target="_blank" rel="noopener">${ja?'開く':'Open'}</a></div></div>`;
+}
+async function bwLoadListings(){
+  const box=document.getElementById('bw-listings');
+  if(!box) return;
+  const ja=lang==='ja';
+  try{
+    const rows=await bwApi('/api/listings');
+    if(!rows||!rows.length){box.innerHTML=`<p class="desc">${ja?'まだ掲載はありません。最初のお申し込みをお待ちしています。':'No listings yet. We look forward to the first application.'}</p>`;return;}
+    box.innerHTML=rows.map(bwListingCard).join('');
+  }catch(e){
+    box.innerHTML=`<p class="desc">${ja?'読み込めませんでした。':'Could not load.'}</p>`;
+  }
+}
 function renderInstitutions(){
-  return officialSections.map((sec,i)=>`<article class="card" style="${i?'margin-top:14px;':''}"><h3 class="title" style="font-size:1.1rem">${esc(lang==='ja'?sec.titleJa:sec.titleEn)}</h3><p class="desc">${esc(lang==='ja'?sec.noteJa:sec.noteEn)}</p>`+sec.videos.map(bwOfficialCard).join('')+((sec.links&&sec.links.length)?`<div class="actions" style="margin-top:10px;flex-wrap:wrap;gap:8px">`+sec.links.map(l=>`<a class="btn" href="${l.url}" target="_blank" rel="noopener">${esc(lang==='ja'?l.labelJa:l.labelEn)}</a>`).join('')+'</div>':'')+'</article>').join('')+bwApplyCard();
+  return officialSections.map((sec,i)=>`<article class="card" style="${i?'margin-top:14px;':''}"><h3 class="title" style="font-size:1.1rem">${esc(lang==='ja'?sec.titleJa:sec.titleEn)}</h3><p class="desc">${esc(lang==='ja'?sec.noteJa:sec.noteEn)}</p>`+sec.videos.map(bwOfficialCard).join('')+((sec.links&&sec.links.length)?`<div class="actions" style="margin-top:10px;flex-wrap:wrap;gap:8px">`+sec.links.map(l=>`<a class="btn" href="${l.url}" target="_blank" rel="noopener">${esc(lang==='ja'?l.labelJa:l.labelEn)}</a>`).join('')+'</div>':'')+'</article>').join('')+bwApplyCard()+bwListingsCard();
 }
 renderVideos();
 renderList(); renderTimeline(); renderProfilePosts(); doSearch(); if(typeof renderNotifications==='function') renderNotifications(); if(typeof renderBwPages==='function') renderBwPages(); if(typeof renderCorners==='function') renderCorners();
