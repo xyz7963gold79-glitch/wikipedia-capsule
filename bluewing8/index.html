@@ -1597,8 +1597,33 @@ function bwPlayOfficial(el,yt){
   el.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=1" title="YouTube" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
   el.style.cursor='default'; el.onclick=null;
 }
+function bwApplyCard(){
+  const ja=lang==='ja';
+  return `<article class="card" style="margin-top:14px"><h3 class="title" style="font-size:1.1rem">${ja?'掲載のお申し込み（大学・研究機関・マスコミの皆さまへ）':'For institutions: request a listing'}</h3><p class="desc">${ja?'大学・研究機関・マスコミの公式の配信を、このコーナーで紹介しています。動画の配信に加えて、リール動画の配信も掲載します。掲載を希望される機関は、こちらからお申し込みください。内容を確かめてから掲載します。費用はかかりません。':'We introduce official videos, channels and Reel videos from universities, research institutions and media. If your institution would like to be listed, please apply here. Listings are free and reviewed before posting.'}</p><div style="display:grid;gap:8px;margin-top:10px"><input id="bw-app-org" type="text" placeholder="${ja?'機関名（必須）':'Institution name (required)'}" style="padding:10px;border:1px solid var(--line,#ccc);border-radius:8px"><input id="bw-app-contact" type="text" placeholder="${ja?'ご担当者のお名前':'Contact name'}" style="padding:10px;border:1px solid var(--line,#ccc);border-radius:8px"><input id="bw-app-email" type="email" placeholder="${ja?'メールアドレス（必須）':'Email (required)'}" style="padding:10px;border:1px solid var(--line,#ccc);border-radius:8px"><input id="bw-app-url" type="url" placeholder="${ja?'紹介したい配信のアドレス（必須。リール動画も可）':'URL of your channel or stream (required)'}" style="padding:10px;border:1px solid var(--line,#ccc);border-radius:8px"><textarea id="bw-app-msg" rows="3" placeholder="${ja?'メッセージ（任意）':'Message (optional)'}" style="padding:10px;border:1px solid var(--line,#ccc);border-radius:8px"></textarea><button class="btn" id="bw-app-btn" onclick="bwApplySubmit()">${ja?'申し込む':'Apply'}</button><p class="desc" id="bw-app-status" style="min-height:1em"></p></div></article>`;
+}
+async function bwApplySubmit(){
+  const ja=lang==='ja';
+  const st=document.getElementById('bw-app-status');
+  const btn=document.getElementById('bw-app-btn');
+  const org=document.getElementById('bw-app-org').value.trim();
+  const contact=document.getElementById('bw-app-contact').value.trim();
+  const email=document.getElementById('bw-app-email').value.trim();
+  const link=document.getElementById('bw-app-url').value.trim();
+  const msg=document.getElementById('bw-app-msg').value.trim();
+  if(!org||!email||!link){st.textContent=ja?'機関名・メールアドレス・配信のアドレスは必須です。':'Institution name, email and URL are required.';return;}
+  btn.disabled=true;
+  st.textContent=ja?'送信しています…':'Sending…';
+  try{
+    const r=await bwApi('/api/applications',{method:'POST',body:{org_name:org,contact_name:contact,email:email,url:link,message:msg}});
+    st.textContent=r.message||(ja?'受け付けました。':'Received.');
+    document.getElementById('bw-app-org').value='';document.getElementById('bw-app-contact').value='';document.getElementById('bw-app-email').value='';document.getElementById('bw-app-url').value='';document.getElementById('bw-app-msg').value='';
+  }catch(e){
+    st.textContent=(e&&e.message)||(ja?'送信できませんでした。':'Could not send.');
+  }
+  btn.disabled=false;
+}
 function renderInstitutions(){
-  return officialSections.map((sec,i)=>`<article class="card" style="${i?'margin-top:14px;':''}"><h3 class="title" style="font-size:1.1rem">${esc(lang==='ja'?sec.titleJa:sec.titleEn)}</h3><p class="desc">${esc(lang==='ja'?sec.noteJa:sec.noteEn)}</p>`+sec.videos.map(bwOfficialCard).join('')+((sec.links&&sec.links.length)?`<div class="actions" style="margin-top:10px;flex-wrap:wrap;gap:8px">`+sec.links.map(l=>`<a class="btn" href="${l.url}" target="_blank" rel="noopener">${esc(lang==='ja'?l.labelJa:l.labelEn)}</a>`).join('')+'</div>':'')+'</article>').join('');
+  return officialSections.map((sec,i)=>`<article class="card" style="${i?'margin-top:14px;':''}"><h3 class="title" style="font-size:1.1rem">${esc(lang==='ja'?sec.titleJa:sec.titleEn)}</h3><p class="desc">${esc(lang==='ja'?sec.noteJa:sec.noteEn)}</p>`+sec.videos.map(bwOfficialCard).join('')+((sec.links&&sec.links.length)?`<div class="actions" style="margin-top:10px;flex-wrap:wrap;gap:8px">`+sec.links.map(l=>`<a class="btn" href="${l.url}" target="_blank" rel="noopener">${esc(lang==='ja'?l.labelJa:l.labelEn)}</a>`).join('')+'</div>':'')+'</article>').join('')+bwApplyCard();
 }
 renderVideos();
 renderList(); renderTimeline(); renderProfilePosts(); doSearch(); if(typeof renderNotifications==='function') renderNotifications(); if(typeof renderBwPages==='function') renderBwPages(); if(typeof renderCorners==='function') renderCorners();
@@ -1625,6 +1650,7 @@ if(typeof bwPlayMovie==='function')window.bwPlayMovie=bwPlayMovie;
 if(typeof bwPlayClassic==='function')window.bwPlayClassic=bwPlayClassic;
 if(typeof bwPlayAudio==='function')window.bwPlayAudio=bwPlayAudio;
 if(typeof bwPlayOfficial==='function')window.bwPlayOfficial=bwPlayOfficial;
+if(typeof bwApplySubmit==='function')window.bwApplySubmit=bwApplySubmit;
 if(typeof openArticle==='function')window.openArticle=openArticle;
 if(typeof shareArticle==='function')window.shareArticle=shareArticle;
 }
