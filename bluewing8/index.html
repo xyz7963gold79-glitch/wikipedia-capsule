@@ -1142,10 +1142,10 @@ window.bwHubPages=bwHubPages;
 function bwOpenHelp(){ location.href=(lang==='en')?'help-en.html':'help.html'; }
 window.bwOpenHelp=bwOpenHelp;
 function renderBwPages(){
-  document.getElementById('bw-grid').innerHTML=bwPages.map(pg=>`<article class="card article-card"><h3 class="title">${lang==='ja'?pg.nameJa:pg.nameEn}</h3><p class="desc">${lang==='ja'?pg.descJa:pg.descEn}</p><div class="meta"><span>${lang==='ja'?'Facebookページ':'Facebook Page'}</span></div><div class="actions"><button class="btn btn-blue" onclick="openBwPage(${pg.id})">${lang==='ja'?'開く':'Open'}</button></div></article>`).join('');
+  document.getElementById('bw-grid').innerHTML=bwPages.map(pg=>`<article class="card article-card"><h3 class="title">${lang==='ja'?pg.nameJa:pg.nameEn}</h3><div class="meta"><span>${lang==='ja'?'Facebookページ':'Facebook Page'}</span></div><div class="actions"><button class="btn btn-blue" onclick="openBwPage(${pg.id})">${lang==='ja'?'開く':'Open'}</button></div></article>`).join('');
   if(bwCurrent){
     document.getElementById('bw-dtitle').textContent=lang==='ja'?bwCurrent.nameJa:bwCurrent.nameEn;
-    document.getElementById('bw-ddesc').textContent=lang==='ja'?bwCurrent.descJa:bwCurrent.descEn;
+    document.getElementById('bw-ddesc').style.display='none';
     document.getElementById('bw-dmeta').textContent=(lang==='ja'?'Facebookページ':'Facebook Page');
     renderBwPosts();
   }
