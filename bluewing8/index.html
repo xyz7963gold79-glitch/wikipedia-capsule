@@ -1162,7 +1162,7 @@ function renderBwPosts(){
 }
 
 function openBwPage(id){
-  bwCurrent=bwPages.find(x=>x.id===id); if(!bwCurrent) return;
+  bwCurrent=bwPages.find(x=>String(x.id)===String(id)); if(!bwCurrent) return;
   document.getElementById('bw-list').style.display='none';
   document.getElementById('bw-detail').style.display='block';
   renderBwPages(); window.scrollTo(0,0);
