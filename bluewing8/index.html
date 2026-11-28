@@ -84,6 +84,11 @@
   .like{border:1px solid #dbe4ff;background:#f5f7ff;color:var(--blue);padding:8px 16px;border-radius:999px;font-size:.9rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
   .like.active{background:var(--blue);color:white;border-color:var(--blue)}
   .post-actions{border-top:1px solid #eef2ff;padding-top:10px;display:flex;gap:10px}
+  .bw-dots-wrap{position:relative;margin-left:auto}
+  .bw-dots{background:none;border:0;font-size:1.3rem;line-height:1;padding:2px 8px;cursor:pointer;color:var(--muted);border-radius:8px}
+  .bw-pop{display:none;position:absolute;right:0;top:calc(100% + 4px);background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 10px 30px rgba(15,31,75,.18);z-index:40;min-width:150px;padding:6px}
+  .bw-pop button{display:block;width:100%;text-align:left;background:none;border:0;padding:9px 10px;font-size:.92rem;border-radius:8px;cursor:pointer;color:#0f1f4b}
+  .bw-pop-up{top:auto;bottom:calc(100% + 4px)}
   /* プロフィール */
   .profile{display:flex;flex-direction:column;gap:16px}
   .ptop{display:flex;gap:16px;align-items:center}
@@ -601,11 +606,73 @@ function bwSharePost(id){
   if(navigator.clipboard){ navigator.clipboard.writeText(text).then(()=>alert(lang==='ja'?'共有の文をコピーしました。':'Copied for sharing.')); }
 }
 window.bwSharePost=bwSharePost;
+function bwClosePops(){ document.querySelectorAll('.bw-pop').forEach(x=>x.style.display='none'); }
+function bwMyName(){ try{ return localStorage.getItem('bw8_name')||''; }catch(e){ return ''; } }
+function bwFindPost(id){ const a=(typeof posts!=='undefined'?posts:[]).find(x=>x.id===id); if(a) return a; return (typeof profilePosts!=='undefined'?profilePosts:[]).find(x=>x.id===id)||null; }
+function bwPostMenu(ev,id){
+  ev.stopPropagation();
+  const wrap=ev.currentTarget.closest('.bw-dots-wrap'); const pop=wrap?wrap.querySelector('.bw-pop'):null;
+  const wasOpen=pop&&pop.style.display==='block';
+  bwClosePops();
+  if(!pop||wasOpen) return;
+  const p=bwFindPost(id); if(!p) return;
+  const mine=!!(bwMyName()&&p.name===bwMyName());
+  let h='<button onclick="bwSharePost('+id+')">'+(lang==='ja'?'共有':'Share')+'</button>';
+  if(mine){
+    h+='<button onclick="bwEditPost('+id+')">'+(lang==='ja'?'編集する':'Edit')+'</button>';
+    h+='<button onclick="bwDeletePost('+id+')">'+(lang==='ja'?'削除する':'Delete')+'</button>';
+  } else {
+    h+='<button onclick="reportPost('+id+')">'+(lang==='ja'?'非表示':'Hide')+'</button>';
+  }
+  pop.innerHTML=h; pop.style.display='block';
+}
+function bwRefreshPostViews(){
+  renderTimeline(); renderProfilePosts();
+  const va=document.getElementById('view-account');
+  if(va&&va.style.display!=='none'&&window._bwAcctName&&window.bwOpenAccount) window.bwOpenAccount(window._bwAcctName);
+}
+function bwEditPost(id){
+  bwClosePops();
+  const p=bwFindPost(id); if(!p) return;
+  document.querySelectorAll('[data-bwbody="'+id+'"]').forEach(el=>{
+    el.innerHTML='<textarea id="bw-edit-'+id+'" style="width:100%;min-height:90px;border:1px solid #e2e8f0;border-radius:10px;padding:8px;font:inherit;box-sizing:border-box">'+esc(p.body)+'</textarea><div style="display:flex;gap:8px;margin-top:6px"><button class="btn btn-blue" onclick="bwSaveEdit('+id+')">'+(lang==='ja'?'保存する':'Save')+'</button><button class="btn btn-ghost" onclick="bwCancelEdit()">'+(lang==='ja'?'キャンセル':'Cancel')+'</button></div>';
+  });
+}
+async function bwSaveEdit(id){
+  const ta=document.getElementById('bw-edit-'+id); if(!ta) return;
+  const text=ta.value.trim();
+  if(!text){ alert(lang==='ja'?'内容が空です。':'The post is empty.'); return; }
+  if(typeof guardText==='function'){ const r=guardText(text); if(r){ alert('保護機能が働きました（'+r+'）'); return; } }
+  const p=bwFindPost(id); if(!p) return;
+  if(p.srv&&typeof bwSrvIds!=='undefined'&&bwSrvIds[id]){
+    if(!bwToken()){ alert(lang==='ja'?'ログインが必要です。':'Please log in.'); return; }
+    try{ await bwApi('/api/posts/'+bwSrvIds[id]+'/edit',{method:'POST',body:{content:text}}); }catch(e){ alert(e.message); return; }
+  }
+  p.body=text;
+  bwRefreshPostViews();
+}
+function bwCancelEdit(){ bwRefreshPostViews(); }
+async function bwDeletePost(id){
+  bwClosePops();
+  if(!confirm(lang==='ja'?'この投稿を削除しますか？':'Delete this post?')) return;
+  const p=bwFindPost(id); if(!p) return;
+  if(p.srv&&typeof bwSrvIds!=='undefined'&&bwSrvIds[id]){
+    if(!bwToken()){ alert(lang==='ja'?'ログインが必要です。':'Please log in.'); return; }
+    try{ await bwApi('/api/posts/'+bwSrvIds[id]+'/delete',{method:'POST',body:{}}); }catch(e){ alert(e.message); return; }
+  }
+  const rm=arr=>{ const i=arr.findIndex(x=>x.id===id); if(i>=0) arr.splice(i,1); };
+  if(typeof posts!=='undefined') rm(posts);
+  if(typeof profilePosts!=='undefined') rm(profilePosts);
+  bwRefreshPostViews();
+}
+window.bwPostMenu=bwPostMenu; window.bwEditPost=bwEditPost; window.bwSaveEdit=bwSaveEdit; window.bwCancelEdit=bwCancelEdit; window.bwDeletePost=bwDeletePost;
+document.addEventListener('click',e=>{ if(!e.target.closest||!e.target.closest('.bw-dots-wrap')) bwClosePops(); });
+
 /* タイムライン */
 const $name=document.getElementById('nameInput'),$body=document.getElementById('bodyInput');
 function postHTML(p){
   const initial=esc(p.name.trim().charAt(0)||'？').toUpperCase();
-  return `<article class="card post"><div class="who"><div class="avatar">${p.avatar_url?`<img src="${esc(p.avatar_url)}" alt="" style="width:100%;height:100%;object-fit:cover">`:initial}</div><div><div class="pname" style="cursor:pointer;text-decoration:underline" onclick="bwOpenAccountByPost(${p.id})">${esc(p.name)}</div><div class="pdate">${esc(p.date)}</div></div></div><div class="pbody">${esc(p.body)}</div>${bwPostVideoHTML(p)}<div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="bwSharePost(${p.id})">${lang==='ja'?'共有':'Share'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'非表示':'Hide'}</button></div></article>`;
+  return `<article class="card post"><div class="who"><div class="avatar">${p.avatar_url?`<img src="${esc(p.avatar_url)}" alt="" style="width:100%;height:100%;object-fit:cover">`:initial}</div><div><div class="pname" style="cursor:pointer;text-decoration:underline" onclick="bwOpenAccountByPost(${p.id})">${esc(p.name)}</div><div class="pdate">${esc(p.date)}</div></div><div class="bw-dots-wrap"><button class="bw-dots" onclick="bwPostMenu(event,${p.id})" aria-label="その他の操作">⋯</button><div class="bw-pop"></div></div></div><div class="pbody" data-bwbody="${p.id}">${esc(p.body)}</div>${bwPostVideoHTML(p)}<div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="bwSharePost(${p.id})">${lang==='ja'?'共有':'Share'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'非表示':'Hide'}</button></div></article>`;
 }
 /* 投稿内YouTubeリンクの動画化：本文から動画IDを厳密に検証して取り出し、ファサードを出す */
 function bwYtId(text){
@@ -710,7 +777,7 @@ function renderProfilePosts(){
   const el=document.getElementById('profile-posts'); if(!el) return;
   if(!logged){ el.innerHTML='<article class="card post"><p style="line-height:1.8">'+(lang==='ja'?'ログインすると、あなたの投稿がここに表示されます。':'Log in to see your posts here.')+'</p></article>'; return; }
   if(!mine.length){ el.innerHTML='<article class="card post"><p style="line-height:1.8">'+(lang==='ja'?'まだ投稿がありません。':'No posts yet.')+'</p></article>'; return; }
-  el.innerHTML=mine.map(p=>'<article class="card post"><div class="pdate">'+esc(p.date)+'</div><div class="pbody">'+esc(p.body)+'</div><div class="post-actions"><button class="like '+(p.liked?'active':'')+'" onclick="toggleLike('+p.id+')">'+(lang==='ja'?'いいね':'Like')+' <span>'+p.likes+'</span></button><button class="like" onclick="openComments('+p.id+')">'+(lang==='ja'?'コメント':'Comments')+'</button><button class="like" onclick="bwSharePost('+p.id+')">'+(lang==='ja'?'共有':'Share')+'</button><button class="like" onclick="reportPost('+p.id+')">'+(lang==='ja'?'非表示':'Hide')+'</button></div></article>').join('');
+  el.innerHTML=mine.map(p=>'<article class="card post"><div class="pdate">'+esc(p.date)+'</div><div class="pbody" data-bwbody="'+p.id+'">'+esc(p.body)+'</div><div class="post-actions"><button class="like '+(p.liked?'active':'')+'" onclick="toggleLike('+p.id+')">'+(lang==='ja'?'いいね':'Like')+' <span>'+p.likes+'</span></button><button class="like" onclick="openComments('+p.id+')">'+(lang==='ja'?'コメント':'Comments')+'</button><button class="like" onclick="bwSharePost('+p.id+')">'+(lang==='ja'?'共有':'Share')+'</button><button class="like" onclick="reportPost('+p.id+')">'+(lang==='ja'?'非表示':'Hide')+'</button><span class="bw-dots-wrap"><button class="like" onclick="bwPostMenu(event,'+p.id+')" aria-label="その他の操作">⋯</button><span class="bw-pop bw-pop-up"></span></span></div></article>').join('');
 }
 
 const $profLogin=document.getElementById('prof-login-btn'); if($profLogin) $profLogin.addEventListener('click',()=>show('login'));
@@ -1345,6 +1412,7 @@ function renderPeople(){
   document.querySelectorAll('[data-acct]').forEach(b=>b.addEventListener('click',()=>bwOpenAccount(b.getAttribute('data-acct'))));
 }
 function bwOpenAccount(name){
+  window._bwAcctName=name;
   const person=bwPeople.find(m=>m.name===name);
   let myName=''; try{ myName=localStorage.getItem('bw8_name')||''; }catch(e){}
   const me=!!myName&&myName===name;
@@ -1355,7 +1423,7 @@ function bwOpenAccount(name){
   document.getElementById('acct-self-btn').style.display=me?'':'none';
   const mine=(typeof posts!=='undefined'?posts:[]).filter(p=>p.name===name);
   document.getElementById('acct-count').textContent=mine.length;
-  document.getElementById('acct-posts').innerHTML=mine.length?mine.map(p=>'<article class="card post"><div class="pdate">'+esc(p.date||'')+'</div><p style="margin:6px 0 8px;line-height:1.7">'+esc(p.body)+'</p><div class="post-actions"><button class="like" onclick="bwSharePost('+p.id+')">'+(lang==='ja'?'共有':'Share')+'</button></div></article>').join(''):'<p class="empty-note">'+(lang==='ja'?'この人の投稿は、まだありません。':'No posts by this person yet.')+'</p>';
+  document.getElementById('acct-posts').innerHTML=mine.length?mine.map(p=>'<article class="card post"><div class="pdate">'+esc(p.date||'')+'</div><p style="margin:6px 0 8px;line-height:1.7" data-bwbody="'+p.id+'">'+esc(p.body)+'</p><div class="post-actions"><button class="like" onclick="bwSharePost('+p.id+')">'+(lang==='ja'?'共有':'Share')+'</button><span class="bw-dots-wrap"><button class="like" onclick="bwPostMenu(event,'+p.id+')" aria-label="その他の操作">⋯</button><span class="bw-pop bw-pop-up"></span></span></div></article>').join(''):'<p class="empty-note">'+(lang==='ja'?'この人の投稿は、まだありません。':'No posts by this person yet.')+'</p>';
   show('account');
 }
 function bwOpenAccountByPost(id){
