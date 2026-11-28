@@ -2088,7 +2088,7 @@ document.getElementById('btn-en').addEventListener('click',()=>setLang('en'));
 setLang('ja');
 Object.entries(tabs).forEach(([k,v])=>v.addEventListener('click',()=>show(k)));
 document.getElementById('art-back').addEventListener('click',()=>show('list'));
-const bwHeroVideo=document.getElementById('bw-hero-video'); if(bwHeroVideo){ bwHeroVideo.playbackRate=0.35; }
+const bwHeroVideo=document.getElementById('bw-hero-video'); if(bwHeroVideo){ bwHeroVideo.playbackRate=0.15; }
 /* 本物のニュース（ウィキメディア自動配信） */
 let newsLang='ja';
 function gtUrl(u,tl){ try{ const url=new URL(u); const host=url.hostname.replace(/\./g,'-')+'.translate.goog'; return 'https://'+host+url.pathname+'?_x_tr_sl=auto&_x_tr_tl='+tl+'&_x_tr_hl='+tl; }catch(e){ return 'https://translate.google.com/translate?sl=auto&tl='+tl+'&u='+encodeURIComponent(u); } }
