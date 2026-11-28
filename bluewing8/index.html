@@ -217,6 +217,7 @@
       <input id="nameInput" type="text" maxlength="24" placeholder="なまえ（例: たろう）"></div>
       <div class="field"><div class="label" data-ja="本文" data-en="Message">本文</div>
       <textarea id="bodyInput" maxlength="200" placeholder="いま何してる？ 水のことを書いてみよう"></textarea></div>
+      <div class="field"><div class="label" data-ja="写真" data-en="Photo">写真</div><input id="photoInput" type="file" accept="image/*"><img id="photoPreview" alt="" style="display:none;width:100%;border-radius:12px;margin-top:8px"></div>
       <div class="actions"><button id="postBtn" class="btn btn-blue" data-ja="投稿する" data-en="Post">投稿する</button>
       <span class="hint" data-ja="タイムラインの一番上に出ます（このページ内だけ）" data-en="Shows at the top of timeline (on this page only)">タイムラインの一番上に出ます（このページ内だけ）</span></div>
     </div>
@@ -388,7 +389,8 @@
         <div class="field"><div class="label" data-ja="パスワード" data-en="Password">パスワード</div>
         <input id="regPass" type="password" placeholder="8文字以上"></div>
         <div class="row2">
-          <div class="field"><div class="label" data-ja="国" data-en="Country">国</div>
+          <div class="field"><div class="label" data-ja="写真を選ぶ" data-en="Choose a photo">写真を選ぶ</div><input id="setAvatarFile" type="file" accept="image/*"><p style="font-size:.8rem;color:var(--muted);margin:4px 0 0" data-ja="スマホやパソコンの中の写真を選ぶと、そのままプロフィール写真になります。" data-en="Choose a photo from your device to use it as your profile photo.">スマホやパソコンの中の写真を選ぶと、そのままプロフィール写真になります。</p></div>
+      <div class="field"><div class="label" data-ja="国" data-en="Country">国</div>
           <select id="regCountry"><option value="JP">日本</option><option value="BR">ブラジル</option><option value="US">アメリカ</option><option value="KE">ケニア</option><option value="IN">インド</option></select></div>
           <div class="field"><div class="label" data-ja="言語" data-en="Language">言語</div>
           <select id="regLang"><option value="ja">日本語</option><option value="en">English</option><option value="pt">Português</option></select></div>
@@ -417,7 +419,8 @@
       <div class="field"><div class="label" data-ja="自己紹介" data-en="Bio">自己紹介</div><textarea id="setBio" placeholder="自己紹介を書く"></textarea></div>
       <div class="field"><div class="label" data-ja="写真のアドレス" data-en="Photo URL">写真のアドレス</div><input id="setAvatar" type="url" placeholder="https://..."><p style="font-size:.8rem;color:var(--muted);margin:4px 0 0" data-ja="ウェブにある写真のアドレスを入れると、アカウント画面に、あなたの写真が出ます。" data-en="Paste the address of a photo on the web, and it will appear on your account page.">ウェブにある写真のアドレスを入れると、アカウント画面に、あなたの写真が出ます。</p></div>
       <div class="row2">
-        <div class="field"><div class="label" data-ja="国" data-en="Country">国</div><select id="setCountry"><option selected>日本</option><option>ブラジル</option><option>アメリカ</option><option>ケニア</option></select></div>
+        <div class="field"><div class="label" data-ja="写真を選ぶ" data-en="Choose a photo">写真を選ぶ</div><input id="setAvatarFile" type="file" accept="image/*"><p style="font-size:.8rem;color:var(--muted);margin:4px 0 0" data-ja="スマホやパソコンの中の写真を選ぶと、そのままプロフィール写真になります。" data-en="Choose a photo from your device to use it as your profile photo.">スマホやパソコンの中の写真を選ぶと、そのままプロフィール写真になります。</p></div>
+      <div class="field"><div class="label" data-ja="国" data-en="Country">国</div><select id="setCountry"><option selected>日本</option><option>ブラジル</option><option>アメリカ</option><option>ケニア</option></select></div>
         <div class="field"><div class="label" data-ja="言語" data-en="Language">言語</div><select id="setLang"><option selected>日本語</option><option>Português / 日本語</option><option>English</option></select></div>
       </div>
     </article>
@@ -672,7 +675,7 @@ document.addEventListener('click',e=>{ if(!e.target.closest||!e.target.closest('
 const $name=document.getElementById('nameInput'),$body=document.getElementById('bodyInput');
 function postHTML(p){
   const initial=esc(p.name.trim().charAt(0)||'？').toUpperCase();
-  return `<article class="card post"><div class="who"><div class="avatar">${p.avatar_url?`<img src="${esc(p.avatar_url)}" alt="" style="width:100%;height:100%;object-fit:cover">`:initial}</div><div><div class="pname" style="cursor:pointer;text-decoration:underline" onclick="bwOpenAccountByPost(${p.id})">${esc(p.name)}</div><div class="pdate">${esc(p.date)}</div></div><div class="bw-dots-wrap"><button class="bw-dots" onclick="bwPostMenu(event,${p.id})" aria-label="その他の操作">⋯</button><div class="bw-pop"></div></div></div><div class="pbody" data-bwbody="${p.id}">${esc(p.body)}</div>${bwPostVideoHTML(p)}<div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="bwSharePost(${p.id})">${lang==='ja'?'共有':'Share'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'非表示':'Hide'}</button></div></article>`;
+  return `<article class="card post"><div class="who"><div class="avatar">${p.avatar_url?`<img src="${esc(p.avatar_url)}" alt="" style="width:100%;height:100%;object-fit:cover">`:initial}</div><div><div class="pname" style="cursor:pointer;text-decoration:underline" onclick="bwOpenAccountByPost(${p.id})">${esc(p.name)}</div><div class="pdate">${esc(p.date)}</div></div><div class="bw-dots-wrap"><button class="bw-dots" onclick="bwPostMenu(event,${p.id})" aria-label="その他の操作">⋯</button><div class="bw-pop"></div></div></div><div class="pbody" data-bwbody="${p.id}">${esc(p.body)}</div>${bwPostVideoHTML(p)}${p.image_url?`<img src="${esc(p.image_url.indexOf('http')===0?p.image_url:BW_API+p.image_url)}" alt="" loading="lazy" style="width:100%;border-radius:12px;margin-top:8px">`:``}<div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="bwSharePost(${p.id})">${lang==='ja'?'共有':'Share'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'非表示':'Hide'}</button></div></article>`;
 }
 /* 投稿内YouTubeリンクの動画化：本文から動画IDを厳密に検証して取り出し、ファサードを出す */
 function bwYtId(text){
@@ -742,9 +745,15 @@ async function reportPost(id){
 async function addPost(){
   const bodyVal=$body.value.trim(); if(!bodyVal){$body.focus();return;}
   if(!guardPost(bodyVal)) return;
+  const _pf=document.getElementById('photoInput');
+  const _hasPhoto=!!(_pf&&_pf.files&&_pf.files[0]);
+  if(_hasPhoto&&!bwToken()){ alert(lang==='ja'?'写真を付けるには、ログインが必要です。':'Please log in to attach a photo.'); return; }
   if(bwToken()){
     try{
-      const r=await bwApi('/api/posts',{method:'POST',body:{content:bodyVal}});
+      let imageUrl='';
+      if(_hasPhoto){ imageUrl=await bwUploadPhoto(_pf.files[0]); }
+      const r=await bwApi('/api/posts',{method:'POST',body:{content:bodyVal,image_url:imageUrl}});
+      if(_pf){ _pf.value=''; const _pv=document.getElementById('photoPreview'); if(_pv) _pv.style.display='none'; }
       $body.value='';
       if(r.status==='pending'){
         alert(lang==='ja'?'受け付けました。最初の投稿は、運営の確認のあとに公開されます。':'Received. Your first post will appear after a quick review.');
@@ -762,6 +771,35 @@ async function addPost(){
   $body.value=''; renderTimeline();
 }
 document.getElementById('postBtn').addEventListener('click',addPost);
+function bwResizeImage(file){
+  return new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(file);
+    const img=new Image();
+    img.onload=()=>{ URL.revokeObjectURL(url);
+      const max=1024; let w=img.width||max,h=img.height||max;
+      if(w>max||h>max){ const s=max/Math.max(w,h); w=Math.max(1,Math.round(w*s)); h=Math.max(1,Math.round(h*s)); }
+      const c=document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      c.toBlob(b=>{ if(b) resolve(b); else reject(new Error('image')); },'image/jpeg',0.82);
+    };
+    img.onerror=()=>{ URL.revokeObjectURL(url); reject(new Error('image')); };
+    img.src=url;
+  });
+}
+async function bwUploadPhoto(file){
+  const blob=await bwResizeImage(file);
+  const r=await fetch(BW_API+'/api/upload',{method:'POST',headers:{'Authorization':'Bearer '+bwToken(),'Content-Type':blob.type},body:blob});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(j.error||'upload failed');
+  return j.url;
+}
+window.bwUploadPhoto=bwUploadPhoto;
+const _photoInput=document.getElementById('photoInput');
+if(_photoInput){ _photoInput.addEventListener('change',()=>{
+  const f=_photoInput.files&&_photoInput.files[0]; const pv=document.getElementById('photoPreview');
+  if(f&&pv){ pv.src=URL.createObjectURL(f); pv.style.display='block'; } else if(pv){ pv.style.display='none'; }
+}); }
+
 /* プロフィール */
 function renderProfilePosts(){
   let name=''; try{ name=localStorage.getItem('bw8_name')||''; }catch(e){}
@@ -777,7 +815,7 @@ function renderProfilePosts(){
   const el=document.getElementById('profile-posts'); if(!el) return;
   if(!logged){ el.innerHTML='<article class="card post"><p style="line-height:1.8">'+(lang==='ja'?'ログインすると、あなたの投稿がここに表示されます。':'Log in to see your posts here.')+'</p></article>'; return; }
   if(!mine.length){ el.innerHTML='<article class="card post"><p style="line-height:1.8">'+(lang==='ja'?'まだ投稿がありません。':'No posts yet.')+'</p></article>'; return; }
-  el.innerHTML=mine.map(p=>'<article class="card post"><div class="pdate">'+esc(p.date)+'</div><div class="pbody" data-bwbody="'+p.id+'">'+esc(p.body)+'</div><div class="post-actions"><button class="like '+(p.liked?'active':'')+'" onclick="toggleLike('+p.id+')">'+(lang==='ja'?'いいね':'Like')+' <span>'+p.likes+'</span></button><button class="like" onclick="openComments('+p.id+')">'+(lang==='ja'?'コメント':'Comments')+'</button><button class="like" onclick="bwSharePost('+p.id+')">'+(lang==='ja'?'共有':'Share')+'</button><button class="like" onclick="reportPost('+p.id+')">'+(lang==='ja'?'非表示':'Hide')+'</button><span class="bw-dots-wrap"><button class="like" onclick="bwPostMenu(event,'+p.id+')" aria-label="その他の操作">⋯</button><span class="bw-pop bw-pop-up"></span></span></div></article>').join('');
+  el.innerHTML=mine.map(p=>'<article class="card post"><div class="pdate">'+esc(p.date)+'</div><div class="pbody" data-bwbody="'+p.id+'">'+esc(p.body)+'</div>'+(p.image_url?'<img src="'+esc(p.image_url.indexOf('http')===0?p.image_url:BW_API+p.image_url)+'" alt="" loading="lazy" style="width:100%;border-radius:12px;margin-top:8px">':'')+'<div class="post-actions"><button class="like '+(p.liked?'active':'')+'" onclick="toggleLike('+p.id+')">'+(lang==='ja'?'いいね':'Like')+' <span>'+p.likes+'</span></button><button class="like" onclick="openComments('+p.id+')">'+(lang==='ja'?'コメント':'Comments')+'</button><button class="like" onclick="bwSharePost('+p.id+')">'+(lang==='ja'?'共有':'Share')+'</button><button class="like" onclick="reportPost('+p.id+')">'+(lang==='ja'?'非表示':'Hide')+'</button><span class="bw-dots-wrap"><button class="like" onclick="bwPostMenu(event,'+p.id+')" aria-label="その他の操作">⋯</button><span class="bw-pop bw-pop-up"></span></span></div></article>').join('');
 }
 
 const $profLogin=document.getElementById('prof-login-btn'); if($profLogin) $profLogin.addEventListener('click',()=>show('login'));
@@ -824,7 +862,7 @@ function bwFmtDate(sec){
 }
 function bwSrvPost(r){
   const alias=++bwSrvSeq; bwSrvIds[alias]=r.id;
-  return {id:alias,srv:true,name:r.display_name||'',avatar_url:r.avatar_url||'',body:r.content,date:bwFmtDate(r.created_at),likes:r.like_count||0,liked:false,status:r.status};
+  return {id:alias,srv:true,name:r.display_name||'',avatar_url:r.avatar_url||'',image_url:r.image_url||'',body:r.content,date:bwFmtDate(r.created_at),likes:r.like_count||0,liked:false,status:r.status};
 }
 async function loadServerPosts(){
   try{
@@ -1380,6 +1418,8 @@ document.getElementById('saveBtn').addEventListener('click',async()=>{
   const n=document.getElementById('savedNotice');
   const token=(typeof bwToken==='function')?bwToken():'';
   if(token){
+    const _af=document.getElementById('setAvatarFile');
+    if(_af&&_af.files&&_af.files[0]){ try{ const _u=await bwUploadPhoto(_af.files[0]); document.getElementById('setAvatar').value=BW_API+_u; _af.value=''; }catch(e){ alert(e.message); return; } }
     const payload={display_name:document.getElementById('setName').value.trim(),bio:document.getElementById('setBio').value,avatar_url:document.getElementById('setAvatar').value.trim()};
     try{
       const r=await fetch(BW_API+'/api/profile',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(payload)});
@@ -1423,7 +1463,7 @@ function bwOpenAccount(name){
   document.getElementById('acct-self-btn').style.display=me?'':'none';
   const mine=(typeof posts!=='undefined'?posts:[]).filter(p=>p.name===name);
   document.getElementById('acct-count').textContent=mine.length;
-  document.getElementById('acct-posts').innerHTML=mine.length?mine.map(p=>'<article class="card post"><div class="pdate">'+esc(p.date||'')+'</div><p style="margin:6px 0 8px;line-height:1.7" data-bwbody="'+p.id+'">'+esc(p.body)+'</p><div class="post-actions"><button class="like" onclick="bwSharePost('+p.id+')">'+(lang==='ja'?'共有':'Share')+'</button><span class="bw-dots-wrap"><button class="like" onclick="bwPostMenu(event,'+p.id+')" aria-label="その他の操作">⋯</button><span class="bw-pop bw-pop-up"></span></span></div></article>').join(''):'<p class="empty-note">'+(lang==='ja'?'この人の投稿は、まだありません。':'No posts by this person yet.')+'</p>';
+  document.getElementById('acct-posts').innerHTML=mine.length?mine.map(p=>'<article class="card post"><div class="pdate">'+esc(p.date||'')+'</div><p style="margin:6px 0 8px;line-height:1.7" data-bwbody="'+p.id+'">'+esc(p.body)+'</p>'+(p.image_url?'<img src="'+esc(p.image_url.indexOf('http')===0?p.image_url:BW_API+p.image_url)+'" alt="" loading="lazy" style="width:100%;border-radius:12px;margin-top:8px">':'')+'<div class="post-actions"><button class="like" onclick="bwSharePost('+p.id+')">'+(lang==='ja'?'共有':'Share')+'</button><span class="bw-dots-wrap"><button class="like" onclick="bwPostMenu(event,'+p.id+')" aria-label="その他の操作">⋯</button><span class="bw-pop bw-pop-up"></span></span></div></article>').join(''):'<p class="empty-note">'+(lang==='ja'?'この人の投稿は、まだありません。':'No posts by this person yet.')+'</p>';
   show('account');
 }
 function bwOpenAccountByPost(id){
