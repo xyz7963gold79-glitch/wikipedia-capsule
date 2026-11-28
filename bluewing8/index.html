@@ -811,7 +811,7 @@ if(_photoInput){ _photoInput.addEventListener('change',()=>{
 function renderProfilePosts(){
   let name=''; try{ name=localStorage.getItem('bw8_name')||''; }catch(e){}
   const logged=!!bwToken()&&!!name;
-  const av=document.getElementById('prof-avatar'); if(av){ let meP=null; try{ meP=logged?bwPeople.find(m=>m.name===name):null; }catch(e){} if(meP&&meP.avatar_url){ av.innerHTML='<img src="'+esc(meP.avatar_url)+'" alt="" style="width:100%;height:100%;object-fit:cover">'; } else { av.textContent=logged?name.charAt(0):'?'; } }
+  const av=document.getElementById('prof-avatar'); if(av){ let _av=''; try{ if(logged&&typeof window.bwMyAvatar==='function') _av=window.bwMyAvatar(name)||''; }catch(e){} if(_av){ av.innerHTML='<img src="'+esc(_av)+'" alt="" style="width:100%;height:100%;object-fit:cover">'; } else { av.textContent=logged?name.charAt(0):'?'; } }
   const nm=document.getElementById('prof-name'); if(nm) nm.textContent=logged?name:(lang==='ja'?'ゲスト':'Guest');
   const sb=document.getElementById('prof-sub'); if(sb) sb.textContent=logged?(lang==='ja'?'ログイン中':'Logged in'):(lang==='ja'?'ログインしていません':'Not logged in');
   const bio=document.getElementById('prof-bio'); if(bio) bio.textContent=logged?(lang==='ja'?'あなたのプロフィールです。あなたの投稿が下に並びます。':'This is your profile. Your posts are listed below.'):(lang==='ja'?'ログインすると、あなたの名前と投稿がここに表示されます。':'Log in to see your name and posts here.');
@@ -1493,6 +1493,7 @@ async function bwLoadMembers(){
   }catch(e){}
 }
 window.bwLoadMembers=bwLoadMembers;
+window.bwMyAvatar=function(nm){ try{ const me=bwPeople.find(m=>m.name===nm); return me?(me.avatar_url||''):''; }catch(e){ return ''; } };
 bwLoadMembers();
 renderPeople();
 /* 写真 */
