@@ -617,14 +617,14 @@ function bwLikeArticle(id,btn){
 }
 window.bwLikeArticle=bwLikeArticle;
 function cardHTML(a){
-  return `<article class="card article-card">${a.thumb?`<img class="card-img" src="${a.thumb}" alt="" loading="lazy">`:``}<div class="meta"><span class="dot"></span><span class="tag" style="${bwTagStyle(a.cat)}">${a.cat}</span><span>${a.date}</span></div><h3 class="title"><a href="#" onclick="openArticle(${a.id});return false;">${a.title}</a></h3><p class="desc">${a.intro}</p>${a.yt?`<div class="yt-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${a.yt}" title="YouTube" loading="lazy" allowfullscreen></iframe></div>`:``}${a.audio?`<audio controls preload="none" src="${a.audio}" style="width:100%"></audio>`:``}<div class="actions"><button class="btn btn-ghost" onclick="bwLikeArticle(${a.id},this)">${lang==='ja'?'いいね':'Like'} <span>${(a.likes||0)+(bwLikedArticles.has(a.id)?1:0)}</span></button><button class="btn btn-fb" onclick="shareArticle(${a.id})">${lang==='ja'?'共有':'Share'}</button></div></article>`;
+  return `<article class="card article-card">${a.thumb?`<img class="card-img" src="${a.thumb}" alt="" loading="lazy">`:``}<div class="meta"><span class="dot"></span><span class="tag" style="${bwTagStyle(a.cat)}">${a.cat}</span><span>${a.date}</span></div><h3 class="title"><a href="#" onclick="openArticle(${a.id});return false;">${a.title}</a></h3><p class="desc">${a.intro}</p>${a.yt?`<div class="yt-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${a.yt}" title="YouTube" loading="lazy" allowfullscreen></iframe></div><p style="margin:6px 0 0"><a href="https://www.youtube.com/watch?v=${a.yt}" target="_blank" rel="noopener">YouTubeで見る</a></p>`:``}${a.audio?`<audio controls preload="none" src="${a.audio}" style="width:100%"></audio>`:``}<div class="actions"><button class="btn btn-ghost" onclick="bwLikeArticle(${a.id},this)">${lang==='ja'?'いいね':'Like'} <span>${(a.likes||0)+(bwLikedArticles.has(a.id)?1:0)}</span></button><button class="btn btn-fb" onclick="shareArticle(${a.id})">${lang==='ja'?'共有':'Share'}</button></div></article>`;
 }
 function renderList(){document.getElementById('list-grid').innerHTML=allArticles().map(cardHTML).join('');}
 function openArticle(id){
   const a=allArticles().find(x=>x.id===id); if(!a) return;
   document.getElementById('art-meta').textContent=a.date+' • '+a.cat;
   document.getElementById('art-title').textContent=a.title;
-  document.getElementById('art-body').innerHTML=a.body?a.body:(a.yt?`<div class="yt-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${a.yt}" title="YouTube" allowfullscreen></iframe></div><p>${a.intro}</p>`:`<p>${a.intro}</p>`);
+  document.getElementById('art-body').innerHTML=a.body?a.body:(a.yt?`<div class="yt-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${a.yt}" title="YouTube" allowfullscreen></iframe></div><p style="margin:6px 0 0"><a href="https://www.youtube.com/watch?v=${a.yt}" target="_blank" rel="noopener">YouTubeで見る</a></p><p>${a.intro}</p>`:`<p>${a.intro}</p>`);
   document.getElementById('art-share').onclick=()=>shareArticle(id);
   show('article');
 }
@@ -724,7 +724,7 @@ function bwYtId(text){
 function bwPostVideoHTML(p){
   const id=bwYtId(p&&p.body);
   if(!id) return '';
-  return `<div class="yt-facade" style="margin-top:10px" onclick="bwPlayPostVideo(this,'${id}')"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div>`;
+  return `<div class="yt-facade" style="margin-top:10px" onclick="bwPlayPostVideo(this,'${id}')"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><p style="margin:6px 0 0"><a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">YouTubeで見る</a></p>`;
 }
 function bwPlayPostVideo(el,yt){
   if(!/^[A-Za-z0-9_-]{11}$/.test(yt||'')) return;
@@ -1599,7 +1599,7 @@ const bwVideoLiked=new Set();
 let bwPlaying=null;
 function renderVideos(){
   const el=document.getElementById('video-list'); if(!el) return;
-  el.innerHTML='<h3 style="margin:18px 0 4px;font-size:1.05rem;color:#102fbf">'+(lang==='ja'?'作品を見る':'Watch the works')+'</h3><p style="color:var(--muted);font-size:.9rem;margin:0 0 12px">'+(lang==='ja'?'岡崎幸雄の作品です。絵を押すと再生します。':'Works by Yukio Okazaki. Tap a picture to play.')+'</p>'+bwVideos.map(v=>'<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayMusic(this,\''+v.yt+'\')"><img src="https://i.ytimg.com/vi/'+v.yt+'/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">'+esc(v.title)+'</div><p style="margin:4px 0 8px">'+esc(v.desc)+'</p></div>').join('');
+  el.innerHTML='<h3 style="margin:18px 0 4px;font-size:1.05rem;color:#102fbf">'+(lang==='ja'?'作品を見る':'Watch the works')+'</h3><p style="color:var(--muted);font-size:.9rem;margin:0 0 12px">'+(lang==='ja'?'岡崎幸雄の作品です。絵を押すと再生します。':'Works by Yukio Okazaki. Tap a picture to play.')+'</p>'+bwVideos.map(v=>'<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayMusic(this,\''+v.yt+'\')"><img src="https://i.ytimg.com/vi/'+v.yt+'/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">'+esc(v.title)+'</div><p style="margin:4px 0 8px">'+esc(v.desc)+'</p><p style="margin:0 0 4px"><a href="https://www.youtube.com/watch?v='+v.yt+'" target="_blank" rel="noopener">YouTubeで見る</a></p></div>').join('');
 }
 
 const bwCms=[
@@ -1623,7 +1623,7 @@ const bwMusicGroups=[
 ];
 function bwMusicCard(m){
   if(m.link){ return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><a class="yt-facade" href="https://www.youtube.com/watch?v=${m.yt}" target="_blank" rel="noopener" style="display:block;text-decoration:none"><img src="https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></a><div class="ptitle" style="font-size:1.05rem">${esc(m.title)}</div><p style="margin:4px 0 8px">${esc(m.intro)}</p><p style="margin:0 0 4px"><a href="https://www.youtube.com/watch?v=${m.yt}" target="_blank" rel="noopener">YouTubeで聴く</a></p></div>`; }
-  return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayMusic(this,'${m.yt}')"><img src="https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">${esc(m.title)}</div><p style="margin:4px 0 8px">${esc(m.intro)}</p></div>`;
+  return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayMusic(this,'${m.yt}')"><img src="https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">${esc(m.title)}</div><p style="margin:4px 0 8px">${esc(m.intro)}</p><p style="margin:0 0 4px"><a href="https://www.youtube.com/watch?v=${m.yt}" target="_blank" rel="noopener">YouTubeで聴く</a></p></div>`;
 }
 function bwMusicHTML(){
   return bwMusicGroups.map(g=>{
@@ -1777,7 +1777,7 @@ const movieItems={
 };
 function bwMovieCard(m){
   const badge=m.limited?'<span style="display:inline-block;background:#dc2626;color:#fff;font-size:.72rem;font-weight:700;border-radius:999px;padding:2px 8px;margin-left:8px;vertical-align:middle">期間限定</span>':'';
-  return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayMovie(this,'${m.yt}')"><img src="https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">${esc(m.title)}${badge}</div><p style="margin:4px 0 8px">${esc(m.intro)}</p></div>`;
+  return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayMovie(this,'${m.yt}')"><img src="https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">${esc(m.title)}${badge}</div><p style="margin:4px 0 8px">${esc(m.intro)}</p><p style="margin:0 0 4px"><a href="https://www.youtube.com/watch?v=${m.yt}" target="_blank" rel="noopener">YouTubeで見る</a></p></div>`;
 }
 function bwClassicCard(m){
   return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayClassic(this,'${m.aid}')"><img src="https://archive.org/services/img/${m.aid}" alt="" loading="lazy" onerror="this.style.display='none'"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">${esc(m.title)}</div><p style="margin:4px 0 8px">${esc(m.intro)}</p></div>`;
@@ -2006,7 +2006,7 @@ const mediaSections=[
 ];
 function bwOfficialCard(m){
   const badge=m.live?`<span style="display:inline-block;background:#dc2626;color:#fff;font-size:.72rem;font-weight:700;border-radius:999px;padding:2px 8px;margin-left:8px;vertical-align:middle">${lang==='ja'?'ライブ':'LIVE'}</span>`:'';
-  return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayOfficial(this,'${m.yt}')"><img src="https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">${esc(m.title)}${badge}</div><p style="margin:4px 0 8px">${esc(m.intro)}</p></div>`;
+  return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayOfficial(this,'${m.yt}')"><img src="https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">${esc(m.title)}${badge}</div><p style="margin:4px 0 8px">${esc(m.intro)}</p><p style="margin:0 0 4px"><a href="https://www.youtube.com/watch?v=${m.yt}" target="_blank" rel="noopener">YouTubeで見る</a></p></div>`;
 }
 function bwPlayOfficial(el,yt){
   el.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=1" title="YouTube" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
