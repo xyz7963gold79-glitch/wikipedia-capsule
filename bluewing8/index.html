@@ -150,6 +150,8 @@
     nav{overflow-x:auto;justify-content:flex-start}
     nav button{flex:0 0 auto;padding:10px 14px}
   }
+.bw-pick-btn{background:#fff;border:2px solid var(--blue);color:var(--blue);border-radius:10px;padding:9px 16px;font-weight:700;cursor:pointer;font-size:.95rem}
+.bw-pick-clear{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;text-decoration:underline;margin-top:6px;padding:2px}
 </style>
 </head>
 <body>
@@ -217,7 +219,7 @@
       <input id="nameInput" type="text" maxlength="24" placeholder="なまえ（例: たろう）"></div>
       <div class="field"><div class="label" data-ja="本文" data-en="Message">本文</div>
       <textarea id="bodyInput" maxlength="200" placeholder="いま何してる？ 水のことを書いてみよう"></textarea></div>
-      <div class="field"><div class="label" data-ja="写真" data-en="Photo">写真</div><input id="photoInput" type="file" accept="image/*"><img id="photoPreview" alt="" style="display:none;width:100%;border-radius:12px;margin-top:8px"></div>
+      <div class="field"><div class="label" data-ja="写真" data-en="Photo">写真</div><button type="button" class="bw-pick-btn" id="photoPickBtn" data-ja="写真を選ぶ" data-en="Choose a photo">写真を選ぶ</button><input id="photoInput" type="file" accept="image/*" style="display:none"><img id="photoPreview" alt="" style="display:none;width:100%;border-radius:12px;margin-top:8px"><button type="button" id="photoClear" class="bw-pick-clear" style="display:none" data-ja="写真を外す" data-en="Remove photo">写真を外す</button></div>
       <div class="actions"><button id="postBtn" class="btn btn-blue" data-ja="投稿する" data-en="Post">投稿する</button>
       <span class="hint" data-ja="タイムラインの一番上に出ます（このページ内だけ）" data-en="Shows at the top of timeline (on this page only)">タイムラインの一番上に出ます（このページ内だけ）</span></div>
     </div>
@@ -389,7 +391,6 @@
         <div class="field"><div class="label" data-ja="パスワード" data-en="Password">パスワード</div>
         <input id="regPass" type="password" placeholder="8文字以上"></div>
         <div class="row2">
-          <div class="field"><div class="label" data-ja="写真を選ぶ" data-en="Choose a photo">写真を選ぶ</div><input id="setAvatarFile" type="file" accept="image/*"><p style="font-size:.8rem;color:var(--muted);margin:4px 0 0" data-ja="スマホやパソコンの中の写真を選ぶと、そのままプロフィール写真になります。" data-en="Choose a photo from your device to use it as your profile photo.">スマホやパソコンの中の写真を選ぶと、そのままプロフィール写真になります。</p></div>
       <div class="field"><div class="label" data-ja="国" data-en="Country">国</div>
           <select id="regCountry"><option value="JP">日本</option><option value="BR">ブラジル</option><option value="US">アメリカ</option><option value="KE">ケニア</option><option value="IN">インド</option></select></div>
           <div class="field"><div class="label" data-ja="言語" data-en="Language">言語</div>
@@ -419,7 +420,7 @@
       <div class="field"><div class="label" data-ja="自己紹介" data-en="Bio">自己紹介</div><textarea id="setBio" placeholder="自己紹介を書く"></textarea></div>
       <div class="field"><div class="label" data-ja="写真のアドレス" data-en="Photo URL">写真のアドレス</div><input id="setAvatar" type="url" placeholder="https://..."><p style="font-size:.8rem;color:var(--muted);margin:4px 0 0" data-ja="ウェブにある写真のアドレスを入れると、アカウント画面に、あなたの写真が出ます。" data-en="Paste the address of a photo on the web, and it will appear on your account page.">ウェブにある写真のアドレスを入れると、アカウント画面に、あなたの写真が出ます。</p></div>
       <div class="row2">
-        <div class="field"><div class="label" data-ja="写真を選ぶ" data-en="Choose a photo">写真を選ぶ</div><input id="setAvatarFile" type="file" accept="image/*"><p style="font-size:.8rem;color:var(--muted);margin:4px 0 0" data-ja="スマホやパソコンの中の写真を選ぶと、そのままプロフィール写真になります。" data-en="Choose a photo from your device to use it as your profile photo.">スマホやパソコンの中の写真を選ぶと、そのままプロフィール写真になります。</p></div>
+        <div class="field"><div class="label" data-ja="写真を選ぶ" data-en="Choose a photo">写真を選ぶ</div><button type="button" class="bw-pick-btn" id="setAvatarPickBtn" data-ja="写真を選ぶ" data-en="Choose a photo">写真を選ぶ</button><input id="setAvatarFile" type="file" accept="image/*" style="display:none"><span id="setAvatarFileName" style="margin-left:8px;font-size:.85rem;color:var(--muted)"></span><p style="font-size:.8rem;color:var(--muted);margin:4px 0 0" data-ja="スマホやパソコンの中の写真を選ぶと、そのままプロフィール写真になります。" data-en="Choose a photo from your device to use it as your profile photo.">スマホやパソコンの中の写真を選ぶと、そのままプロフィール写真になります。</p></div>
       <div class="field"><div class="label" data-ja="国" data-en="Country">国</div><select id="setCountry"><option selected>日本</option><option>ブラジル</option><option>アメリカ</option><option>ケニア</option></select></div>
         <div class="field"><div class="label" data-ja="言語" data-en="Language">言語</div><select id="setLang"><option selected>日本語</option><option>Português / 日本語</option><option>English</option></select></div>
       </div>
@@ -796,9 +797,14 @@ async function bwUploadPhoto(file){
 }
 window.bwUploadPhoto=bwUploadPhoto;
 const _photoInput=document.getElementById('photoInput');
+const _pickBtn=document.getElementById('photoPickBtn'); if(_pickBtn&&_photoInput){ _pickBtn.addEventListener('click',()=>_photoInput.click()); }
+const _photoClear=document.getElementById('photoClear');
+if(_photoClear&&_photoInput){ _photoClear.addEventListener('click',()=>{ _photoInput.value=''; const pv=document.getElementById('photoPreview'); if(pv){ pv.style.display='none'; pv.src=''; } _photoClear.style.display='none'; }); }
+const _sapb=document.getElementById('setAvatarPickBtn'); const _saf0=document.getElementById('setAvatarFile');
+if(_sapb&&_saf0){ _sapb.addEventListener('click',()=>_saf0.click()); _saf0.addEventListener('change',()=>{ const nm=document.getElementById('setAvatarFileName'); if(nm){ nm.textContent=(_saf0.files&&_saf0.files[0])?_saf0.files[0].name:''; } }); }
 if(_photoInput){ _photoInput.addEventListener('change',()=>{
   const f=_photoInput.files&&_photoInput.files[0]; const pv=document.getElementById('photoPreview');
-  if(f&&pv){ pv.src=URL.createObjectURL(f); pv.style.display='block'; } else if(pv){ pv.style.display='none'; }
+  if(f&&pv){ pv.src=URL.createObjectURL(f); pv.style.display='block'; const pc=document.getElementById('photoClear'); if(pc) pc.style.display='inline-block'; } else if(pv){ pv.style.display='none'; const pc2=document.getElementById('photoClear'); if(pc2) pc2.style.display='none'; }
 }); }
 
 /* プロフィール */
