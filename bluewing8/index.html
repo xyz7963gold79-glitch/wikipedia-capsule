@@ -1583,7 +1583,7 @@ const bwMusicGroups=[
  {nameJa:'ガンダムの曲',nameEn:'Gundam Songs',ids:[5204,5206,5207,5208,5209,5211],extra:[]},
  {nameJa:'マクロスFの曲',nameEn:'Macross Frontier Songs',ids:[5216],extra:[]},
  {nameJa:'一般的な曲',nameEn:'General Songs',ids:[],extra:[],subs:[{nameJa:'日本の愛唱歌・スタンダード',nameEn:'Japanese Standards',ids:[5220,5221,5223,5224,5227]},{nameJa:'世界の名曲',nameEn:'World Classics',ids:[5228,5229,5231,5232,5233]},{nameJa:'フォークとロックの名曲',nameEn:'Folk & Rock Classics',ids:[5234,5239,5240,5241,5246,5247]}]},
- {nameJa:'名作アニメの曲',nameEn:'Classic Anime Songs',ids:[],extra:[{yt:'7taxv3NsKb4',title:'宇宙戦艦ヤマト ／ ささきいさお',intro:'公式の音源動画です。'}]}
+ {nameJa:'名作アニメの曲',nameEn:'Classic Anime Songs',ids:[],extra:[{yt:'7taxv3NsKb4',title:'宇宙戦艦ヤマト ／ ささきいさお',intro:'公式の音源動画です。'},{yt:'0nwWym1y1Pk',title:'Walking Tour ／ 黒石ひとみ',intro:'黒石ひとみさんの公式動画です。感動アニメ「WALKING TOUR」の曲です。'}]}
 ];
 function bwMusicCard(m){
   return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="yt-facade" onclick="bwPlayMusic(this,'${m.yt}')"><img src="https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg" alt="" loading="lazy"><div class="play">▶</div></div><div class="ptitle" style="font-size:1.05rem">${esc(m.title)}</div><p style="margin:4px 0 8px">${esc(m.intro)}</p></div>`;
