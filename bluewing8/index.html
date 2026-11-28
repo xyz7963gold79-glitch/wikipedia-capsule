@@ -261,6 +261,29 @@
     <div class="timeline" id="profile-posts"></div>
   </section>
 
+  <!-- アカウント画面 -->
+  <section id="view-account" class="view">
+    <article class="card profile">
+      <div class="ptop">
+        <div class="pavatar" id="acct-avatar">?</div>
+        <div>
+          <h2 class="pname2" id="acct-name">アカウント</h2>
+          <div class="psub" id="acct-sub"></div>
+        </div>
+      </div>
+      <p class="bio" id="acct-bio"></p>
+      <div class="stats">
+        <div class="stat"><b id="acct-count">0</b><span data-ja="この人の投稿" data-en="Posts by this person">この人の投稿</span></div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" id="acct-back" data-ja="← メンバーへ戻る" data-en="← Back to members">← メンバーへ戻る</button>
+        <button class="btn btn-blue" id="acct-self-btn" style="display:none;margin-left:8px" data-ja="自分のプロフィール" data-en="My profile">自分のプロフィール</button>
+      </div>
+    </article>
+    <div class="section-head" style="margin-top:22px"><h2 data-ja="この人の投稿" data-en="Posts by this person">この人の投稿</h2></div>
+    <div class="timeline" id="acct-posts"></div>
+  </section>
+
   <!-- 記事 -->
   <section id="view-article" class="view">
     <article class="card">
@@ -525,7 +548,7 @@ let posts=[];
 const profilePosts=[];
 let lang='ja';
 let isFollowing=false;
-const views={};['list','timeline','search','profile','article','comments','notifications','pages','corners','login','messages','settings','people','photos','events','videos'].forEach(n=>views[n]=document.getElementById('view-'+n));
+const views={};['list','timeline','search','profile','article','comments','notifications','pages','corners','login','messages','settings','people','photos','events','videos','account'].forEach(n=>views[n]=document.getElementById('view-'+n));
 const tabs={};['list','timeline','search','profile','pages','corners','messages','people','photos','events','videos'].forEach(n=>tabs[n]=document.getElementById('tab-'+n));
 function show(name){
   Object.entries(views).forEach(([k,v])=>v.classList.toggle('show',k===name));
@@ -581,7 +604,7 @@ window.bwSharePost=bwSharePost;
 const $name=document.getElementById('nameInput'),$body=document.getElementById('bodyInput');
 function postHTML(p){
   const initial=esc(p.name.trim().charAt(0)||'？').toUpperCase();
-  return `<article class="card post"><div class="who"><div class="avatar">${initial}</div><div><div class="pname">${esc(p.name)}</div><div class="pdate">${esc(p.date)}</div></div></div><div class="pbody">${esc(p.body)}</div>${bwPostVideoHTML(p)}<div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="bwSharePost(${p.id})">${lang==='ja'?'共有':'Share'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'非表示':'Hide'}</button></div></article>`;
+  return `<article class="card post"><div class="who"><div class="avatar">${initial}</div><div><div class="pname" style="cursor:pointer;text-decoration:underline" onclick="bwOpenAccountByPost(${p.id})">${esc(p.name)}</div><div class="pdate">${esc(p.date)}</div></div></div><div class="pbody">${esc(p.body)}</div>${bwPostVideoHTML(p)}<div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="bwSharePost(${p.id})">${lang==='ja'?'共有':'Share'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'非表示':'Hide'}</button></div></article>`;
 }
 /* 投稿内YouTubeリンクの動画化：本文から動画IDを厳密に検証して取り出し、ファサードを出す */
 function bwYtId(text){
@@ -1296,13 +1319,36 @@ function renderPeople(){
      <div class="who"><div class="avatar">${m.initial}</div><div><div class="pname">${esc(m.name)}</div><div class="pdate">${esc(m.country)}</div></div></div>
      <p style="margin:8px 0 10px">${esc(m.bio)}</p>
      <span class="tag" style="background:#ffedd5;color:#9a3412">${lang==='ja'?'運営':'Operator'}</span>
+     <div style="margin-top:10px"><button class="btn btn-blue" data-acct="${esc(m.name)}">${lang==='ja'?'アカウント画面':'Account page'}</button></div>
    </div>`).join(''):'<p class="empty-note">見つかりませんでした。</p>';
   document.querySelectorAll('[data-follow-person]').forEach(b=>b.addEventListener('click',()=>{
     const id=Number(b.getAttribute('data-follow-person'));
     if(bwFollowing.has(id)) bwFollowing.delete(id); else bwFollowing.add(id);
     renderPeople();
   }));
+  document.querySelectorAll('[data-acct]').forEach(b=>b.addEventListener('click',()=>bwOpenAccount(b.getAttribute('data-acct'))));
 }
+function bwOpenAccount(name){
+  const person=bwPeople.find(m=>m.name===name);
+  let myName=''; try{ myName=localStorage.getItem('bw8_name')||''; }catch(e){}
+  const me=!!myName&&myName===name;
+  document.getElementById('acct-avatar').textContent=person?person.initial:(name?name.charAt(0):'?');
+  document.getElementById('acct-name').textContent=name||'';
+  document.getElementById('acct-sub').textContent=(person?person.country:(lang==='ja'?'日本':''))+(me?(lang==='ja'?' ・ あなた':' ・ You'):(lang==='ja'?' ・ メンバー':' ・ Member'));
+  document.getElementById('acct-bio').textContent=person?person.bio:(lang==='ja'?'ブルーウィング8のメンバーです。':'A member of BlueWing8.');
+  document.getElementById('acct-self-btn').style.display=me?'':'none';
+  const mine=(typeof posts!=='undefined'?posts:[]).filter(p=>p.name===name);
+  document.getElementById('acct-count').textContent=mine.length;
+  document.getElementById('acct-posts').innerHTML=mine.length?mine.map(p=>'<article class="card post"><div class="pdate">'+esc(p.date||'')+'</div><p style="margin:6px 0 8px;line-height:1.7">'+esc(p.body)+'</p><div class="post-actions"><button class="like" onclick="bwSharePost('+p.id+')">'+(lang==='ja'?'共有':'Share')+'</button></div></article>').join(''):'<p class="empty-note">'+(lang==='ja'?'この人の投稿は、まだありません。':'No posts by this person yet.')+'</p>';
+  show('account');
+}
+function bwOpenAccountByPost(id){
+  const p=(typeof posts!=='undefined'?posts:[]).find(x=>x.id===id)||(typeof profilePosts!=='undefined'?profilePosts:[]).find(x=>x.id===id);
+  if(p&&p.name) bwOpenAccount(p.name);
+}
+window.bwOpenAccount=bwOpenAccount; window.bwOpenAccountByPost=bwOpenAccountByPost;
+document.getElementById('acct-back').addEventListener('click',()=>show('people'));
+document.getElementById('acct-self-btn').addEventListener('click',()=>show('profile'));
 document.getElementById('people-q').addEventListener('input',renderPeople);
 renderPeople();
 /* 写真 */
