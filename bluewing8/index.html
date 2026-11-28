@@ -172,7 +172,7 @@
   <!-- ニュース一覧 -->
   <section id="view-list" class="view show">
     <div class="card" style="padding:0;overflow:hidden;margin-bottom:14px">
-      <video autoplay muted loop playsinline preload="metadata" poster="https://upload.wikimedia.org/wikipedia/commons/a/a8/NASA-Apollo8-Dec24-Earthrise.jpg" style="width:100%;display:block;aspect-ratio:16/9;object-fit:cover;background:#000"><source src="https://upload.wikimedia.org/wikipedia/commons/9/94/DSCOVR_EPIC_Earth_Rotation.webm" type="video/webm"></video>
+      <video id="bw-hero-video" autoplay muted loop playsinline preload="metadata" poster="https://upload.wikimedia.org/wikipedia/commons/a/a8/NASA-Apollo8-Dec24-Earthrise.jpg" style="width:100%;display:block;aspect-ratio:16/9;object-fit:cover;background:#000"><source src="https://upload.wikimedia.org/wikipedia/commons/9/94/DSCOVR_EPIC_Earth_Rotation.webm" type="video/webm"></video>
       <div style="padding:10px 14px"><div class="ptitle" style="font-size:1.05rem" data-ja="扉の映像：回る地球" data-en="Entrance video: the rotating Earth">扉の映像：回る地球</div><p style="color:var(--muted);font-size:.88rem;margin:2px 0 0" data-ja="NASAの衛星DSCOVRが撮った地球の映像です（ウィキメディア・コモンズ）。" data-en="Earth filmed by NASA's DSCOVR satellite (Wikimedia Commons).">NASAの衛星DSCOVRが撮った地球の映像です（ウィキメディア・コモンズ）。</p></div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:2px 0 10px">
@@ -1897,6 +1897,7 @@ document.getElementById('btn-en').addEventListener('click',()=>setLang('en'));
 setLang('ja');
 Object.entries(tabs).forEach(([k,v])=>v.addEventListener('click',()=>show(k)));
 document.getElementById('art-back').addEventListener('click',()=>show('list'));
+const bwHeroVideo=document.getElementById('bw-hero-video'); if(bwHeroVideo){ bwHeroVideo.playbackRate=0.35; }
 /* 本物のニュース（ウィキメディア自動配信） */
 let newsLang='ja';
 function gtUrl(u,tl){ try{ const url=new URL(u); const host=url.hostname.replace(/\./g,'-')+'.translate.goog'; return 'https://'+host+url.pathname+'?_x_tr_sl=auto&_x_tr_tl='+tl+'&_x_tr_hl='+tl; }catch(e){ return 'https://translate.google.com/translate?sl=auto&tl='+tl+'&u='+encodeURIComponent(u); } }
