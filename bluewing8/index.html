@@ -171,6 +171,10 @@
 <main>
   <!-- ニュース一覧 -->
   <section id="view-list" class="view show">
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:14px">
+      <video autoplay muted loop playsinline preload="metadata" poster="https://upload.wikimedia.org/wikipedia/commons/a/a8/NASA-Apollo8-Dec24-Earthrise.jpg" style="width:100%;display:block;aspect-ratio:16/9;object-fit:cover;background:#000"><source src="https://upload.wikimedia.org/wikipedia/commons/9/94/DSCOVR_EPIC_Earth_Rotation.webm" type="video/webm"></video>
+      <div style="padding:10px 14px"><div class="ptitle" style="font-size:1.05rem" data-ja="扉の映像：回る地球" data-en="Entrance video: the rotating Earth">扉の映像：回る地球</div><p style="color:var(--muted);font-size:.88rem;margin:2px 0 0" data-ja="NASAの衛星DSCOVRが撮った地球の映像です（ウィキメディア・コモンズ）。" data-en="Earth filmed by NASA's DSCOVR satellite (Wikimedia Commons).">NASAの衛星DSCOVRが撮った地球の映像です（ウィキメディア・コモンズ）。</p></div>
+    </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:2px 0 10px">
 <span style="font-size:.85rem;color:var(--muted)">🌐 あなたの言語 / Your language</span>
 <select id="newsLang" style="padding:8px 10px;border-radius:10px;border:1px solid #c9d8ff;font-family:inherit;font-size:.9rem">
@@ -205,7 +209,7 @@
     <div class="card composer">
       <h2 data-ja="投稿を書く" data-en="Write a post">投稿を書く</h2>
       <div class="field"><div class="label" data-ja="なまえ" data-en="Name">なまえ</div>
-      <input id="nameInput" type="text" maxlength="24" placeholder="なまえ（例: サラ）"></div>
+      <input id="nameInput" type="text" maxlength="24" placeholder="なまえ（例: たろう）"></div>
       <div class="field"><div class="label" data-ja="本文" data-en="Message">本文</div>
       <textarea id="bodyInput" maxlength="200" placeholder="いま何してる？ 水のことを書いてみよう"></textarea></div>
       <div class="actions"><button id="postBtn" class="btn btn-blue" data-ja="投稿する" data-en="Post">投稿する</button>
@@ -263,7 +267,7 @@
       <div class="meta"><span class="dot"></span><span id="art-meta"></span></div>
       <h2 class="article-title" id="art-title"></h2>
       <div class="actions">
-        <button class="btn btn-fb" id="art-share" data-ja="Facebookで共有" data-en="Share on Facebook">Facebookで共有</button>
+        <button class="btn btn-fb" id="art-share" data-ja="共有" data-en="Share">共有</button>
         <button class="btn btn-ghost" id="art-back" data-ja="一覧に戻る" data-en="Back to list">一覧に戻る</button>
       </div>
       <div class="content" id="art-body"></div>
@@ -350,7 +354,7 @@
       <div class="card" id="regCard" style="display:none">
         <h2 style="margin:0 0 4px;font-size:1.25rem" data-ja="新しく登録する" data-en="Create account">新しく登録する</h2>
         <div class="field"><div class="label" data-ja="なまえ" data-en="Name">なまえ</div>
-        <input id="regName" type="text" placeholder="例: サラ"></div>
+        <input id="regName" type="text" placeholder="例: たろう"></div>
         <div class="field"><div class="label" data-ja="メールアドレス" data-en="Email">メールアドレス</div>
         <input id="regEmail" type="email" placeholder="例: sara@example.com"></div>
         <div class="field"><div class="label" data-ja="パスワード" data-en="Password">パスワード</div>
@@ -372,12 +376,8 @@
   <!-- メッセージ -->
   <section id="view-messages" class="view">
     <article class="card">
-      <div class="who"><div class="avatar">S</div><div><div class="pname">サラ</div><div class="pdate" data-ja="オンライン • ブラジル" data-en="Online • Brazil">オンライン • ブラジル</div></div></div>
-      <div id="msg-chat" class="chat" style="margin-top:14px"></div>
-      <div class="msg-composer">
-        <textarea id="msg-input" rows="1" placeholder="メッセージを書く..."></textarea>
-        <button id="msg-send" class="btn btn-blue" data-ja="送る" data-en="Send">送る</button>
-      </div>
+      <h2 style="margin:0 0 4px;font-size:1.2rem" data-ja="メッセージ" data-en="Messages">メッセージ</h2>
+      <p style="color:var(--muted);font-size:.95rem;margin:0" data-ja="個別のメッセージは、準備中です。みんなで話す場所は、タイムラインとコーナーです。困った事は、画面の下の「お問い合わせ・削除の依頼」から知らせてください。" data-en="Direct messages are being prepared. For now, please talk with everyone on the Timeline and in the Corners. For problems, use the contact window at the bottom of the screen.">個別のメッセージは、準備中です。みんなで話す場所は、タイムラインとコーナーです。困った事は、画面の下の「お問い合わせ・削除の依頼」から知らせてください。</p>
     </article>
   </section>
 
@@ -386,7 +386,7 @@
     <article class="card">
       <h2 style="margin:0 0 4px;font-size:1.15rem" data-ja="プロフィールを直す" data-en="Edit profile">プロフィールを直す</h2>
       <div class="field"><div class="label" data-ja="なまえ" data-en="Name">なまえ</div><input id="setName" type="text" value=""></div>
-      <div class="field"><div class="label" data-ja="自己紹介" data-en="Bio">自己紹介</div><textarea id="setBio">ウィキペディアで世界の教育と平和について学んでいます。対話と音楽で世界をつなげたいです。</textarea></div>
+      <div class="field"><div class="label" data-ja="自己紹介" data-en="Bio">自己紹介</div><textarea id="setBio" placeholder="自己紹介を書く"></textarea></div>
       <div class="row2">
         <div class="field"><div class="label" data-ja="国" data-en="Country">国</div><select id="setCountry"><option>日本</option><option selected>ブラジル</option><option>アメリカ</option><option>ケニア</option></select></div>
         <div class="field"><div class="label" data-ja="言語" data-en="Language">言語</div><select id="setLang"><option>日本語</option><option selected>Português / 日本語</option><option>English</option></select></div>
@@ -418,6 +418,7 @@
       <p style="color:var(--muted);font-size:.9rem;margin:0 0 12px" data-ja="やさしい言葉で、世界とつながる" data-en="Connect with the world, gently">やさしい言葉で、世界とつながる</p>
       <div class="field" style="margin-top:0"><input id="people-q" type="search" data-ph-ja="名前で探す" data-ph-en="Search by name" placeholder="名前で探す" style="width:100%;font-size:1rem;padding:12px 14px;border-radius:16px;border:2px solid #c9d8ff;background:#fbfdff;font-family:inherit"></div>
       <div id="people-list" style="margin-top:14px"></div>
+      <p style="color:var(--muted);font-size:.88rem;margin-top:14px" data-ja="メンバーは、登録した方が増えると、ここに並びます。" data-en="Members will appear here as more people register.">メンバーは、登録した方が増えると、ここに並びます。</p>
     </article>
   </section>
 
@@ -542,8 +543,16 @@ function bwTagStyle(cat){
   if(/国際|政治|経済|世界|日本|ニュース|World|News|Japan/.test(c)) return 'background:#dbeafe;color:#1e40af';
   return '';
 }
+const bwLikedArticles=new Set();
+function bwLikeArticle(id,btn){
+  if(bwLikedArticles.has(id)) bwLikedArticles.delete(id); else bwLikedArticles.add(id);
+  const a=allArticles().find(x=>x.id===id); const base=(a&&a.likes)||0;
+  const span=btn.querySelector('span'); if(span) span.textContent=base+(bwLikedArticles.has(id)?1:0);
+  btn.style.background=bwLikedArticles.has(id)?'#dbeafe':'';
+}
+window.bwLikeArticle=bwLikeArticle;
 function cardHTML(a){
-  return `<article class="card article-card">${a.thumb?`<img class="card-img" src="${a.thumb}" alt="" loading="lazy">`:``}<div class="meta"><span class="dot"></span><span class="tag" style="${bwTagStyle(a.cat)}">${a.cat}</span><span>${a.date}</span></div><h3 class="title"><a href="#" onclick="openArticle(${a.id});return false;">${a.title}</a></h3><p class="desc">${a.intro}</p>${a.yt?`<div class="yt-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${a.yt}" title="YouTube" loading="lazy" allowfullscreen></iframe></div>`:``}${a.audio?`<audio controls preload="none" src="${a.audio}" style="width:100%"></audio>`:``}<div class="actions"><button class="btn btn-fb" onclick="shareArticle(${a.id})">${lang==='ja'?'Facebookで共有':'Share on Facebook'}</button></div></article>`;
+  return `<article class="card article-card">${a.thumb?`<img class="card-img" src="${a.thumb}" alt="" loading="lazy">`:``}<div class="meta"><span class="dot"></span><span class="tag" style="${bwTagStyle(a.cat)}">${a.cat}</span><span>${a.date}</span></div><h3 class="title"><a href="#" onclick="openArticle(${a.id});return false;">${a.title}</a></h3><p class="desc">${a.intro}</p>${a.yt?`<div class="yt-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${a.yt}" title="YouTube" loading="lazy" allowfullscreen></iframe></div>`:``}${a.audio?`<audio controls preload="none" src="${a.audio}" style="width:100%"></audio>`:``}<div class="actions"><button class="btn btn-ghost" onclick="bwLikeArticle(${a.id},this)">${lang==='ja'?'いいね':'Like'} <span>${(a.likes||0)+(bwLikedArticles.has(a.id)?1:0)}</span></button><button class="btn btn-fb" onclick="shareArticle(${a.id})">${lang==='ja'?'共有':'Share'}</button></div></article>`;
 }
 function renderList(){document.getElementById('list-grid').innerHTML=allArticles().map(cardHTML).join('');}
 function openArticle(id){
@@ -557,13 +566,22 @@ function openArticle(id){
 function shareArticle(id){
   const a=allArticles().find(x=>x.id===id); if(!a) return;
   const url=location.href.split('#')[0]+'#'+encodeURIComponent(a.title);
-  window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url)+'&quote='+encodeURIComponent(a.title+' - ブルーウィング8'),'_blank','width=600,height=520');
+  const text=a.title+' - ブルーウィング8';
+  if(navigator.share){ navigator.share({title:text,text:text,url:url}).catch(()=>{}); return; }
+  window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url)+'&quote='+encodeURIComponent(text),'_blank','width=600,height=520');
 }
+function bwSharePost(id){
+  const p=(typeof posts!=='undefined'?posts:[]).find(x=>x.id===id)||(typeof profilePosts!=='undefined'?profilePosts:[]).find(x=>x.id===id); if(!p) return;
+  const text=(p.body||'')+' - ブルーウィング8';
+  if(navigator.share){ navigator.share({text:text}).catch(()=>{}); return; }
+  if(navigator.clipboard){ navigator.clipboard.writeText(text).then(()=>alert(lang==='ja'?'共有の文をコピーしました。':'Copied for sharing.')); }
+}
+window.bwSharePost=bwSharePost;
 /* タイムライン */
 const $name=document.getElementById('nameInput'),$body=document.getElementById('bodyInput');
 function postHTML(p){
   const initial=esc(p.name.trim().charAt(0)||'？').toUpperCase();
-  return `<article class="card post"><div class="who"><div class="avatar">${initial}</div><div><div class="pname">${esc(p.name)}</div><div class="pdate">${esc(p.date)}</div></div></div><div class="pbody">${esc(p.body)}</div>${bwPostVideoHTML(p)}<div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'非表示':'Hide'}</button></div></article>`;
+  return `<article class="card post"><div class="who"><div class="avatar">${initial}</div><div><div class="pname">${esc(p.name)}</div><div class="pdate">${esc(p.date)}</div></div></div><div class="pbody">${esc(p.body)}</div>${bwPostVideoHTML(p)}<div class="post-actions"><button class="like ${p.liked?'active':''}" onclick="toggleLike(${p.id})">${lang==='ja'?'いいね':'Like'} <span>${p.likes}</span></button><button class="like" onclick="openComments(${p.id})">${lang==='ja'?'コメント':'Comments'}</button><button class="like" onclick="bwSharePost(${p.id})">${lang==='ja'?'共有':'Share'}</button><button class="like" onclick="reportPost(${p.id})">${lang==='ja'?'非表示':'Hide'}</button></div></article>`;
 }
 /* 投稿内YouTubeリンクの動画化：本文から動画IDを厳密に検証して取り出し、ファサードを出す */
 function bwYtId(text){
@@ -668,7 +686,7 @@ function renderProfilePosts(){
   const el=document.getElementById('profile-posts'); if(!el) return;
   if(!logged){ el.innerHTML='<article class="card post"><p style="line-height:1.8">'+(lang==='ja'?'ログインすると、あなたの投稿がここに表示されます。':'Log in to see your posts here.')+'</p></article>'; return; }
   if(!mine.length){ el.innerHTML='<article class="card post"><p style="line-height:1.8">'+(lang==='ja'?'まだ投稿がありません。':'No posts yet.')+'</p></article>'; return; }
-  el.innerHTML=mine.map(p=>'<article class="card post"><div class="pdate">'+esc(p.date)+'</div><div class="pbody">'+esc(p.body)+'</div><div class="post-actions"><button class="like '+(p.liked?'active':'')+'" onclick="toggleLike('+p.id+')">'+(lang==='ja'?'いいね':'Like')+' <span>'+p.likes+'</span></button><button class="like" onclick="openComments('+p.id+')">'+(lang==='ja'?'コメント':'Comments')+'</button><button class="like" onclick="reportPost('+p.id+')">'+(lang==='ja'?'非表示':'Hide')+'</button></div></article>').join('');
+  el.innerHTML=mine.map(p=>'<article class="card post"><div class="pdate">'+esc(p.date)+'</div><div class="pbody">'+esc(p.body)+'</div><div class="post-actions"><button class="like '+(p.liked?'active':'')+'" onclick="toggleLike('+p.id+')">'+(lang==='ja'?'いいね':'Like')+' <span>'+p.likes+'</span></button><button class="like" onclick="openComments('+p.id+')">'+(lang==='ja'?'コメント':'Comments')+'</button><button class="like" onclick="bwSharePost('+p.id+')">'+(lang==='ja'?'共有':'Share')+'</button><button class="like" onclick="reportPost('+p.id+')">'+(lang==='ja'?'非表示':'Hide')+'</button></div></article>').join('');
 }
 
 const $profLogin=document.getElementById('prof-login-btn'); if($profLogin) $profLogin.addEventListener('click',()=>show('login'));
@@ -755,7 +773,7 @@ function setLang(l){
   document.documentElement.lang=l;
   document.querySelectorAll('[data-ja][data-en]').forEach(el=>{el.textContent=el.getAttribute(l==='ja'?'data-ja':'data-en');});
   $q.placeholder=l==='ja'?'題名や紹介文の言葉で探す 例: 水 雨 歌':'Search by title or intro, e.g. water rain song';
-  $name.placeholder=l==='ja'?'なまえ（例: サラ）':'Name (e.g. Sara)';
+  $name.placeholder=l==='ja'?'なまえ（例: たろう）':'Name (e.g. Taro)';
   $body.placeholder=l==='ja'?'いま何してる？ 水のことを書いてみよう':"What's happening? Write about water...";
   /* コメント */
 const commentsByPost={201:[
@@ -1248,28 +1266,7 @@ document.getElementById('regBtn').addEventListener('click',async()=>{
   }
   bwBusy=false;
 });
-/* メッセージ */
-const bwMessages=[
- {me:false,text:"こんにちは、葉っぱの器、うまくできましたか？",time:"08:10"},
- {me:true,text:"はい！0.5リットルたまりました。子どもたちも喜んでいます。",time:"08:12"},
- {me:false,text:"素晴らしい。ウィキペディアの水の循環の記事、シェアしますね。",time:"08:13"},
- {me:true,text:"ありがとう。明日の座談会で紹介します。対話が広がるといいですね。",time:"08:15"}
-];
-function renderMessages(){
-  const chat=document.getElementById('msg-chat');
-  chat.innerHTML=bwMessages.map(m=>`<div class="bubble ${m.me?'me':'other'}">${esc(m.text)}<div class="btime">${m.time}</div></div>`).join('');
-  chat.scrollTop=chat.scrollHeight;
-}
-function sendMessage(){
-  const input=document.getElementById('msg-input');
-  const t=input.value.trim(); if(!t) return;
-  const now=new Date();
-  bwMessages.push({me:true,text:t,time:String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')});
-  input.value=''; renderMessages();
-}
-document.getElementById('msg-send').addEventListener('click',sendMessage);
-document.getElementById('msg-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
-renderMessages();
+/* メッセージ：個別メッセージは準備中（画面に案内を表示） */
 /* 設定 */
 document.getElementById('settingsBtn').addEventListener('click',()=>show('settings'));
 document.querySelectorAll('.switch').forEach(sw=>sw.addEventListener('click',()=>sw.classList.toggle('on')));
@@ -1288,12 +1285,7 @@ document.getElementById('saveBtn').addEventListener('click',()=>{
 });
 /* メンバー */
 const bwPeople=[
- {id:1,name:"あいこ",country:"日本",bio:"空が好き。写真を撮ります。",initial:"あ"},
- {id:2,name:"カルロス",country:"ブラジル",bio:"鳥と話すのが好き。森を歩きます。",initial:"C"},
- {id:3,name:"アマラ",country:"ケニア",bio:"星が好き。夜に見ます。",initial:"A"},
- {id:4,name:"エリック",country:"スウェーデン",bio:"海が好き。船に乗ります。",initial:"E"},
- {id:5,name:"プリヤ",country:"インド",bio:"花が好き。絵をかきます。",initial:"P"},
- {id:6,name:"エミリー",country:"アメリカ",bio:"本が好き。みんなと話します。",initial:"Em"}
+ {id:1,name:"岡崎幸雄",country:"日本",bio:"ブルーウィング8の運営者です。ウィキペディアのカプセルと、アニメを作っています。",initial:"岡"}
 ];
 const bwFollowing=new Set();
 function renderPeople(){
@@ -1303,7 +1295,7 @@ function renderPeople(){
    <div class="post" style="border-top:1px solid #eef2ff;padding-top:14px">
      <div class="who"><div class="avatar">${m.initial}</div><div><div class="pname">${esc(m.name)}</div><div class="pdate">${esc(m.country)}</div></div></div>
      <p style="margin:8px 0 10px">${esc(m.bio)}</p>
-     <button class="btn ${bwFollowing.has(m.id)?'btn-ghost':'btn-blue'}" data-follow-person="${m.id}">${bwFollowing.has(m.id)?(lang==='ja'?'フォロー中':'Following'):(lang==='ja'?'フォローする':'Follow')}</button>
+     <span class="tag" style="background:#ffedd5;color:#9a3412">${lang==='ja'?'運営':'Operator'}</span>
    </div>`).join(''):'<p class="empty-note">見つかりませんでした。</p>';
   document.querySelectorAll('[data-follow-person]').forEach(b=>b.addEventListener('click',()=>{
     const id=Number(b.getAttribute('data-follow-person'));
@@ -1315,17 +1307,17 @@ document.getElementById('people-q').addEventListener('input',renderPeople);
 renderPeople();
 /* 写真 */
 const bwPhotos=[
- {id:1,word:"空",title:"空の写真",desc:"今日の空は青いです。雲が少しあります。ゆっくり見よう。",color:"linear-gradient(135deg,#6EC2FF,#1A8CFF)",likes:12},
- {id:2,word:"海",title:"海の写真",desc:"海は広いです。波の音がやさしいです。",color:"linear-gradient(135deg,#3DD598,#0F8A9A)",likes:23},
- {id:3,word:"花",title:"花の写真",desc:"小さな花がさいています。色がきれいです。",color:"linear-gradient(135deg,#FF8AD8,#E84DB5)",likes:18},
- {id:4,word:"星",title:"星の写真",desc:"夜に星が見えます。きらきら光ります。",color:"linear-gradient(135deg,#FFB86A,#FF7A3D)",likes:31},
- {id:5,word:"森",title:"森の写真",desc:"森は静かです。木がたくさんあります。",color:"linear-gradient(135deg,#7DD8A0,#2DB872)",likes:15},
- {id:6,word:"鳥",title:"鳥の写真",desc:"鳥が飛んでいます。自由です。",color:"linear-gradient(135deg,#8AA8FF,#4E7CFF)",likes:27}
+ {id:1,img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/Red_Avadavat_in_Baruipur_September_2025_by_Tisha_Mukherjee_06.jpg/960px-Red_Avadavat_in_Baruipur_September_2025_by_Tisha_Mukherjee_06.jpg",title:"ベニスズメ",desc:"インドで撮られた、赤い小さな鳥、ベニスズメです。ウィキメディア・コモンズの「今日の写真」から。",likes:0},
+ {id:2,img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/Pointe_Saint_Mathieu_-_Phare.jpg/960px-Pointe_Saint_Mathieu_-_Phare.jpg",title:"サン・マチュー岬の灯台",desc:"フランス・ブルターニュの岬にある灯台です。ウィキメディア・コモンズの「今日の写真」から。",likes:0},
+ {id:3,img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/South_Panorama_Taza_Morocco_Nov25_A7CR_09655-62_PanoC.jpg/960px-South_Panorama_Taza_Morocco_Nov25_A7CR_09655-62_PanoC.jpg",title:"モロッコ・タザの町",desc:"モロッコの古い町、タザの眺めです。ウィキメディア・コモンズの「今日の写真」から。",likes:0},
+ {id:4,img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Wredes_passage_November_2025_01.jpg/960px-Wredes_passage_November_2025_01.jpg",title:"ヘルシンキの古い商店街",desc:"フィンランドの首都ヘルシンキにある、古い商店の通りです。ウィキメディア・コモンズの「今日の写真」から。",likes:0},
+ {id:5,img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Male_wild_turkey_%28Meleagris_gallopavo%29_strutting.jpg/960px-Male_wild_turkey_%28Meleagris_gallopavo%29_strutting.jpg",title:"野生のシチメンチョウ",desc:"羽を広げる、野生のシチメンチョウの雄です。ウィキメディア・コモンズの「今日の写真」から。",likes:0},
+ {id:6,img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a1/Liquid_Crystal_Phase_Transition.jpg/960px-Liquid_Crystal_Phase_Transition.jpg",title:"液晶の模様",desc:"液晶が姿を変える様子を、100倍に拡大した写真です。ウィキメディア・コモンズの「今日の写真」から。",likes:0}
 ];
 const bwPhotoLiked=new Set();
 let bwPhotoCurrent=null;
 function renderPhotoGrid(){
-  document.getElementById('photo-grid').innerHTML=bwPhotos.map(ph=>`<div class="photo-cell" style="background:${ph.color}" data-photo="${ph.id}">${ph.word}</div>`).join('');
+  document.getElementById('photo-grid').innerHTML=bwPhotos.map(ph=>`<div class="photo-cell" data-photo="${ph.id}"><img src="${ph.img}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block"></div>`).join('');
   document.querySelectorAll('[data-photo]').forEach(c=>c.addEventListener('click',()=>openPhoto(Number(c.getAttribute('data-photo')))));
 }
 function openPhoto(id){
@@ -1333,7 +1325,7 @@ function openPhoto(id){
   const ph=bwPhotos.find(x=>x.id===id);
   document.getElementById('photoListCard').style.display='none';
   document.getElementById('photoDetailCard').style.display='block';
-  const big=document.getElementById('photo-big'); big.style.background=ph.color; big.textContent=ph.word;
+  const big=document.getElementById('photo-big'); big.style.background='#0b1e4b'; big.innerHTML='<img src="'+ph.img+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:20px;display:block">';
   document.getElementById('photo-title').textContent=ph.title;
   document.getElementById('photo-desc').textContent=ph.desc;
   updatePhotoLike();
@@ -1353,28 +1345,15 @@ document.getElementById('photo-back').addEventListener('click',()=>{
 });
 renderPhotoGrid();
 /* イベント */
-const bwEvents=[
- {id:1,title:"空について話そう",time:"2026年12月5日 19:00〜",place:"オンライン",desc:"世界の友だちと、空の写真を見ながら話します。やさしい会です。初めての人も安心。",base:24},
- {id:2,title:"世界の友だちと手をつなぐ",time:"2026年12月12日 20:00〜",place:"オンラインと松山",desc:"平和について、みんなで考えます。歌もあります。",base:42},
- {id:3,title:"鳥の名前を覚えよう",time:"2026年12月20日 10:00〜",place:"オンライン",desc:"鳥が好きな人が集まります。はじめての人も大歓迎。ゆっくり覚えよう。",base:18}
-];
+const bwEvents=[];
 const bwJoined=new Set();
 function renderEvents(){
-  document.getElementById('event-list').innerHTML=bwEvents.map(ev=>{
+  const el=document.getElementById('event-list');
+  if(!bwEvents.length){ el.innerHTML='<p class="empty-note">'+(lang==='ja'?'予定されているイベントは、まだありません。これから、世界の友だちと集まる会を計画します。':'No events are scheduled yet. Gatherings with friends around the world are being planned.')+'</p>'; return; }
+  el.innerHTML=bwEvents.map(ev=>{
     const is=bwJoined.has(ev.id);
-    return `<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px">
-      <div class="ptitle" style="font-size:1.1rem">${esc(ev.title)}</div>
-      <div class="pdate">${esc(ev.time)} ・ ${esc(ev.place)}</div>
-      <p style="margin:6px 0 10px">${esc(ev.desc)}</p>
-      <div class="actions"><span class="count">${ev.base+(is?1:0)} ${lang==='ja'?'人が参加':'going'}</span>
-      <button class="btn ${is?'btn-ghost':'btn-blue'}" data-join="${ev.id}">${is?(lang==='ja'?'参加予定':'Going'):(lang==='ja'?'参加する':'Join')}</button></div>
-    </div>`;
+    return '<div class="post" style="border-top:1px solid #eef2ff;padding-top:14px"><div class="ptitle" style="font-size:1.1rem">'+esc(ev.title)+'</div><div class="pdate">'+esc(ev.time)+' ・ '+esc(ev.place)+'</div><p style="margin:6px 0 10px">'+esc(ev.desc)+'</p></div>';
   }).join('');
-  document.querySelectorAll('[data-join]').forEach(b=>b.addEventListener('click',()=>{
-    const id=Number(b.getAttribute('data-join'));
-    if(bwJoined.has(id)) bwJoined.delete(id); else bwJoined.add(id);
-    renderEvents();
-  }));
 }
 renderEvents();
 /* 動画 */
